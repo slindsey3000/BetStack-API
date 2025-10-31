@@ -40,13 +40,13 @@ namespace :odds do
     puts "  ✅ Created #{result[:leagues_created]} leagues"
     puts ""
 
-    # Step 2: Fetch odds for active leagues to discover teams
-    puts "Step 2: Fetching odds to discover teams and bookmakers..."
+    # Step 2: Fetch odds for major North American leagues to discover teams
+    puts "Step 2: Fetching odds for major North American leagues (NBA, NFL, NHL, MLB, NCAAF, NCAAB)..."
     puts ""
 
-    active_leagues = League.active.limit(10) # Start with first 10 leagues
-    active_leagues.each_with_index do |league, index|
-      puts "  [#{index + 1}/#{active_leagues.count}] #{league.name} (#{league.key})"
+    major_leagues = League.major_north_american
+    major_leagues.each_with_index do |league, index|
+      puts "  [#{index + 1}/#{major_leagues.count}] #{league.name} (#{league.key})"
 
       begin
         result = ingester.sync_sport_odds(league.key)
@@ -74,15 +74,15 @@ namespace :odds do
     puts ""
   end
 
-  desc "Sync odds for all active leagues"
+  desc "Sync odds for major North American leagues (NBA, NFL, NHL, MLB, NCAAF, NCAAB)"
   task sync: :environment do
-    puts "🔄 Syncing odds for all active leagues..."
+    puts "🔄 Syncing odds for major North American leagues..."
     puts ""
 
     ingester = OddsDataIngester.new
-    leagues = League.active
+    leagues = League.major_north_american
 
-    puts "Found #{leagues.count} active leagues"
+    puts "Found #{leagues.count} major leagues: #{leagues.pluck(:name).join(', ')}"
     puts ""
 
     leagues.each_with_index do |league, index|
@@ -119,7 +119,12 @@ namespace :odds do
     unless league
       puts "❌ Error: League not found: #{league_key}"
       puts ""
-      puts "Available leagues:"
+      puts "Major North American leagues:"
+      League.major_north_american.pluck(:name, :key).each do |name, key|
+        puts "  • #{name} (#{key})"
+      end
+      puts ""
+      puts "All available leagues:"
       League.active.pluck(:name, :key).each do |name, key|
         puts "  • #{name} (#{key})"
       end

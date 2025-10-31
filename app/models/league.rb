@@ -11,4 +11,16 @@ class League < ApplicationRecord
   # Scopes
   scope :active, -> { where(active: true) }
   scope :with_outrights, -> { where(has_outrights: true) }
+  
+  # Major North American leagues for focused syncing
+  MAJOR_NORTH_AMERICAN_LEAGUES = [
+    'basketball_nba',       # NBA
+    'americanfootball_nfl', # NFL
+    'icehockey_nhl',        # NHL
+    'baseball_mlb',         # MLB
+    'americanfootball_ncaaf', # NCAAF
+    'basketball_ncaab'      # NCAAB
+  ].freeze
+  
+  scope :major_north_american, -> { where(key: MAJOR_NORTH_AMERICAN_LEAGUES) }
 end

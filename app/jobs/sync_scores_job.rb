@@ -38,12 +38,12 @@ class SyncScoresJob < ApplicationJob
   end
 
   def sync_all_scores
-    Rails.logger.info "🏆 Starting scores sync for all active leagues..."
+    Rails.logger.info "🏆 Starting scores sync for major North American leagues..."
 
-    active_leagues = League.active.to_a
-    Rails.logger.info "Found #{active_leagues.count} active leagues"
+    major_leagues = League.major_north_american.to_a
+    Rails.logger.info "Found #{major_leagues.count} major leagues: #{major_leagues.map(&:name).join(', ')}"
 
-    active_leagues.each do |league|
+    major_leagues.each do |league|
       sync_league_scores(league.key)
     end
 
