@@ -1,0 +1,197 @@
+# BetStack API - Cursor Rules
+
+## Project Overview
+This is a Ruby on Rails 8 API that serves as the central data hub for sports and sports betting information. The API ingests data from multiple external sports data providers (starting with The Odds API) and exposes it through well-designed RESTful endpoints to support various front-end clients including mobile apps, web applications, and third-party integrations.
+
+## Architecture Principles
+
+### API Design
+- Follow RESTful conventions and best practices for public API design
+- Use versioned namespaces (e.g., `/api/v1/`) for all endpoints
+- Return consistent JSON responses with proper HTTP status codes
+- Implement pagination, filtering, and sorting on collection endpoints
+- Use proper serialization (jbuilder or Active Model Serializers)
+- Include metadata in responses (pagination info, timestamps, etc.)
+- Design for backward compatibility - never break existing endpoints
+- Support multiple response formats when appropriate (JSON primary)
+
+### Database Design
+- Highly referential and object-oriented database structure
+- Strong emphasis on proper associations and foreign keys
+- Normalize data to avoid duplication and maintain consistency
+- Use indexes strategically on foreign keys and frequently queried columns
+- Implement database constraints (unique indexes, not null, foreign keys)
+- Design for historical data retention - avoid deleting records
+- Use boolean flags (e.g., `active`, `completed`) instead of deletion
+- Prefer `belongs_to`, `has_many`, `has_many through` associations over denormalized data
+
+### Data Integrity
+- Always use database transactions for multi-model operations
+- Implement validations at both model and database levels
+- Use unique indexes to prevent duplicate records
+- Foreign key constraints should be enforced at the database level
+- Timestamps on all tables (`created_at`, `updated_at`)
+- Add `last_sync_at` or similar for externally sourced data
+
+### Code Organization
+- Service objects for business logic (`app/services/`)
+- Background jobs for async operations (`app/jobs/`)
+- Concerns for shared model behavior (`app/models/concerns/`)
+- Keep controllers thin - delegate to services
+- Use query objects for complex database queries
+
+## Tech Stack
+- Ruby on Rails 8.x
+- PostgreSQL database
+- Solid Queue for background jobs (Rails 8 built-in)
+- Solid Cache for caching (Rails 8 built-in)
+- Faraday for HTTP client requests to external APIs
+- Jbuilder for JSON serialization
+
+## Domain Models
+
+### Core Entities
+The application centers around sports betting data with these primary models:
+
+1. **Sport** - Represents sports (Football, baseball, basketball, hockey, etc)
+2. **League** - Sports have leagues (NFL, NBA, MLB, etc.)
+3. **Team** - Individual teams with normalized names for multi-API support
+4. **Event** - Games/matches between teams with scheduled times
+5. **Bookmaker** - Sportsbooks that provide betting lines
+6. **Line** - Specific odds for events, points spread, moneyline, total, adjust
+7. **Result** - Scores for events
+8. There are more models
+
+### Association Patterns
+- Use join tables where many-to-many relationships exist
+- Self-referential associations where appropriate (e.g., Team → Events)
+
+## Coding Standards
+
+### Models
+- Use strong parameter validation
+- Define associations at the top of the model
+- Add scopes for common queries
+- Include dependent destroy/nullify options on associations
+- Use enums for status fields
+- Add database indexes in migrations for foreign keys
+
+### Controllers
+- Keep actions RESTful (index, show, create, update, destroy)
+- Use `before_action` for common operations
+- Delegate complex logic to service objects
+- Return proper HTTP status codes (200, 201, 404, 422, etc.)
+- Handle errors gracefully with rescue blocks
+
+### Services
+- One public method per service class (`.call` or specific verb)
+- Return consistent result objects or use exceptions
+- Wrap multi-model operations in transactions
+- Log important operations and errors
+- Handle external API failures gracefully
+
+### Background Jobs
+- Idempotent job design (safe to run multiple times)
+- Include retry logic with exponential backoff
+- Log job execution for debugging
+- Use Solid Queue (Rails 8 built-in)
+
+### Migrations
+- Always reversible migrations
+- Add indexes for foreign keys
+- Add unique indexes where appropriate
+- Use `null: false` for required fields
+- Add comments for complex fields
+
+## External API Integration
+
+### The Odds API
+- Primary data source for sports and betting odds
+- Rate limiting awareness - respect API quotas
+- Store API credentials in environment variables
+- Cache responses when appropriate
+- Handle 429 (rate limit) and 5xx errors gracefully
+- Normalize team names for future multi-API support
+
+### Data Syncing Strategy
+- Scheduled jobs for regular data updates
+- Upsert pattern (find or create, then update)
+- Track last sync timestamps
+- Never delete historical data
+- Mark records as inactive instead
+
+## Environment & Deployment
+
+### Heroku
+- Designed for Heroku deployment
+- Use environment variables for all configuration
+- Support for worker dynos (background jobs)
+- PostgreSQL database
+- Enable logging and monitoring
+
+### Environment Variables
+- `ODDS_API_KEY` - API key for The Odds API
+- `ODDS_API_BASE_URL` - Base URL for The Odds API
+- `DATABASE_URL` - PostgreSQL connection (Heroku managed)
+- `RAILS_ENV` - Environment (development, production)
+- `RAILS_MAX_THREADS` - Puma thread count
+
+## Testing Approach
+- No tests needed initially. Ask where you think a test is very much needed before you create one
+
+## Performance Considerations
+- Use `includes()` to avoid N+1 queries
+- Add database indexes for frequently queried columns
+- Implement caching for expensive operations
+- Paginate large collections
+- Use counter caches where appropriate
+- Background jobs for slow operations
+
+## Security
+- Never commit API keys or secrets
+- Use Rails encrypted credentials for sensitive data
+- Implement rate limiting on API endpoints
+- Validate and sanitize all inputs
+- Use strong parameters in controllers
+- CORS configuration for cross-origin requests
+
+## Future Extensibility
+- Design for multiple external API providers
+- Team normalization layer for cross-API matching
+- Modular market types (easy to add player props, futures, etc.)
+- User predictions and betting tracking (future feature)
+- Live betting support (future enhancement)
+- Historical analytics and reporting
+
+## Common Patterns
+
+### Creating Associated Records
+```ruby
+# Use transactions for multi-model creates
+ActiveRecord::Base.transaction do
+  event = Event.create!(...)
+  event.markets.create!(...)
+end
+```
+
+### Upserting from External API
+```ruby
+# Find or initialize, then update attributes
+team = Team.find_or_initialize_by(normalized_name: normalized)
+team.update!(name: api_data['name'], ...)
+```
+
+### Background Job Scheduling
+```ruby
+# Use Solid Queue for async operations
+SyncOddsJob.perform_later(sport_key)
+```
+
+## Remember
+- API design is permanent - get it right the first time
+- Associations are the foundation - model relationships carefully
+- Never delete data - use status flags
+- External APIs can fail - always have error handling
+- Performance matters - index and optimize queries
+- Test thoroughly - this API is the foundation for all clients
+
