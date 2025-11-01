@@ -1,15 +1,65 @@
-# examples:
-#   periodic_cleanup:
-#     class: CleanSoftDeletedRecordsJob
-#     queue: background
-#     args: [ 1000, { batch_size: 500 } ]
-#     schedule: every hour
-#   periodic_cleanup_with_command:
-#     command: "SoftDeletedRecord.due.delete_all"
-#     priority: 2
-#     schedule: at 5am every day
+# BetStack API - Recurring Job Schedule
+# Simple and configurable schedule for syncing sports data
+#
+# Timezone: All times are in UTC (EST + 5 hours)
+# To change frequency: modify the schedule strings below
+# 
+# Schedule syntax examples:
+#   - "at 8am every day" (daily at 8am)
+#   - "every 2 hours" (every 2 hours)
+#   - "at 1pm on monday" (weekly)
 
 production:
+  # Clean up finished Solid Queue jobs
   clear_solid_queue_finished_jobs:
     command: "SolidQueue::Job.clear_finished_in_batches(sleep_between_batches: 0.3)"
     schedule: every hour at minute 12
+  
+  # Sync sports and leagues (once daily)
+  sync_sports:
+    class: SyncSportsJob
+    queue: default
+    schedule: at 6am every day
+  
+  # Sync odds for major North American leagues (2x daily)
+  # Morning sync
+  sync_odds_morning:
+    class: SyncAllOddsJob
+    queue: default
+    schedule: at 12pm every day  # 7am EST
+  
+  # Evening sync
+  sync_odds_evening:
+    class: SyncAllOddsJob
+    queue: default
+    schedule: at 8pm every day   # 3pm EST
+  
+  # Sync scores/results for major leagues (2x daily)
+  # 5pm EST = 10pm UTC
+  sync_scores_evening:
+    class: SyncScoresJob
+    queue: default
+    schedule: at 10pm every day  # 5pm EST
+  
+  # 10pm EST = 3am UTC (next day)
+  sync_scores_night:
+    class: SyncScoresJob
+    queue: default
+    schedule: at 3am every day   # 10pm EST (previous day)
+
+development:
+  # Development can use the same schedule or run less frequently
+  sync_sports:
+    class: SyncSportsJob
+    queue: default
+    schedule: at 9am every day
+  
+  sync_odds:
+    class: SyncAllOddsJob
+    queue: default
+    schedule: at 10am every day
+  
+  sync_scores:
+    class: SyncScoresJob
+    queue: default
+    schedule: at 11am every day
