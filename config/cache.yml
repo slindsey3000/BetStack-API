@@ -12,5 +12,5 @@ test:
   <<: *default
 
 production:
-  database: cache
+  # database: cache  # Commented out - not using separate cache database on Heroku
   <<: *default
