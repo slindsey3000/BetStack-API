@@ -10,47 +10,6 @@
 #     schedule: at 5am every day
 
 production:
-  # Clean up finished Solid Queue jobs
   clear_solid_queue_finished_jobs:
     command: "SolidQueue::Job.clear_finished_in_batches(sleep_between_batches: 0.3)"
     schedule: every hour at minute 12
-  
-  # Sync sports and leagues once daily
-  sync_sports:
-    class: SyncSportsJob
-    queue: default
-    schedule: at 6am every day
-  
-  # Sync odds 3x daily (morning, afternoon, evening)
-  sync_odds_morning:
-    class: SyncAllOddsJob
-    queue: default
-    schedule: at 8am every day
-  
-  sync_odds_afternoon:
-    class: SyncAllOddsJob
-    queue: default
-    schedule: at 2pm every day
-  
-  sync_odds_evening:
-    class: SyncAllOddsJob
-    queue: default
-    schedule: at 8pm every day
-  
-  # Sync scores hourly to catch completed games
-  sync_scores:
-    class: SyncScoresJob
-    queue: default
-    schedule: every hour
-
-development:
-  # Development can use the same schedule or run less frequently
-  sync_sports:
-    class: SyncSportsJob
-    queue: default
-    schedule: at 9am every day
-  
-  sync_odds:
-    class: SyncAllOddsJob
-    queue: default
-    schedule: at 10am every day
