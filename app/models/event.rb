@@ -21,6 +21,41 @@ class Event < ApplicationRecord
   # Enums (optional - if you want to use enum for status)
   # enum status: { scheduled: "scheduled", live: "live", completed: "completed", cancelled: "cancelled", postponed: "postponed" }
 
+  # API Serialization
+  def api_json
+    {
+      id: id,
+      odds_api_id: odds_api_id,
+      commence_time: commence_time,
+      status: status,
+      completed: completed,
+      league: {
+        id: league.id,
+        key: league.key,
+        name: league.name
+      },
+      home_team: {
+        id: home_team.id,
+        name: home_team_name
+      },
+      away_team: {
+        id: away_team.id,
+        name: away_team_name
+      }
+    }
+  end
+
+  def api_json_detailed
+    data = api_json.merge(
+      lines: lines.includes(:bookmaker).map(&:api_json)
+    )
+    
+    # Include result if exists
+    data[:result] = result.api_json if result.present?
+    
+    data
+  end
+
   private
 
   def teams_must_be_different

@@ -23,4 +23,27 @@ class League < ApplicationRecord
   ].freeze
   
   scope :major_north_american, -> { where(key: MAJOR_NORTH_AMERICAN_LEAGUES) }
+
+  # API Serialization
+  def api_json
+    {
+      id: id,
+      key: key,
+      name: name,
+      region: region,
+      active: active,
+      has_outrights: has_outrights,
+      sport: {
+        id: sport.id,
+        name: sport.name
+      }
+    }
+  end
+
+  def api_json_detailed
+    api_json.merge(
+      teams_count: teams.count,
+      upcoming_events_count: events.upcoming.count
+    )
+  end
 end

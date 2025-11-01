@@ -14,6 +14,30 @@ class Team < ApplicationRecord
   # Scopes
   scope :active, -> { where(active: true) }
 
+  # API Serialization
+  def api_json
+    {
+      id: id,
+      name: name,
+      normalized_name: normalized_name,
+      abbreviation: abbreviation,
+      city: city,
+      active: active,
+      league: {
+        id: league.id,
+        key: league.key,
+        name: league.name
+      }
+    }
+  end
+
+  def api_json_detailed
+    api_json.merge(
+      conference: conference,
+      division: division
+    )
+  end
+
   private
 
   def set_normalized_name
