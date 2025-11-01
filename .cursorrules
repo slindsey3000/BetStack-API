@@ -9,9 +9,10 @@ This is a Ruby on Rails 8 API that serves as the central data hub for sports and
 - Follow RESTful conventions and best practices for public API design
 - Use versioned namespaces (e.g., `/api/v1/`) for all endpoints
 - Return consistent JSON responses with proper HTTP status codes
-- Implement pagination, filtering, and sorting on collection endpoints
-- Use proper serialization (jbuilder or Active Model Serializers)
-- Include metadata in responses (pagination info, timestamps, etc.)
+- **DO NOT implement pagination** - return full datasets when requested
+- Support filtering and sorting on collection endpoints
+- Use proper serialization (simple `.as_json` or model methods)
+- **Return clean JSON arrays** for collections (no metadata wrappers)
 - Design for backward compatibility - never break existing endpoints
 - Support multiple response formats when appropriate (JSON primary)
 
