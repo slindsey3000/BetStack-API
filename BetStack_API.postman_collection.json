@@ -1,0 +1,687 @@
+{
+	"info": {
+		"_postman_id": "betstack-api-v1",
+		"name": "BetStack API",
+		"description": "Complete API collection for BetStack - Sports & Sports Betting Data API\n\nBase URLs:\n- Local: http://localhost:3000\n- Production: https://betstack-45ae7ff725cd.herokuapp.com",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "production_url",
+			"value": "https://betstack-45ae7ff725cd.herokuapp.com",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Sports",
+			"item": [
+				{
+					"name": "Get All Sports",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/sports",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "sports"]
+						},
+						"description": "Get all sports. Returns 12 sports (American Football, Baseball, Basketball, etc.)"
+					}
+				},
+				{
+					"name": "Get All Sports (Active Only)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/sports?active=true",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "sports"],
+							"query": [
+								{
+									"key": "active",
+									"value": "true"
+								}
+							]
+						},
+						"description": "Get only active sports"
+					}
+				},
+				{
+					"name": "Get Single Sport",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/sports/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "sports", "1"]
+						},
+						"description": "Get a single sport by ID with its leagues"
+					}
+				}
+			]
+		},
+		{
+			"name": "Leagues",
+			"item": [
+				{
+					"name": "Get All Leagues",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/leagues",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "leagues"]
+						},
+						"description": "Get all leagues (73 total)"
+					}
+				},
+				{
+					"name": "Get All Leagues (Active Only)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/leagues?active=true",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "leagues"],
+							"query": [
+								{
+									"key": "active",
+									"value": "true"
+								}
+							]
+						},
+						"description": "Get only active leagues"
+					}
+				},
+				{
+					"name": "Get Leagues by Sport",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/leagues?sport_id=1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "leagues"],
+							"query": [
+								{
+									"key": "sport_id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Get leagues for a specific sport"
+					}
+				},
+				{
+					"name": "Get Single League",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/leagues/4",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "leagues", "4"]
+						},
+						"description": "Get a single league by ID"
+					}
+				}
+			]
+		},
+		{
+			"name": "Events",
+			"item": [
+				{
+					"name": "Get All Events",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/events",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "events"]
+						},
+						"description": "Get all upcoming and live events (default behavior)"
+					}
+				},
+				{
+					"name": "Get NFL Events",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/events?league_key=americanfootball_nfl",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "events"],
+							"query": [
+								{
+									"key": "league_key",
+									"value": "americanfootball_nfl"
+								}
+							]
+						},
+						"description": "Get all NFL events"
+					}
+				},
+				{
+					"name": "Get NBA Events",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/events?league_key=basketball_nba",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "events"],
+							"query": [
+								{
+									"key": "league_key",
+									"value": "basketball_nba"
+								}
+							]
+						},
+						"description": "Get all NBA events"
+					}
+				},
+				{
+					"name": "Get NHL Events",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/events?league_key=icehockey_nhl",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "events"],
+							"query": [
+								{
+									"key": "league_key",
+									"value": "icehockey_nhl"
+								}
+							]
+						},
+						"description": "Get all NHL events"
+					}
+				},
+				{
+					"name": "Get MLB Events",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/events?league_key=baseball_mlb",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "events"],
+							"query": [
+								{
+									"key": "league_key",
+									"value": "baseball_mlb"
+								}
+							]
+						},
+						"description": "Get all MLB events"
+					}
+				},
+				{
+					"name": "Get Upcoming Events",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/events?status=upcoming",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "events"],
+							"query": [
+								{
+									"key": "status",
+									"value": "upcoming"
+								}
+							]
+						},
+						"description": "Get only upcoming events"
+					}
+				},
+				{
+					"name": "Get Live Events",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/events?status=live",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "events"],
+							"query": [
+								{
+									"key": "status",
+									"value": "live"
+								}
+							]
+						},
+						"description": "Get only live events"
+					}
+				},
+				{
+					"name": "Get Completed Events",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/events?status=completed",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "events"],
+							"query": [
+								{
+									"key": "status",
+									"value": "completed"
+								}
+							]
+						},
+						"description": "Get completed events (last 3 days)"
+					}
+				},
+				{
+					"name": "Get Events by Date",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/events?date=2025-11-02",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "events"],
+							"query": [
+								{
+									"key": "date",
+									"value": "2025-11-02"
+								}
+							]
+						},
+						"description": "Get events for a specific date"
+					}
+				},
+				{
+					"name": "Get Single Event",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/events/68",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "events", "68"]
+						},
+						"description": "Get a single event with all lines and result"
+					}
+				}
+			]
+		},
+		{
+			"name": "Lines (Odds)",
+			"item": [
+				{
+					"name": "Get All Lines",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/lines",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "lines"]
+						},
+						"description": "Get all betting lines for upcoming/live events"
+					}
+				},
+				{
+					"name": "Get NFL Lines",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/lines?league_key=americanfootball_nfl",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "lines"],
+							"query": [
+								{
+									"key": "league_key",
+									"value": "americanfootball_nfl"
+								}
+							]
+						},
+						"description": "Get all NFL betting lines"
+					}
+				},
+				{
+					"name": "Get DraftKings Lines",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/lines?bookmaker_key=draftkings",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "lines"],
+							"query": [
+								{
+									"key": "bookmaker_key",
+									"value": "draftkings"
+								}
+							]
+						},
+						"description": "Get all DraftKings lines"
+					}
+				},
+				{
+					"name": "Get FanDuel Lines",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/lines?bookmaker_key=fanduel",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "lines"],
+							"query": [
+								{
+									"key": "bookmaker_key",
+									"value": "fanduel"
+								}
+							]
+						},
+						"description": "Get all FanDuel lines"
+					}
+				},
+				{
+					"name": "Get NFL DraftKings Lines",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/lines?league_key=americanfootball_nfl&bookmaker_key=draftkings",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "lines"],
+							"query": [
+								{
+									"key": "league_key",
+									"value": "americanfootball_nfl"
+								},
+								{
+									"key": "bookmaker_key",
+									"value": "draftkings"
+								}
+							]
+						},
+						"description": "Get NFL lines from DraftKings only"
+					}
+				},
+				{
+					"name": "Get Lines for Event",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/lines?event_id=68",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "lines"],
+							"query": [
+								{
+									"key": "event_id",
+									"value": "68"
+								}
+							]
+						},
+						"description": "Get all lines for a specific event"
+					}
+				},
+				{
+					"name": "Get Lines by Date",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/lines?date=2025-11-02",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "lines"],
+							"query": [
+								{
+									"key": "date",
+									"value": "2025-11-02"
+								}
+							]
+						},
+						"description": "Get lines for events on a specific date"
+					}
+				}
+			]
+		},
+		{
+			"name": "Results",
+			"item": [
+				{
+					"name": "Get All Results",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/results",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "results"]
+						},
+						"description": "Get all results (last 7 days)"
+					}
+				},
+				{
+					"name": "Get NFL Results",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/results?league_key=americanfootball_nfl",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "results"],
+							"query": [
+								{
+									"key": "league_key",
+									"value": "americanfootball_nfl"
+								}
+							]
+						},
+						"description": "Get NFL results only"
+					}
+				},
+				{
+					"name": "Get Results by Date",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/results?date=2025-10-28",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "results"],
+							"query": [
+								{
+									"key": "date",
+									"value": "2025-10-28"
+								}
+							]
+						},
+						"description": "Get results for a specific date"
+					}
+				},
+				{
+					"name": "Get Result for Event",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/results?event_id=45",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "results"],
+							"query": [
+								{
+									"key": "event_id",
+									"value": "45"
+								}
+							]
+						},
+						"description": "Get result for a specific event"
+					}
+				},
+				{
+					"name": "Get Single Result",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/results/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "results", "1"]
+						},
+						"description": "Get a single result by ID"
+					}
+				}
+			]
+		},
+		{
+			"name": "Teams",
+			"item": [
+				{
+					"name": "Get All Teams",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/teams",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "teams"]
+						},
+						"description": "Get all teams"
+					}
+				},
+				{
+					"name": "Get All Teams (Active Only)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/teams?active=true",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "teams"],
+							"query": [
+								{
+									"key": "active",
+									"value": "true"
+								}
+							]
+						},
+						"description": "Get only active teams"
+					}
+				},
+				{
+					"name": "Get NFL Teams",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/teams?league_key=americanfootball_nfl",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "teams"],
+							"query": [
+								{
+									"key": "league_key",
+									"value": "americanfootball_nfl"
+								}
+							]
+						},
+						"description": "Get all NFL teams"
+					}
+				},
+				{
+					"name": "Get NBA Teams",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/teams?league_key=basketball_nba",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "teams"],
+							"query": [
+								{
+									"key": "league_key",
+									"value": "basketball_nba"
+								}
+							]
+						},
+						"description": "Get all NBA teams"
+					}
+				},
+				{
+					"name": "Get Single Team",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/teams/120",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "teams", "120"]
+						},
+						"description": "Get a single team by ID"
+					}
+				}
+			]
+		},
+		{
+			"name": "Bookmakers",
+			"item": [
+				{
+					"name": "Get All Bookmakers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/bookmakers",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "bookmakers"]
+						},
+						"description": "Get all bookmakers"
+					}
+				},
+				{
+					"name": "Get All Bookmakers (Active Only)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/bookmakers?active=true",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "bookmakers"],
+							"query": [
+								{
+									"key": "active",
+									"value": "true"
+								}
+							]
+						},
+						"description": "Get only active bookmakers"
+					}
+				},
+				{
+					"name": "Get Single Bookmaker",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/bookmakers/8",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "bookmakers", "8"]
+						},
+						"description": "Get a single bookmaker by ID"
+					}
+				}
+			]
+		}
+	]
+}
+
