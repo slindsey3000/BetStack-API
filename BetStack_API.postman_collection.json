@@ -315,7 +315,7 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "v1", "events", "68"]
 						},
-						"description": "Get a single event with all lines and result"
+						"description": "Get a single event with BetStack consensus line and result"
 					}
 				}
 			]
@@ -333,7 +333,7 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "v1", "lines"]
 						},
-						"description": "Get all betting lines for upcoming/live events"
+						"description": "Get BetStack consensus lines for all major North American leagues (NFL, NBA, NHL, MLB, NCAAF, NCAAB). Returns upcoming/live events only, ordered by start time (soonest first)."
 					}
 				},
 				{
@@ -352,7 +352,7 @@
 								}
 							]
 						},
-						"description": "Get all NFL betting lines"
+						"description": "Get BetStack consensus lines for NFL events. Ordered by start time (soonest first)."
 					}
 				},
 				{
@@ -371,7 +371,7 @@
 								}
 							]
 						},
-						"description": "Get all DraftKings lines"
+						"description": "Get DraftKings lines for all major leagues. Override default BetStack consensus with bookmaker_key parameter."
 					}
 				},
 				{
@@ -390,7 +390,7 @@
 								}
 							]
 						},
-						"description": "Get all FanDuel lines"
+						"description": "Get FanDuel lines for all major leagues. Override default BetStack consensus with bookmaker_key parameter."
 					}
 				},
 				{
@@ -413,7 +413,7 @@
 								}
 							]
 						},
-						"description": "Get NFL lines from DraftKings only"
+						"description": "Get NFL lines from DraftKings (override default BetStack consensus). Shows how to combine league_key and bookmaker_key filters."
 					}
 				},
 				{
@@ -432,7 +432,7 @@
 								}
 							]
 						},
-						"description": "Get all lines for a specific event"
+						"description": "Get BetStack consensus line for a specific event"
 					}
 				},
 				{
@@ -451,7 +451,7 @@
 								}
 							]
 						},
-						"description": "Get lines for events on a specific date"
+						"description": "Get BetStack consensus lines for events on a specific date. Ordered by start time (soonest first)."
 					}
 				}
 			]
