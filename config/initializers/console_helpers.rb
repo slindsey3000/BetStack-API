@@ -193,6 +193,62 @@ module BetStackConsoleHelpers
     
     puts "✅ All results refreshed!"
   end
+
+  # Show all available console commands and rake tasks
+  def help
+    puts "🎯 BetStack API - Available Commands"
+    puts "=" * 70
+    puts ""
+    
+    puts "📊 GET LINES (Odds)"
+    puts "-" * 70
+    puts "  nfl_lines              Get NFL betting lines"
+    puts "  nba_lines              Get NBA betting lines"
+    puts "  nhl_lines              Get NHL betting lines"
+    puts "  mlb_lines              Get MLB betting lines"
+    puts "  lines_for(league_key)  Get lines for any league"
+    puts ""
+    
+    puts "🔄 REFRESH ODDS"
+    puts "-" * 70
+    puts "  refresh_nfl            Refresh NFL odds from API"
+    puts "  refresh_nba            Refresh NBA odds from API"
+    puts "  refresh_nhl            Refresh NHL odds from API"
+    puts "  refresh_mlb            Refresh MLB odds from API"
+    puts "  refresh_odds(key)      Refresh odds for any league"
+    puts "  refresh_all_odds       Refresh all major leagues"
+    puts ""
+    
+    puts "🏆 REFRESH RESULTS"
+    puts "-" * 70
+    puts "  refresh_nfl_results    Refresh NFL scores/results"
+    puts "  refresh_nba_results    Refresh NBA scores/results"
+    puts "  refresh_results(key)   Refresh results for any league"
+    puts "  refresh_all_results    Refresh all major leagues"
+    puts ""
+    
+    puts "📈 STATISTICS"
+    puts "-" * 70
+    puts "  league_stats(key)      Show stats for a league"
+    puts ""
+    
+    puts "🔧 RAKE TASKS"
+    puts "-" * 70
+    puts "  rails odds:test                    Test API connection"
+    puts "  rails odds:seed                    Seed initial data"
+    puts "  rails odds:sync                    Sync all major leagues"
+    puts "  rails odds:sync_league[key]        Sync specific league"
+    puts "  rails odds:sync_scores[key]        Sync scores for league"
+    puts "  rails odds:stats                   Show database stats"
+    puts ""
+    
+    puts "💡 Examples:"
+    puts "-" * 70
+    puts "  nfl_lines"
+    puts "  refresh_nfl"
+    puts "  league_stats('americanfootball_nfl')"
+    puts ""
+  end
 end
 
 # Include helpers in Rails console
