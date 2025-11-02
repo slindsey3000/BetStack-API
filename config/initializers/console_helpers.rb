@@ -19,16 +19,16 @@ module BetStackConsoleHelpers
       puts "   Bookmaker: #{line.bookmaker.name}"
       puts "   Commence: #{event.commence_time.strftime('%Y-%m-%d %I:%M %p')}"
 
-      if line.moneyline
-        puts "   Moneyline: #{line.moneyline['home']} / #{line.moneyline['away']}"
+      if line.has_moneyline?
+        puts "   Moneyline: #{line.money_line_home} / #{line.money_line_away}"
       end
 
-      if line.spread
-        puts "   Spread: #{line.spread['home']['point']} (#{line.spread['home']['price']}) / #{line.spread['away']['point']} (#{line.spread['away']['price']})"
+      if line.has_spread?
+        puts "   Spread: #{line.point_spread_home} (#{line.point_spread_home_line}) / #{line.point_spread_away} (#{line.point_spread_away_line})"
       end
 
-      if line.total
-        puts "   Total: #{line.total['number']} (Over: #{line.total['over']}, Under: #{line.total['under']})"
+      if line.has_totals?
+        puts "   Total: #{line.total_number} (Over: #{line.over_line}, Under: #{line.under_line})"
       end
 
       puts ""
