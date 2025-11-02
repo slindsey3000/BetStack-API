@@ -251,9 +251,11 @@ module BetStackConsoleHelpers
   end
 end
 
-# Include helpers in Rails console
+# Include helpers in Rails console and auto-display help on startup
 if defined?(Rails::Console)
   Rails.application.console do
     include BetStackConsoleHelpers
+    # Automatically show help when console loads
+    help
   end
 end
