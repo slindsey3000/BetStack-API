@@ -26,6 +26,7 @@ Rails.application.routes.draw do
       resources :results, only: [:index, :show]
       resources :teams, only: [:index, :show]
       resources :bookmakers, only: [:index, :show]
+      resources :users, only: [:index, :show, :create, :update]
     end
   end
 end

@@ -203,7 +203,7 @@ module BetStackConsoleHelpers
   def incomplete_lines(league_key: nil, bookmaker_key: "betstack")
     scope = Line.incomplete
                 .joins(event: :league)
-                .where('events.commence_time > ? OR (events.commence_time <= ? AND events.completed = ?)',
+                .where("events.commence_time > ? OR (events.commence_time <= ? AND events.completed = ?)",
                        Time.current, Time.current, false)
 
     if league_key
@@ -215,7 +215,7 @@ module BetStackConsoleHelpers
     scope = scope.joins(:bookmaker).where(bookmakers: { key: bookmaker_key })
     scope = scope.order("events.commence_time ASC")
 
-    lines = scope.includes(event: [:home_team, :away_team, :league], bookmaker: [])
+    lines = scope.includes(event: [ :home_team, :away_team, :league ], bookmaker: [])
 
     puts "⚠️  Found #{lines.count} lines with missing market data"
     puts ""
@@ -234,15 +234,15 @@ module BetStackConsoleHelpers
       puts "   Bookmaker: #{line.bookmaker.name}"
       puts "   Commence: #{event.commence_time.strftime('%Y-%m-%d %I:%M %p')}"
       puts "   ⚠️  Missing: #{missing.join(', ')}"
-      
+
       if line.has_moneyline? && !line.moneyline_complete?
         puts "      Moneyline: #{line.money_line_home || 'MISSING'} / #{line.money_line_away || 'MISSING'}"
       end
-      
+
       if line.has_spread? && !line.spread_complete?
         puts "      Spread: #{line.point_spread_home || 'MISSING'} (#{line.point_spread_home_line || 'MISSING'}) / #{line.point_spread_away || 'MISSING'} (#{line.point_spread_away_line || 'MISSING'})"
       end
-      
+
       if line.has_totals? && !line.totals_complete?
         puts "      Total: #{line.total_number || 'MISSING'} (Over: #{line.over_line || 'MISSING'}, Under: #{line.under_line || 'MISSING'})"
       end

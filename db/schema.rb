@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_31_193449) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_02_212327) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -114,6 +114,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_31_193449) do
     t.datetime "updated_at", null: false
     t.index ["league_id", "normalized_name"], name: "index_teams_on_league_id_and_normalized_name", unique: true
     t.index ["league_id"], name: "index_teams_on_league_id"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "api_key", null: false
+    t.string "email", null: false
+    t.string "phone_number", null: false
+    t.text "address"
+    t.datetime "start_time", null: false
+    t.datetime "end_time", null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["api_key"], name: "index_users_on_api_key", unique: true
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["phone_number"], name: "index_users_on_phone_number", unique: true
   end
 
   add_foreign_key "events", "leagues"

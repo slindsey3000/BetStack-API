@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  api_key: MyString
+  email: MyString
+  phone_number: MyString
+  address: MyText
+  start_time: 2025-11-02 16:23:27
+  end_time: 2025-11-02 16:23:27
+  active: false
+
+two:
+  api_key: MyString
+  email: MyString
+  phone_number: MyString
+  address: MyText
+  start_time: 2025-11-02 16:23:27
+  end_time: 2025-11-02 16:23:27
+  active: false
