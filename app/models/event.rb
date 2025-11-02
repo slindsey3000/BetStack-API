@@ -46,8 +46,16 @@ class Event < ApplicationRecord
   end
 
   def api_json_detailed
+    # Only include BetStack consensus lines by default
+    betstack_bookmaker = Bookmaker.find_by(key: 'betstack')
+    consensus_lines = if betstack_bookmaker
+                        lines.where(bookmaker: betstack_bookmaker).includes(:bookmaker)
+                      else
+                        lines.none
+                      end
+    
     data = api_json.merge(
-      lines: lines.includes(:bookmaker).map(&:api_json)
+      lines: consensus_lines.map(&:api_json)
     )
     
     # Include result if exists

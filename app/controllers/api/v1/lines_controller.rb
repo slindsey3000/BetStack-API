@@ -23,10 +23,9 @@ class Api::V1::LinesController < Api::V1::BaseController
       lines = lines.joins(event: :league).where(leagues: { key: params[:league_key] })
     end
 
-    # Filter by bookmaker
-    if params[:bookmaker_key].present?
-      lines = lines.joins(:bookmaker).where(bookmakers: { key: params[:bookmaker_key] })
-    end
+    # Filter by bookmaker (default to BetStack consensus line)
+    bookmaker_key = params[:bookmaker_key] || 'betstack'
+    lines = lines.joins(:bookmaker).where(bookmakers: { key: bookmaker_key })
 
     # Filter by date
     if params[:date].present?

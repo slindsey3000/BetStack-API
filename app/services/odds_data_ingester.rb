@@ -46,6 +46,9 @@ class OddsDataIngester
       return
     end
 
+    # Ensure BetStack bookmaker exists before processing
+    ensure_betstack_bookmaker
+
     odds_data = @client.fetch_odds(
       sport_key,
       regions: ['us'],
@@ -153,6 +156,16 @@ class OddsDataIngester
     bookmaker
   end
 
+  # Ensure BetStack bookmaker exists (for consensus lines)
+  def ensure_betstack_bookmaker
+    @betstack_bookmaker ||= Bookmaker.find_or_create_by!(key: 'betstack') do |bm|
+      bm.name = 'BetStack'
+      bm.region = 'us'
+      bm.active = true
+      Rails.logger.info "  ✨ Created BetStack bookmaker for consensus lines"
+    end
+  end
+
   # Upsert Event with teams
   def upsert_event(league:, api_event_data:)
     # API provides: id, sport_key, commence_time, home_team, away_team, bookmakers
@@ -214,6 +227,9 @@ class OddsDataIngester
       line.last_updated = Time.parse(bookmaker_data['last_update']) if bookmaker_data['last_update']
       line.save!
     end
+
+    # Calculate and upsert consensus line after all bookmaker lines are saved
+    upsert_consensus_line(event: event)
   end
 
   # Upsert Result for completed event
@@ -290,6 +306,99 @@ class OddsDataIngester
     else
       'scheduled' # Default to scheduled if unclear
     end
+  end
+
+  # Calculate consensus line from all bookmaker lines for an event
+  # Returns a hash with consensus values (median of all available values)
+  def calculate_consensus_line(event:)
+    # Get all lines for this event, excluding BetStack consensus line
+    betstack_bookmaker = ensure_betstack_bookmaker
+    bookmaker_lines = Line.where(event: event)
+                         .where.not(bookmaker: betstack_bookmaker)
+                         .includes(:bookmaker)
+
+    return {} if bookmaker_lines.empty?
+
+    consensus = {}
+
+    # Helper method to find median value from a list
+    # Uses mode (most frequent value) if there's a clear majority, otherwise uses median
+    median_value = lambda do |values|
+      return nil if values.empty?
+      return values.first if values.length == 1
+
+      compact_values = values.compact
+      return nil if compact_values.empty?
+
+      # Check for mode (most frequent value)
+      frequency = compact_values.each_with_object(Hash.new(0)) { |v, h| h[v] += 1 }
+      max_frequency = frequency.values.max
+      mode_value = frequency.key(max_frequency)
+      
+      # Use mode if it appears more than any other value and at least twice
+      # This handles cases like [2,3,4,3,3,3,4,3,3,3,3,3.5] where 3 is clearly the mode
+      if max_frequency > 1 && max_frequency > (compact_values.length.to_f / 2.0)
+        return mode_value
+      end
+
+      # Otherwise use actual median value from sorted list
+      sorted = compact_values.sort
+      mid_index = sorted.length / 2
+
+      if sorted.length.odd?
+        # Odd count: return middle value (e.g., [2,2,2,3,4,4,4] -> 3)
+        sorted[mid_index]
+      else
+        # Even count: use the lower middle value (represents middle of pack)
+        sorted[mid_index - 1]
+      end
+    end
+
+    # Calculate median for each field
+    # Moneyline
+    consensus[:money_line_home] = median_value.call(bookmaker_lines.map(&:money_line_home).compact)
+    consensus[:money_line_away] = median_value.call(bookmaker_lines.map(&:money_line_away).compact)
+    consensus[:draw_line] = median_value.call(bookmaker_lines.map(&:draw_line).compact)
+
+    # Spreads (points and lines/prices)
+    consensus[:point_spread_home] = median_value.call(bookmaker_lines.map(&:point_spread_home).compact)
+    consensus[:point_spread_away] = median_value.call(bookmaker_lines.map(&:point_spread_away).compact)
+    consensus[:point_spread_home_line] = median_value.call(bookmaker_lines.map(&:point_spread_home_line).compact)
+    consensus[:point_spread_away_line] = median_value.call(bookmaker_lines.map(&:point_spread_away_line).compact)
+
+    # Totals (number and lines/prices)
+    consensus[:total_number] = median_value.call(bookmaker_lines.map(&:total_number).compact)
+    consensus[:over_line] = median_value.call(bookmaker_lines.map(&:over_line).compact)
+    consensus[:under_line] = median_value.call(bookmaker_lines.map(&:under_line).compact)
+
+    consensus[:source] = 'consensus'
+    consensus
+  end
+
+  # Upsert consensus line for an event
+  def upsert_consensus_line(event:)
+    betstack_bookmaker = ensure_betstack_bookmaker
+    consensus_data = calculate_consensus_line(event: event)
+
+    return if consensus_data.empty?
+
+    line = Line.find_or_initialize_by(
+      event: event,
+      bookmaker: betstack_bookmaker
+    )
+
+    if line.new_record?
+      @stats[:lines_created] += 1
+      Rails.logger.debug "  ✨ Created consensus line for event #{event.id}"
+    else
+      @stats[:lines_updated] += 1
+      Rails.logger.debug "  🔄 Updated consensus line for event #{event.id}"
+    end
+
+    line.assign_attributes(consensus_data)
+    line.last_updated = Time.current
+    line.save!
+    line
   end
 end
 
