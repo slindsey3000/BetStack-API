@@ -5,9 +5,10 @@ module BetStackConsoleHelpers
   # Get lines for a specific league
   # Example: lines_for("americanfootball_nfl")
   # Defaults to BetStack consensus lines unless bookmaker_key is specified
-  def lines_for(league_key, bookmaker_key: 'betstack')
+  def lines_for(league_key, bookmaker_key: "betstack")
     scope = Line.joins(event: :league).where(leagues: { key: league_key })
     scope = scope.joins(:bookmaker).where(bookmakers: { key: bookmaker_key })
+    scope = scope.order('events.commence_time ASC')
 
     lines = scope.includes(event: [ :home_team, :away_team, :league ], bookmaker: [])
 
@@ -40,19 +41,19 @@ module BetStackConsoleHelpers
 
   # Quick shortcuts for NFL and NBA
   # Default to BetStack consensus lines unless bookmaker_key is specified
-  def nfl_lines(bookmaker_key: 'betstack')
+  def nfl_lines(bookmaker_key: "betstack")
     lines_for("americanfootball_nfl", bookmaker_key: bookmaker_key)
   end
 
-  def nba_lines(bookmaker_key: 'betstack')
+  def nba_lines(bookmaker_key: "betstack")
     lines_for("basketball_nba", bookmaker_key: bookmaker_key)
   end
 
-  def nhl_lines(bookmaker_key: 'betstack')
+  def nhl_lines(bookmaker_key: "betstack")
     lines_for("icehockey_nhl", bookmaker_key: bookmaker_key)
   end
 
-  def mlb_lines(bookmaker_key: 'betstack')
+  def mlb_lines(bookmaker_key: "betstack")
     lines_for("baseball_mlb", bookmaker_key: bookmaker_key)
   end
 
