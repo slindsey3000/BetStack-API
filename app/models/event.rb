@@ -49,7 +49,7 @@ class Event < ApplicationRecord
     # Only include BetStack consensus lines by default
     betstack_bookmaker = Bookmaker.find_by(key: 'betstack')
     consensus_lines = if betstack_bookmaker
-                        lines.where(bookmaker: betstack_bookmaker).includes(:bookmaker)
+                        lines.where(bookmaker: betstack_bookmaker).includes(:bookmaker).order(:created_at)
                       else
                         lines.none
                       end
