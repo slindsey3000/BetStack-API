@@ -3,7 +3,7 @@
 
 class Api::V1::LinesController < Api::V1::BaseController
   # GET /api/v1/lines
-  # Returns betting lines for upcoming events
+  # Returns betting lines for upcoming events from major North American leagues
   # Params: event_id=123, league_key=nfl, bookmaker_key=fanduel, date=2025-11-01
   def index
     lines = Line.includes(:bookmaker, event: [:league, :home_team, :away_team])
@@ -18,9 +18,12 @@ class Api::V1::LinesController < Api::V1::BaseController
       lines = lines.where(event_id: params[:event_id])
     end
 
-    # Filter by league
+    # Filter by league (default to major North American leagues only)
     if params[:league_key].present?
       lines = lines.joins(event: :league).where(leagues: { key: params[:league_key] })
+    else
+      # Default: only return lines for major North American leagues (NFL, NBA, NHL, MLB, NCAAF, NCAAB)
+      lines = lines.joins(event: :league).where(leagues: { key: League::MAJOR_NORTH_AMERICAN_LEAGUES })
     end
 
     # Filter by bookmaker (default to BetStack consensus line)

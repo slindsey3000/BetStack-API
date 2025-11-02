@@ -8,7 +8,7 @@ module BetStackConsoleHelpers
   def lines_for(league_key, bookmaker_key: "betstack")
     scope = Line.joins(event: :league).where(leagues: { key: league_key })
     scope = scope.joins(:bookmaker).where(bookmakers: { key: bookmaker_key })
-    scope = scope.order('events.commence_time ASC')
+    scope = scope.order("events.commence_time ASC")
 
     lines = scope.includes(event: [ :home_team, :away_team, :league ], bookmaker: [])
 
