@@ -197,6 +197,62 @@ module BetStackConsoleHelpers
     puts "✅ All results refreshed!"
   end
 
+  # Get lines with missing market data
+  # Example: incomplete_lines
+  # Example: incomplete_lines("americanfootball_nfl")
+  def incomplete_lines(league_key: nil, bookmaker_key: "betstack")
+    scope = Line.incomplete
+                .joins(event: :league)
+                .where('events.commence_time > ? OR (events.commence_time <= ? AND events.completed = ?)',
+                       Time.current, Time.current, false)
+
+    if league_key
+      scope = scope.where(leagues: { key: league_key })
+    else
+      scope = scope.where(leagues: { key: League::MAJOR_NORTH_AMERICAN_LEAGUES })
+    end
+
+    scope = scope.joins(:bookmaker).where(bookmakers: { key: bookmaker_key })
+    scope = scope.order("events.commence_time ASC")
+
+    lines = scope.includes(event: [:home_team, :away_team, :league], bookmaker: [])
+
+    puts "⚠️  Found #{lines.count} lines with missing market data"
+    puts ""
+
+    if lines.empty?
+      puts "✅ All lines are complete!"
+      return lines
+    end
+
+    lines.each do |line|
+      event = line.event
+      missing = line.missing_markets
+
+      puts "🏈 #{event.home_team.name} vs #{event.away_team.name}"
+      puts "   League: #{event.league.name}"
+      puts "   Bookmaker: #{line.bookmaker.name}"
+      puts "   Commence: #{event.commence_time.strftime('%Y-%m-%d %I:%M %p')}"
+      puts "   ⚠️  Missing: #{missing.join(', ')}"
+      
+      if line.has_moneyline? && !line.moneyline_complete?
+        puts "      Moneyline: #{line.money_line_home || 'MISSING'} / #{line.money_line_away || 'MISSING'}"
+      end
+      
+      if line.has_spread? && !line.spread_complete?
+        puts "      Spread: #{line.point_spread_home || 'MISSING'} (#{line.point_spread_home_line || 'MISSING'}) / #{line.point_spread_away || 'MISSING'} (#{line.point_spread_away_line || 'MISSING'})"
+      end
+      
+      if line.has_totals? && !line.totals_complete?
+        puts "      Total: #{line.total_number || 'MISSING'} (Over: #{line.over_line || 'MISSING'}, Under: #{line.under_line || 'MISSING'})"
+      end
+
+      puts ""
+    end
+
+    lines
+  end
+
   # Show all available console commands and rake tasks
   def help
     puts "🎯 BetStack API - Available Commands"
@@ -210,6 +266,7 @@ module BetStackConsoleHelpers
     puts "  nhl_lines              Get NHL betting lines"
     puts "  mlb_lines              Get MLB betting lines"
     puts "  lines_for(league_key)  Get lines for any league"
+    puts "  incomplete_lines       Get lines with missing market data"
     puts ""
 
     puts "🔄 REFRESH ODDS"

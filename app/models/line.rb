@@ -24,6 +24,49 @@ class Line < ApplicationRecord
     total_number.present?
   end
 
+  # Check if a market is complete (has both point/numbers and prices)
+  def moneyline_complete?
+    money_line_home.present? && money_line_away.present?
+  end
+
+  def spread_complete?
+    point_spread_home.present? && point_spread_away.present? &&
+    point_spread_home_line.present? && point_spread_away_line.present?
+  end
+
+  def totals_complete?
+    total_number.present? && over_line.present? && under_line.present?
+  end
+
+  # Check if line is complete (all 3 markets have data)
+  def complete?
+    moneyline_complete? && spread_complete? && totals_complete?
+  end
+
+  # Check if line is missing any data
+  def incomplete?
+    !complete?
+  end
+
+  # Get list of missing markets
+  def missing_markets
+    missing = []
+    missing << "moneyline" unless moneyline_complete?
+    missing << "spread" unless spread_complete?
+    missing << "totals" unless totals_complete?
+    missing
+  end
+
+  # Scopes
+  scope :incomplete, -> { 
+    where(
+      "(money_line_home IS NULL OR money_line_away IS NULL OR 
+       point_spread_home IS NULL OR point_spread_away IS NULL OR 
+       point_spread_home_line IS NULL OR point_spread_away_line IS NULL OR
+       total_number IS NULL OR over_line IS NULL OR under_line IS NULL)"
+    )
+  }
+
   # API Serialization
   def api_json
     {

@@ -453,6 +453,38 @@
 						},
 						"description": "Get BetStack consensus lines for events on a specific date. Ordered by start time (soonest first)."
 					}
+				},
+				{
+					"name": "Get Incomplete Lines",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/lines/incomplete",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "lines", "incomplete"]
+						},
+						"description": "Get lines with missing market data (missing moneyline, spread, or totals). Returns BetStack consensus lines for major leagues by default."
+					}
+				},
+				{
+					"name": "Get Incomplete NFL Lines",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/lines/incomplete?league_key=americanfootball_nfl",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "lines", "incomplete"],
+							"query": [
+								{
+									"key": "league_key",
+									"value": "americanfootball_nfl"
+								}
+							]
+						},
+						"description": "Get NFL lines with missing market data"
+					}
 				}
 			]
 		},

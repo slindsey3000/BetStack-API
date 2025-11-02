@@ -18,7 +18,11 @@ Rails.application.routes.draw do
       resources :sports, only: [:index, :show]
       resources :leagues, only: [:index, :show]
       resources :events, only: [:index, :show]
-      resources :lines, only: [:index]
+      resources :lines, only: [:index] do
+        collection do
+          get :incomplete
+        end
+      end
       resources :results, only: [:index, :show]
       resources :teams, only: [:index, :show]
       resources :bookmakers, only: [:index, :show]
