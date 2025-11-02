@@ -354,22 +354,48 @@ class OddsDataIngester
       end
     end
 
+    # Helper to pick the price from the bookmaker that has the selected point
+    pick_price_for_point = lambda do |pairs, target_point|
+      return nil if target_point.nil? || pairs.empty?
+      # Try exact match first
+      exact = pairs.select { |pt, _price| pt && pt == target_point }
+      return exact.first&.last if exact.any?
+      # Otherwise pick the price from the nearest point
+      pairs.compact.min_by { |pt, _| (pt.to_f - target_point.to_f).abs }&.last
+    end
+
     # Calculate median for each field
     # Moneyline
     consensus[:money_line_home] = median_value.call(bookmaker_lines.map(&:money_line_home).compact)
     consensus[:money_line_away] = median_value.call(bookmaker_lines.map(&:money_line_away).compact)
-    consensus[:draw_line] = median_value.call(bookmaker_lines.map(&:draw_line).compact)
+    consensus[:draw_line]       = median_value.call(bookmaker_lines.map(&:draw_line).compact)
 
     # Spreads (points and lines/prices)
-    consensus[:point_spread_home] = median_value.call(bookmaker_lines.map(&:point_spread_home).compact)
-    consensus[:point_spread_away] = median_value.call(bookmaker_lines.map(&:point_spread_away).compact)
-    consensus[:point_spread_home_line] = median_value.call(bookmaker_lines.map(&:point_spread_home_line).compact)
-    consensus[:point_spread_away_line] = median_value.call(bookmaker_lines.map(&:point_spread_away_line).compact)
+    home_spread_points = bookmaker_lines.map(&:point_spread_home).compact
+    away_spread_points = bookmaker_lines.map(&:point_spread_away).compact
+
+    home_spread_pairs = bookmaker_lines.map { |l| [ l.point_spread_home, l.point_spread_home_line ] }.compact
+    away_spread_pairs = bookmaker_lines.map { |l| [ l.point_spread_away, l.point_spread_away_line ] }.compact
+
+    home_spread_median = median_value.call(home_spread_points)
+    away_spread_median = median_value.call(away_spread_points)
+
+    consensus[:point_spread_home]      = home_spread_median
+    consensus[:point_spread_home_line] = pick_price_for_point.call(home_spread_pairs, home_spread_median)
+
+    consensus[:point_spread_away]      = away_spread_median
+    consensus[:point_spread_away_line] = pick_price_for_point.call(away_spread_pairs, away_spread_median)
 
     # Totals (number and lines/prices)
-    consensus[:total_number] = median_value.call(bookmaker_lines.map(&:total_number).compact)
-    consensus[:over_line] = median_value.call(bookmaker_lines.map(&:over_line).compact)
-    consensus[:under_line] = median_value.call(bookmaker_lines.map(&:under_line).compact)
+    total_numbers = bookmaker_lines.map(&:total_number).compact
+    total_median  = median_value.call(total_numbers)
+    consensus[:total_number] = total_median
+
+    totals_candidates = bookmaker_lines.select { |l| l.total_number.present? }
+    best_total_line = totals_candidates.min_by { |l| (l.total_number.to_f - total_median.to_f).abs }
+
+    consensus[:over_line]  = best_total_line&.over_line
+    consensus[:under_line] = best_total_line&.under_line
 
     consensus[:source] = 'consensus'
     consensus
