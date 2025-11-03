@@ -9,10 +9,18 @@ class CloudflareCacheSyncer
   end
 
   # Sync all cacheable endpoints to Cloudflare KV (only if data changed)
-  def sync_all_endpoints
+  def sync_all_endpoints(priority: :all)
     start_time = Time.current
     
-    endpoints = build_endpoint_list
+    endpoints = case priority
+                when :critical
+                  build_critical_endpoints_list
+                when :static
+                  build_static_endpoints_list
+                else
+                  build_endpoint_list
+                end
+    
     bulk_data = []
     checked_count = 0
     changed_count = 0
@@ -54,9 +62,9 @@ class CloudflareCacheSyncer
     end
     
     duration = Time.current - start_time
-    # bulk_data includes both cache entries and timestamp updates (2x changed_count when changed)
+    priority_label = priority == :critical ? "critical" : (priority == :static ? "static" : "all")
     cache_entries_written = changed_count
-    Rails.logger.info "Checked #{checked_count} endpoints, #{changed_count} changed, #{cache_entries_written} cache entries (#{bulk_data.count} KV writes total) in #{duration.round(2)}s"
+    Rails.logger.info "[#{priority_label.upcase}] Checked #{checked_count} endpoints, #{changed_count} changed, #{cache_entries_written} cache entries (#{bulk_data.count} KV writes total) in #{duration.round(2)}s"
     
     success
   end
@@ -80,16 +88,14 @@ class CloudflareCacheSyncer
 
   private
 
-  def build_endpoint_list
+  # Critical endpoints that change frequently (lines, events, results)
+  # These need to be synced more often (every 1-2 minutes)
+  def build_critical_endpoints_list
     endpoints = [
-      '/api/v1/sports',
-      '/api/v1/leagues',
       '/api/v1/events',
       '/api/v1/lines',
       '/api/v1/lines/incomplete',
-      '/api/v1/results',
-      '/api/v1/teams',
-      '/api/v1/bookmakers'
+      '/api/v1/results'
     ]
 
     # Add league-specific endpoints for major leagues
@@ -99,6 +105,21 @@ class CloudflareCacheSyncer
     end
 
     endpoints
+  end
+
+  # Static endpoints that change rarely (sports, leagues, teams, bookmakers)
+  # These can be synced less frequently (every 15-30 minutes)
+  def build_static_endpoints_list
+    [
+      '/api/v1/sports',
+      '/api/v1/leagues',
+      '/api/v1/teams',
+      '/api/v1/bookmakers'
+    ]
+  end
+
+  def build_endpoint_list
+    build_critical_endpoints_list + build_static_endpoints_list
   end
 
   # Check if data has changed since last sync using timestamp comparison

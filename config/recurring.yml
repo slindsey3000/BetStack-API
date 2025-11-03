@@ -15,12 +15,20 @@ production:
     command: "SolidQueue::Job.clear_finished_in_batches(sleep_between_batches: 0.3)"
     schedule: every hour at minute 12
   
-  # Sync Cloudflare edge cache (every 5 minutes - optimized with timestamp checks)
-  # Only writes to KV when data actually changes (stays within free tier limits)
-  sync_cloudflare_cache:
-    class: SyncCloudflareCacheJob
+  # Sync Cloudflare edge cache - Tiered approach for efficiency
+  # Critical endpoints (lines, events, results): Every 2 minutes
+  # These change frequently with odds updates and game results
+  sync_cloudflare_cache_critical:
+    class: SyncCloudflareCacheCriticalJob
     queue: default
-    schedule: every 5 minutes
+    schedule: every 2 minutes
+  
+  # Static endpoints (sports, leagues, teams, bookmakers): Every 30 minutes
+  # These rarely change, so less frequent syncing saves resources
+  sync_cloudflare_cache_static:
+    class: SyncCloudflareCacheStaticJob
+    queue: default
+    schedule: every 30 minutes
   
   # Sync sports and leagues (once daily)
   sync_sports:
@@ -56,11 +64,17 @@ production:
 
 development:
   # Development can use the same schedule or run less frequently
-  # Sync Cloudflare cache every 5 minutes (optimized)
-  sync_cloudflare_cache:
-    class: SyncCloudflareCacheJob
+  # Critical endpoints: Every 2 minutes (matches production)
+  sync_cloudflare_cache_critical:
+    class: SyncCloudflareCacheCriticalJob
     queue: default
-    schedule: every 5 minutes
+    schedule: every 2 minutes
+  
+  # Static endpoints: Every 30 minutes
+  sync_cloudflare_cache_static:
+    class: SyncCloudflareCacheStaticJob
+    queue: default
+    schedule: every 30 minutes
   
   sync_sports:
     class: SyncSportsJob
