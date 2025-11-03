@@ -54,6 +54,23 @@ class CloudflareKvClient
     end
   end
 
+  # Get a value by key
+  def get(key)
+    conn = Faraday.new do |f|
+      f.adapter Faraday.default_adapter
+    end
+
+    response = conn.get("#{@base_url}/values/#{key}") do |req|
+      req.headers['Authorization'] = "Bearer #{@api_token}"
+    end
+
+    if response.success?
+      response.body
+    else
+      nil
+    end
+  end
+
   # Delete a key
   def delete(key)
     conn = Faraday.new do |f|

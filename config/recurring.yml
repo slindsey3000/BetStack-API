@@ -15,11 +15,12 @@ production:
     command: "SolidQueue::Job.clear_finished_in_batches(sleep_between_batches: 0.3)"
     schedule: every hour at minute 12
   
-  # Sync Cloudflare edge cache (every minute for real-time updates)
+  # Sync Cloudflare edge cache (every 5 minutes - optimized with timestamp checks)
+  # Only writes to KV when data actually changes (stays within free tier limits)
   sync_cloudflare_cache:
     class: SyncCloudflareCacheJob
     queue: default
-    schedule: every minute
+    schedule: every 5 minutes
   
   # Sync sports and leagues (once daily)
   sync_sports:
@@ -55,11 +56,11 @@ production:
 
 development:
   # Development can use the same schedule or run less frequently
-  # Sync Cloudflare cache every minute in development too
+  # Sync Cloudflare cache every 5 minutes (optimized)
   sync_cloudflare_cache:
     class: SyncCloudflareCacheJob
     queue: default
-    schedule: every minute
+    schedule: every 5 minutes
   
   sync_sports:
     class: SyncSportsJob
