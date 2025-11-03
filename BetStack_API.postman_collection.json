@@ -15,6 +15,11 @@
 			"key": "production_url",
 			"value": "https://betstack-45ae7ff725cd.herokuapp.com",
 			"type": "string"
+		},
+		{
+			"key": "edge_url",
+			"value": "https://api.betstack.dev",
+			"type": "string"
 		}
 	],
 	"item": [
@@ -785,6 +790,310 @@
 							"path": ["api", "v1", "users", "1"]
 						},
 						"description": "Update a user. Can modify start_time, end_time, active status, email, phone_number, or address."
+					}
+				}
+			]
+		},
+		{
+			"name": "Cache Testing",
+			"item": [
+				{
+					"name": "Get Lines - Cloudflare Edge (Cache HIT)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test script for cache status",
+									"pm.test(\"Response is successful\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"// Check if response came from Cloudflare",
+									"const cacheHeader = pm.response.headers.get(\"X-Cache\");",
+									"const serverHeader = pm.response.headers.get(\"Server\");",
+									"const responseTime = pm.response.responseTime;",
+									"",
+									"if (cacheHeader) {",
+									"    console.log(\"Cache Status:\", cacheHeader);",
+									"    pm.test(\"Response from Cloudflare\", function () {",
+									"        pm.expect(serverHeader).to.include(\"cloudflare\");",
+									"    });",
+									"    ",
+									"    if (cacheHeader === \"HIT\") {",
+									"        console.log(\"✅ SERVED FROM EDGE CACHE (Fast!)\");",
+									"        pm.test(\"Cache HIT - served from edge\", function () {",
+									"            pm.expect(cacheHeader).to.eql(\"HIT\");",
+									"        });",
+									"    } else if (cacheHeader === \"MISS\") {",
+									"        console.log(\"⚠️ Cache miss - fetched from origin, now cached\");",
+									"    } else {",
+									"        console.log(\"🔄 Bypassed cache - proxied to origin\");",
+									"    }",
+									"} else {",
+									"    console.log(\"📡 Direct request to Heroku (bypassed Cloudflare)\");",
+									"}",
+									"",
+									"// Log response time",
+									"console.log(\"Response Time:\", responseTime + \"ms\");",
+									"if (responseTime < 100) {",
+									"    console.log(\"⚡ Very fast - likely from edge cache!\");",
+									"} else if (responseTime > 200) {",
+									"    console.log(\"⏱️ Slower response - likely from origin\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{edge_url}}/api/v1/lines",
+							"host": ["{{edge_url}}"],
+							"path": ["api", "v1", "lines"]
+						},
+						"description": "Test Cloudflare edge caching. Send this request TWICE:\n\n**First request:**\n- X-Cache: MISS (fetched from Heroku, now cached)\n- Response time: ~200-400ms\n\n**Second request (within 2 minutes):**\n- X-Cache: HIT (served from edge cache)\n- Response time: ~10-50ms\n- X-Cache-Status: Cloudflare Edge\n\nCheck the Console tab to see cache status automatically."
+					}
+				},
+				{
+					"name": "Get Lines - Direct Heroku (No Cache)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is successful\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const viaHeader = pm.response.headers.get(\"Via\");",
+									"const serverHeader = pm.response.headers.get(\"Server\");",
+									"const cacheHeader = pm.response.headers.get(\"X-Cache\");",
+									"const responseTime = pm.response.responseTime;",
+									"",
+									"pm.test(\"Direct to Heroku (no Cloudflare)\", function () {",
+									"    pm.expect(serverHeader).to.include(\"Heroku\");",
+									"    pm.expect(cacheHeader).to.be.undefined;",
+									"});",
+									"",
+									"if (viaHeader) {",
+									"    console.log(\"✅ Via header confirms Heroku:\", viaHeader);",
+									"}",
+									"console.log(\"📡 Direct request to Heroku origin\");",
+									"console.log(\"Response Time:\", responseTime + \"ms\");",
+									"console.log(\"Server:\", serverHeader);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{production_url}}/api/v1/lines",
+							"host": ["{{production_url}}"],
+							"path": ["api", "v1", "lines"]
+						},
+						"description": "Direct request to Heroku origin (bypasses Cloudflare completely).\n\n**Expected headers:**\n- Server: Heroku\n- Via: 1.1 heroku-router\n- No X-Cache header (not through Cloudflare)\n- Response time: ~300-500ms\n\nUse this to compare performance with edge-cached requests."
+					}
+				},
+				{
+					"name": "Get Lines - Force Cache Miss",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is successful\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const cacheHeader = pm.response.headers.get(\"X-Cache\");",
+									"const viaHeader = pm.response.headers.get(\"Via\");",
+									"",
+									"console.log(\"Cache-Control: no-cache header forces cache bypass\");",
+									"if (cacheHeader === \"MISS\" || cacheHeader === \"BYPASS\") {",
+									"    console.log(\"✅ Forced cache miss/bypass - hit Heroku origin\");",
+									"    if (viaHeader) {",
+									"        console.log(\"Via header:\", viaHeader);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cache-Control",
+								"value": "no-cache",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{edge_url}}/api/v1/lines",
+							"host": ["{{edge_url}}"],
+							"path": ["api", "v1", "lines"]
+						},
+						"description": "Force a cache miss even if data is cached. Uses Cache-Control: no-cache header.\n\n**Expected behavior:**\n- X-Cache: MISS or BYPASS\n- Fetches fresh data from Heroku\n- Response time: ~200-400ms\n- Via: 1.1 heroku-router (shows it hit origin)"
+					}
+				},
+				{
+					"name": "Get Events - Cloudflare Edge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is successful\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const cacheHeader = pm.response.headers.get(\"X-Cache\");",
+									"const responseTime = pm.response.responseTime;",
+									"",
+									"if (cacheHeader === \"HIT\") {",
+									"    console.log(\"✅ Events served from edge cache\");",
+									"} else {",
+									"    console.log(\"⚠️ Events fetched from origin\");",
+									"}",
+									"console.log(\"Response Time:\", responseTime + \"ms\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{edge_url}}/api/v1/events",
+							"host": ["{{edge_url}}"],
+							"path": ["api", "v1", "events"]
+						},
+						"description": "Test edge caching for events endpoint. Send twice to see cache HIT vs MISS."
+					}
+				},
+				{
+					"name": "Get Events - Direct Heroku",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{production_url}}/api/v1/events",
+							"host": ["{{production_url}}"],
+							"path": ["api", "v1", "events"]
+						},
+						"description": "Direct request to Heroku for events (bypasses Cloudflare)."
+					}
+				},
+				{
+					"name": "Get NFL Lines - Edge vs Origin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is successful\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const cacheHeader = pm.response.headers.get(\"X-Cache\");",
+									"const serverHeader = pm.response.headers.get(\"Server\");",
+									"",
+									"if (cacheHeader === \"HIT\") {",
+									"    console.log(\"✅ NFL Lines from edge cache\");",
+									"} else if (serverHeader === \"Heroku\") {",
+									"    console.log(\"📡 NFL Lines from Heroku origin\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{edge_url}}/api/v1/lines?league_key=americanfootball_nfl",
+							"host": ["{{edge_url}}"],
+							"path": ["api", "v1", "lines"],
+							"query": [
+								{
+									"key": "league_key",
+									"value": "americanfootball_nfl"
+								}
+							]
+						},
+						"description": "Test edge caching for NFL-specific lines. Compare with direct Heroku request."
+					}
+				},
+				{
+					"name": "Get NFL Lines - Direct Heroku",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{production_url}}/api/v1/lines?league_key=americanfootball_nfl",
+							"host": ["{{production_url}}"],
+							"path": ["api", "v1", "lines"],
+							"query": [
+								{
+									"key": "league_key",
+									"value": "americanfootball_nfl"
+								}
+							]
+						},
+						"description": "Direct Heroku request for NFL lines. Compare response time with edge version."
+					}
+				},
+				{
+					"name": "Create User - Always Bypasses Cache",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const cacheHeader = pm.response.headers.get(\"X-Cache\");",
+									"const viaHeader = pm.response.headers.get(\"Via\");",
+									"",
+									"// User endpoints should always bypass cache",
+									"if (cacheHeader === \"BYPASS\" || viaHeader) {",
+									"    console.log(\"✅ User endpoint correctly bypassed cache (security)\");",
+									"}",
+									"",
+									"pm.test(\"User endpoint not cached\", function () {",
+									"    pm.expect(cacheHeader).to.not.eql(\"HIT\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"test-cache@example.com\",\n  \"phone_number\": \"5551234567\",\n  \"address\": \"123 Test St\"\n}"
+						},
+						"url": {
+							"raw": "{{edge_url}}/api/v1/users",
+							"host": ["{{edge_url}}"],
+							"path": ["api", "v1", "users"]
+						},
+						"description": "Test that user endpoints (POST/PUT) always bypass cache and hit Heroku directly.\n\n**Expected:**\n- X-Cache: BYPASS\n- Via: 1.1 heroku-router\n- Always hits origin (write operations never cached)"
 					}
 				}
 			]
