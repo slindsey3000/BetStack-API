@@ -63,30 +63,8 @@ production:
     schedule: at 3am every day   # 10pm EST (previous day)
 
 development:
-  # Development can use the same schedule or run less frequently
-  # Critical endpoints: Every 2 minutes (matches production)
-  sync_cloudflare_cache_critical:
-    class: SyncCloudflareCacheCriticalJob
-    queue: default
-    schedule: every 2 minutes
-  
-  # Static endpoints: Every 30 minutes
-  sync_cloudflare_cache_static:
-    class: SyncCloudflareCacheStaticJob
-    queue: default
-    schedule: every 30 minutes
-  
-  sync_sports:
-    class: SyncSportsJob
-    queue: default
-    schedule: at 9am every day
-  
-  sync_odds:
-    class: SyncAllOddsJob
-    queue: default
-    schedule: at 10am every day
-  
-  sync_scores:
-    class: SyncScoresJob
-    queue: default
-    schedule: at 11am every day
+  # Development: No automatic syncing - run jobs manually via console or rake tasks
+  # Example: SyncAllOddsJob.perform_now
+  # Example: SyncSportsJob.perform_now
+  # Example: SyncScoresJob.perform_now
+  # Example: SyncCloudflareCacheCriticalJob.perform_now

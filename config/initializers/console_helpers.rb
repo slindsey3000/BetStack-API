@@ -302,11 +302,20 @@ module BetStackConsoleHelpers
     puts "  rails odds:stats                   Show database stats"
     puts ""
 
+    puts "⚙️  BACKGROUND JOBS (Manual - Dev Only)"
+    puts "-" * 70
+    puts "  SyncAllOddsJob.perform_now         Sync all odds immediately"
+    puts "  SyncSportsJob.perform_now          Sync sports/leagues"
+    puts "  SyncScoresJob.perform_now          Sync all scores"
+    puts "  SyncCloudflareCacheCriticalJob.perform_now  Sync edge cache"
+    puts ""
+
     puts "💡 Examples:"
     puts "-" * 70
     puts "  nfl_lines"
     puts "  refresh_nfl"
     puts "  league_stats('americanfootball_nfl')"
+    puts "  SyncAllOddsJob.perform_now"
     puts ""
   end
 end
