@@ -116,6 +116,25 @@
 					}
 				},
 				{
+					"name": "Get North American Leagues",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/leagues?north_american=true",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "leagues"],
+							"query": [
+								{
+									"key": "north_american",
+									"value": "true"
+								}
+							]
+						},
+						"description": "Get North American leagues only (NBA, NFL, NHL, MLB, NCAAF, NCAAB). Pre-cached at Cloudflare edge."
+					}
+				},
+				{
 					"name": "Get All Leagues (Active Only)",
 					"request": {
 						"method": "GET",
@@ -182,6 +201,25 @@
 							"path": ["api", "v1", "events"]
 						},
 						"description": "Get all upcoming and live events (default behavior)"
+					}
+				},
+				{
+					"name": "Get North American Events",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/events?north_american=true",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "events"],
+							"query": [
+								{
+									"key": "north_american",
+									"value": "true"
+								}
+							]
+						},
+						"description": "Get North American events only (NBA, NFL, NHL, MLB, NCAAF, NCAAB). Pre-cached at Cloudflare edge every 2 minutes."
 					}
 				},
 				{
@@ -364,7 +402,26 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "v1", "lines"]
 						},
-						"description": "Get BetStack consensus lines for all major North American leagues (NFL, NBA, NHL, MLB, NCAAF, NCAAB). Returns upcoming/live events only, ordered by start time (soonest first)."
+						"description": "Get BetStack consensus lines for all major North American leagues (NFL, NBA, NHL, MLB, NCAAF, NCAAB). Returns upcoming/live events only, ordered by start time (soonest first). Defaults to North American leagues."
+					}
+				},
+				{
+					"name": "Get North American Lines",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/lines?north_american=true",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "lines"],
+							"query": [
+								{
+									"key": "north_american",
+									"value": "true"
+								}
+							]
+						},
+						"description": "Get BetStack consensus lines for North American leagues only (NBA, NFL, NHL, MLB, NCAAF, NCAAB). Explicitly filtered. Pre-cached at Cloudflare edge every 2 minutes."
 					}
 				},
 				{
@@ -499,6 +556,25 @@
 					}
 				},
 				{
+					"name": "Get Incomplete North American Lines",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/lines/incomplete?north_american=true",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "lines", "incomplete"],
+							"query": [
+								{
+									"key": "north_american",
+									"value": "true"
+								}
+							]
+						},
+						"description": "Get incomplete lines for North American leagues only (NBA, NFL, NHL, MLB, NCAAF, NCAAB). Pre-cached at Cloudflare edge every 2 minutes."
+					}
+				},
+				{
 					"name": "Get Incomplete NFL Lines",
 					"request": {
 						"method": "GET",
@@ -533,6 +609,25 @@
 							"path": ["api", "v1", "results"]
 						},
 						"description": "Get all results (last 7 days)"
+					}
+				},
+				{
+					"name": "Get North American Results",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/results?north_american=true",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "results"],
+							"query": [
+								{
+									"key": "north_american",
+									"value": "true"
+								}
+							]
+						},
+						"description": "Get results for North American leagues only (NBA, NFL, NHL, MLB, NCAAF, NCAAB). Pre-cached at Cloudflare edge every 2 minutes."
 					}
 				},
 				{
