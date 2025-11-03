@@ -71,6 +71,28 @@ class CloudflareKvClient
     end
   end
 
+  # Increment a numeric value atomically (GET + PUT pattern)
+  # Note: Cloudflare KV REST API doesn't support atomic increment with TTL
+  # We use GET + PUT pattern which has a small race condition window
+  # TTL is set by Cloudflare Worker when it first creates the key
+  # Returns the new value after increment, or nil on failure
+  def increment(key, by: 1, expiration_ttl: nil)
+    # Get current value
+    current_value = get(key)
+    current_count = current_value ? current_value.to_i : 0
+    
+    # Increment
+    new_count = current_count + by
+    
+    # Put new value
+    # Note: expiration_ttl parameter is accepted but not used via REST API
+    # TTL must be set via Workers KV API or metadata API
+    success = put(key, new_count.to_s)
+    return new_count if success
+    
+    nil
+  end
+
   # Delete a key
   def delete(key)
     conn = Faraday.new do |f|

@@ -1,7 +1,11 @@
 # Base controller for API v1
 # Provides common functionality for all API controllers
+# Includes API key authentication and rate limiting
 
 class Api::V1::BaseController < ApplicationController
+  include ApiKeyAuthentication
+  include RateLimitable
+
   private
 
   # Render JSON collection - returns all results

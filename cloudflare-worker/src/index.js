@@ -19,33 +19,76 @@ export default {
     // Extract API key from header
     const apiKey = request.headers.get('X-API-Key');
     
-    // API key validation for all requests (optional - allow requests without keys)
-    if (apiKey) {
-      const validKey = await env.API_KEYS.get(apiKey);
-      if (!validKey || validKey !== 'valid') {
-        return new Response(JSON.stringify({ error: 'Invalid or expired API key' }), {
-          status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        });
-      }
-    }
-    
-    // Rate limiting (100 requests per minute per key/IP)
-    const clientIP = request.headers.get('CF-Connecting-IP') || 'unknown';
-    const rateLimitKey = `ratelimit:${apiKey || clientIP}`;
-    const requests = await env.CACHE.get(rateLimitKey);
-    
-    if (requests && parseInt(requests) > 100) {
-      return new Response(JSON.stringify({ error: 'Rate limit exceeded. Maximum 100 requests per minute.' }), {
-        status: 429,
+    // API key validation - required for all requests
+    if (!apiKey) {
+      return new Response(JSON.stringify({ 
+        error: 'Unauthorized',
+        message: 'API key is required. Please provide X-API-Key header.'
+      }), {
+        status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
     
-    // Increment rate limit counter
+    // Validate API key exists
+    const validKey = await env.API_KEYS.get(apiKey);
+    if (!validKey || validKey !== 'valid') {
+      return new Response(JSON.stringify({ 
+        error: 'Unauthorized',
+        message: 'Invalid or expired API key'
+      }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+    
+    // Rate limiting: 1,000 requests per day per API key
+    // Use daily key format: ratelimit:{apiKey}:{YYYY-MM-DD}
+    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const rateLimitKey = `ratelimit:${apiKey}:${today}`;
+    const RATE_LIMIT_MAX = 1000;
+    const RATE_LIMIT_TTL = 86400; // 24 hours
+    
+    // Get current count
+    const currentCountStr = await env.CACHE.get(rateLimitKey);
+    const currentCount = currentCountStr ? parseInt(currentCountStr) : 0;
+    
+    // Calculate reset time (next midnight UTC)
+    const resetTime = new Date();
+    resetTime.setUTCDate(resetTime.getUTCDate() + 1);
+    resetTime.setUTCHours(0, 0, 0, 0);
+    
+    // Check if limit exceeded
+    if (currentCount >= RATE_LIMIT_MAX) {
+      return new Response(JSON.stringify({ 
+        error: 'Rate limit exceeded',
+        message: `Maximum 1,000 requests per day. Limit resets at ${resetTime.toISOString()}`,
+        limit: RATE_LIMIT_MAX,
+        reset_at: resetTime.toISOString()
+      }), {
+        status: 429,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+          'X-RateLimit-Limit': RATE_LIMIT_MAX.toString(),
+          'X-RateLimit-Remaining': '0',
+          'X-RateLimit-Reset': Math.floor(resetTime.getTime() / 1000).toString()
+        }
+      });
+    }
+    
+    // Increment rate limit counter (async, won't block response)
+    const newCount = currentCount + 1;
+    const remaining = RATE_LIMIT_MAX - newCount;
+    
     ctx.waitUntil(
-      env.CACHE.put(rateLimitKey, (parseInt(requests || 0) + 1).toString(), { expirationTtl: 60 })
+      env.CACHE.put(rateLimitKey, newCount.toString(), { expirationTtl: RATE_LIMIT_TTL })
     );
+    
+    // Store rate limit headers for response
+    corsHeaders['X-RateLimit-Limit'] = RATE_LIMIT_MAX.toString();
+    corsHeaders['X-RateLimit-Remaining'] = remaining.toString();
+    corsHeaders['X-RateLimit-Reset'] = Math.floor(resetTime.getTime() / 1000).toString();
     
     // User endpoints always proxy to origin (no caching for security)
     if (path.startsWith('/api/v1/users')) {
