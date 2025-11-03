@@ -1,10 +1,8 @@
 name = "betstack-api"
 main = "src/index.js"
 compatibility_date = "2025-11-02"
-workers_dev = false
 
-[env.production]
-name = "betstack-api"
+# Route configuration - apply to all environments
 routes = [
   { pattern = "api.betstack.dev/*", zone_name = "betstack.dev" }
 ]
