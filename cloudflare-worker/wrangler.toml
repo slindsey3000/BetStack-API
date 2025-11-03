@@ -1,0 +1,24 @@
+name = "betstack-api"
+main = "src/index.js"
+compatibility_date = "2025-11-02"
+workers_dev = false
+
+[env.production]
+name = "betstack-api"
+routes = [
+  { pattern = "api.betstack.dev/*", zone_name = "betstack.dev" }
+]
+
+# KV Namespaces will be populated after creation
+# Run: wrangler kv:namespace create "CACHE"
+# Run: wrangler kv:namespace create "API_KEYS"
+# Then update the IDs below
+
+[[kv_namespaces]]
+binding = "CACHE"
+id = "eca5c52b976c4b1cb1f242e4b8b69527"
+
+[[kv_namespaces]]
+binding = "API_KEYS"
+id = "f9d653b5dbaf46f2b83cef2c1bb9c628"
+

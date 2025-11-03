@@ -1,0 +1,14 @@
+{
+  "name": "betstack-api-worker",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker for BetStack API edge caching",
+  "main": "src/index.js",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}
+
