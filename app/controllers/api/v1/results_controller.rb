@@ -4,7 +4,11 @@
 class Api::V1::ResultsController < Api::V1::BaseController
   # GET /api/v1/results
   # Returns results for completed events (last 7 days by default)
-  # Params: league_key=nfl, date=2025-11-01, event_id=123
+  # Params: 
+  #   - league_key=nfl (single league)
+  #   - north_american=true (filter to NBA, NFL, NHL, MLB, NCAAF, NCAAB)
+  #   - date=2025-11-01
+  #   - event_id=123
   def index
     results = Result.includes(event: [:league, :home_team, :away_team])
                     .joins(:event)
@@ -15,7 +19,11 @@ class Api::V1::ResultsController < Api::V1::BaseController
     # Filter by league
     if params[:league_key].present?
       results = results.joins(event: :league).where(leagues: { key: params[:league_key] })
+    elsif params[:north_american] == 'true' || params[:north_american] == true
+      # Explicitly filter to North American leagues
+      results = results.joins(event: :league).where(leagues: { key: League::MAJOR_NORTH_AMERICAN_LEAGUES })
     end
+    # If no league filter specified and north_american is not true, return all leagues
 
     # Filter by event
     if params[:event_id].present?

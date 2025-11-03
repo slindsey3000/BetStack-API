@@ -4,11 +4,20 @@
 class Api::V1::LeaguesController < Api::V1::BaseController
   # GET /api/v1/leagues
   # Returns all leagues, optionally filtered
-  # Params: active=true, sport_id=1
+  # Params: 
+  #   - active=true
+  #   - sport_id=1
+  #   - north_american=true (filter to NBA, NFL, NHL, MLB, NCAAF, NCAAB)
   def index
     leagues = League.includes(:sport).all
     leagues = leagues.active if params[:active] == 'true'
     leagues = leagues.where(sport_id: params[:sport_id]) if params[:sport_id].present?
+    
+    # Filter to North American leagues
+    if params[:north_american] == 'true' || params[:north_american] == true
+      leagues = leagues.major_north_american
+    end
+    
     leagues = leagues.order(:name)
 
     render_collection(leagues, :api_json)

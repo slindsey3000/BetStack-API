@@ -4,7 +4,11 @@
 class Api::V1::EventsController < Api::V1::BaseController
   # GET /api/v1/events
   # Returns events with smart filtering
-  # Params: status=(upcoming|live|completed), league_key=nfl, date=2025-11-01
+  # Params: 
+  #   - status=(upcoming|live|completed)
+  #   - league_key=nfl (single league)
+  #   - north_american=true (filter to NBA, NFL, NHL, MLB, NCAAF, NCAAB)
+  #   - date=2025-11-01
   def index
     events = Event.includes(:league, :home_team, :away_team)
 
@@ -26,7 +30,11 @@ class Api::V1::EventsController < Api::V1::BaseController
     # Filter by league
     if params[:league_key].present?
       events = events.joins(:league).where(leagues: { key: params[:league_key] })
+    elsif params[:north_american] == 'true' || params[:north_american] == true
+      # Explicitly filter to North American leagues
+      events = events.joins(:league).where(leagues: { key: League::MAJOR_NORTH_AMERICAN_LEAGUES })
     end
+    # If no league filter specified and north_american is not true, return all leagues
 
     # Filter by date
     if params[:date].present?
