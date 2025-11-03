@@ -112,7 +112,7 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "v1", "leagues"]
 						},
-						"description": "Get all leagues (73 total)"
+						"description": "Get all leagues worldwide (typically 70+ leagues). Use north_american=true to filter to North American leagues only (NBA, NFL, NHL, MLB, NCAAF, NCAAB)."
 					}
 				},
 				{
@@ -200,7 +200,7 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "v1", "events"]
 						},
-						"description": "Get all upcoming and live events (default behavior)"
+						"description": "Get all upcoming and live events from all leagues worldwide. Use north_american=true to filter to North American leagues only (NBA, NFL, NHL, MLB, NCAAF, NCAAB)."
 					}
 				},
 				{
@@ -402,7 +402,7 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "v1", "lines"]
 						},
-						"description": "Get BetStack consensus lines for all major North American leagues (NFL, NBA, NHL, MLB, NCAAF, NCAAB). Returns upcoming/live events only, ordered by start time (soonest first). Defaults to North American leagues."
+						"description": "Get BetStack consensus lines for all leagues worldwide. Returns upcoming/live events only, ordered by start time (soonest first). Use north_american=true to filter to North American leagues only (NBA, NFL, NHL, MLB, NCAAF, NCAAB)."
 					}
 				},
 				{
@@ -552,7 +552,7 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "v1", "lines", "incomplete"]
 						},
-						"description": "Get lines with missing market data (missing moneyline, spread, or totals). Returns BetStack consensus lines for major leagues by default."
+						"description": "Get lines with missing market data (missing moneyline, spread, or totals) from all leagues worldwide. Returns BetStack consensus lines. Use north_american=true to filter to North American leagues only (NBA, NFL, NHL, MLB, NCAAF, NCAAB)."
 					}
 				},
 				{
@@ -608,7 +608,7 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "v1", "results"]
 						},
-						"description": "Get all results (last 7 days)"
+						"description": "Get all results from all leagues worldwide (last 7 days). Use north_american=true to filter to North American leagues only (NBA, NFL, NHL, MLB, NCAAF, NCAAB)."
 					}
 				},
 				{

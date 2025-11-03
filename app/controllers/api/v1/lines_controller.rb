@@ -3,14 +3,13 @@
 
 class Api::V1::LinesController < Api::V1::BaseController
   # GET /api/v1/lines
-  # Returns betting lines for upcoming events
+  # Returns betting lines for upcoming events from all leagues
   # Params: 
   #   - event_id=123
   #   - league_key=nfl (single league)
   #   - north_american=true (filter to NBA, NFL, NHL, MLB, NCAAF, NCAAB)
   #   - bookmaker_key=fanduel (default: betstack)
   #   - date=2025-11-01
-  # Note: Defaults to North American leagues only. Use north_american=false to get all leagues.
   def index
     lines = Line.includes(:bookmaker, event: [:league, :home_team, :away_team])
 
@@ -27,13 +26,12 @@ class Api::V1::LinesController < Api::V1::BaseController
     # Filter by league
     if params[:league_key].present?
       lines = lines.joins(event: :league).where(leagues: { key: params[:league_key] })
-    elsif params[:north_american] == 'false' || params[:north_american] == false
-      # Explicitly request all leagues (no filter)
-      lines = lines.joins(event: :league)
-    else
-      # Default: only return lines for major North American leagues (NFL, NBA, NHL, MLB, NCAAF, NCAAB)
-      # Also supports north_american=true explicitly
+    elsif params[:north_american] == 'true' || params[:north_american] == true
+      # Explicitly filter to North American leagues
       lines = lines.joins(event: :league).where(leagues: { key: League::MAJOR_NORTH_AMERICAN_LEAGUES })
+    else
+      # Default: return all leagues (no filter)
+      lines = lines.joins(event: :league)
     end
 
     # Filter by bookmaker (default to BetStack consensus line)
@@ -56,12 +54,11 @@ class Api::V1::LinesController < Api::V1::BaseController
   end
 
   # GET /api/v1/lines/incomplete
-  # Returns lines with missing market data (missing moneyline, spread, or totals)
+  # Returns lines with missing market data (missing moneyline, spread, or totals) from all leagues
   # Params: 
   #   - league_key=nfl (single league)
   #   - north_american=true (filter to NBA, NFL, NHL, MLB, NCAAF, NCAAB)
   #   - bookmaker_key=betstack (default: betstack)
-  # Note: Defaults to North American leagues only. Use north_american=false to get all leagues.
   def incomplete
     lines = Line.includes(:bookmaker, event: [:league, :home_team, :away_team])
                 .incomplete
@@ -74,12 +71,12 @@ class Api::V1::LinesController < Api::V1::BaseController
     # Filter by league
     if params[:league_key].present?
       lines = lines.joins(event: :league).where(leagues: { key: params[:league_key] })
-    elsif params[:north_american] == 'false' || params[:north_american] == false
-      # Explicitly request all leagues (no filter)
-      lines = lines.joins(event: :league)
-    else
-      # Default: only return lines for major North American leagues
+    elsif params[:north_american] == 'true' || params[:north_american] == true
+      # Explicitly filter to North American leagues
       lines = lines.joins(event: :league).where(leagues: { key: League::MAJOR_NORTH_AMERICAN_LEAGUES })
+    else
+      # Default: return all leagues (no filter)
+      lines = lines.joins(event: :league)
     end
 
     # Filter by bookmaker (default to BetStack consensus line)

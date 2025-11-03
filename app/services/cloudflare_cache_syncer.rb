@@ -192,16 +192,14 @@ class CloudflareCacheSyncer
       
       if params['league_key'].present?
         league_key = params['league_key']
-      elsif params['north_american'] == 'false'
-        # All leagues - no filter needed
-        league_key = nil
+        scope = scope.joins(event: :league).where(leagues: { key: league_key })
+      elsif params['north_american'] == 'true'
+        # Filter to North American leagues
+        scope = scope.joins(event: :league).where(leagues: { key: League::MAJOR_NORTH_AMERICAN_LEAGUES })
       else
-        # Default or north_american=true
-        league_key = League::MAJOR_NORTH_AMERICAN_LEAGUES
+        # Default: all leagues (no filter)
+        scope = scope.joins(event: :league)
       end
-      
-      scope = scope.joins(event: :league)
-      scope = scope.where(leagues: { key: league_key }) if league_key
       
       bookmaker_key = params['bookmaker_key'] || 'betstack'
       scope = scope.joins(:bookmaker).where(bookmakers: { key: bookmaker_key })
@@ -214,12 +212,12 @@ class CloudflareCacheSyncer
                   .where('events.commence_time > ? OR (events.commence_time <= ? AND events.completed = ?)',
                          Time.current, Time.current, false)
       
-      if params['north_american'] == 'false'
-        # All leagues - no filter needed
-        scope = scope.joins(event: :league)
-      else
-        # Default or north_american=true
+      if params['north_american'] == 'true'
+        # Filter to North American leagues
         scope = scope.joins(event: :league).where(leagues: { key: League::MAJOR_NORTH_AMERICAN_LEAGUES })
+      else
+        # Default: all leagues (no filter)
+        scope = scope.joins(event: :league)
       end
       
       scope = scope.where(bookmakers: { key: 'betstack' })
@@ -290,12 +288,12 @@ class CloudflareCacheSyncer
       # Filter by league
       if params['league_key'].present?
         scope = scope.joins(event: :league).where(leagues: { key: params['league_key'] })
-      elsif params['north_american'] == 'false'
-        # All leagues - no filter needed, but need join for query
-        scope = scope.joins(event: :league)
-      else
-        # Default or north_american=true
+      elsif params['north_american'] == 'true'
+        # Filter to North American leagues
         scope = scope.joins(event: :league).where(leagues: { key: League::MAJOR_NORTH_AMERICAN_LEAGUES })
+      else
+        # Default: all leagues (no filter)
+        scope = scope.joins(event: :league)
       end
       
       # Filter by bookmaker (default to BetStack consensus)
@@ -313,12 +311,12 @@ class CloudflareCacheSyncer
                          Time.current, Time.current, false)
       
       # Filter by league
-      if params['north_american'] == 'false'
-        # All leagues - no filter needed, but need join
-        scope = scope.joins(event: :league)
-      else
-        # Default or north_american=true
+      if params['north_american'] == 'true'
+        # Filter to North American leagues
         scope = scope.joins(event: :league).where(leagues: { key: League::MAJOR_NORTH_AMERICAN_LEAGUES })
+      else
+        # Default: all leagues (no filter)
+        scope = scope.joins(event: :league)
       end
       
       scope = scope.where(bookmakers: { key: 'betstack' })
