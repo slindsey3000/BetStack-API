@@ -95,7 +95,12 @@ class CloudflareCacheSyncer
       '/api/v1/events',
       '/api/v1/lines',
       '/api/v1/lines/incomplete',
-      '/api/v1/results'
+      '/api/v1/results',
+      # North American variants (pre-cached since we focus on North America)
+      '/api/v1/events?north_american=true',
+      '/api/v1/lines?north_american=true',
+      '/api/v1/lines/incomplete?north_american=true',
+      '/api/v1/results?north_american=true'
     ]
 
     # Add league-specific endpoints for major leagues
@@ -113,6 +118,7 @@ class CloudflareCacheSyncer
     [
       '/api/v1/sports',
       '/api/v1/leagues',
+      '/api/v1/leagues?north_american=true',  # Pre-cache North American leagues
       '/api/v1/teams',
       '/api/v1/bookmakers'
     ]
@@ -161,7 +167,11 @@ class CloudflareCacheSyncer
       Sport.maximum(:updated_at)
       
     when '/api/v1/leagues'
-      League.maximum(:updated_at)
+      scope = League.all
+      if params['north_american'] == 'true'
+        scope = scope.major_north_american
+      end
+      scope.maximum(:updated_at)
       
     when '/api/v1/events'
       scope = Event.where('commence_time > ? OR (commence_time <= ? AND completed = ?)', 
@@ -169,6 +179,8 @@ class CloudflareCacheSyncer
       
       if params['league_key']
         scope = scope.joins(:league).where(leagues: { key: params['league_key'] })
+      elsif params['north_american'] == 'true'
+        scope = scope.joins(:league).where(leagues: { key: League::MAJOR_NORTH_AMERICAN_LEAGUES })
       end
       
       scope.maximum(:updated_at)
@@ -178,8 +190,18 @@ class CloudflareCacheSyncer
                   .where('events.commence_time > ? OR (events.commence_time <= ? AND events.completed = ?)',
                          Time.current, Time.current, false)
       
-      league_key = params['league_key'].present? ? params['league_key'] : League::MAJOR_NORTH_AMERICAN_LEAGUES
-      scope = scope.joins(event: :league).where(leagues: { key: league_key })
+      if params['league_key'].present?
+        league_key = params['league_key']
+      elsif params['north_american'] == 'false'
+        # All leagues - no filter needed
+        league_key = nil
+      else
+        # Default or north_american=true
+        league_key = League::MAJOR_NORTH_AMERICAN_LEAGUES
+      end
+      
+      scope = scope.joins(event: :league)
+      scope = scope.where(leagues: { key: league_key }) if league_key
       
       bookmaker_key = params['bookmaker_key'] || 'betstack'
       scope = scope.joins(:bookmaker).where(bookmakers: { key: bookmaker_key })
@@ -191,15 +213,28 @@ class CloudflareCacheSyncer
                   .joins(:event, :bookmaker)
                   .where('events.commence_time > ? OR (events.commence_time <= ? AND events.completed = ?)',
                          Time.current, Time.current, false)
-                  .joins(event: :league).where(leagues: { key: League::MAJOR_NORTH_AMERICAN_LEAGUES })
-                  .where(bookmakers: { key: 'betstack' })
+      
+      if params['north_american'] == 'false'
+        # All leagues - no filter needed
+        scope = scope.joins(event: :league)
+      else
+        # Default or north_american=true
+        scope = scope.joins(event: :league).where(leagues: { key: League::MAJOR_NORTH_AMERICAN_LEAGUES })
+      end
+      
+      scope = scope.where(bookmakers: { key: 'betstack' })
       
       scope.maximum(:updated_at)
       
     when '/api/v1/results'
-      Result.joins(:event)
-            .where('events.commence_time > ?', 3.days.ago)
-            .maximum(:updated_at)
+      scope = Result.joins(:event)
+                    .where('events.commence_time > ?', 3.days.ago)
+      
+      if params['north_american'] == 'true'
+        scope = scope.joins(event: :league).where(leagues: { key: League::MAJOR_NORTH_AMERICAN_LEAGUES })
+      end
+      
+      scope.maximum(:updated_at)
             
     when '/api/v1/teams'
       Team.maximum(:updated_at)
@@ -224,13 +259,19 @@ class CloudflareCacheSyncer
       Sport.order(:name).map(&:api_json)
       
     when '/api/v1/leagues'
-      League.order(:name).map(&:api_json)
+      scope = League.includes(:sport).all
+      if params['north_american'] == 'true'
+        scope = scope.major_north_american
+      end
+      scope.order(:name).map(&:api_json)
       
     when '/api/v1/events'
       scope = Event.includes(:league, :home_team, :away_team)
       
       if params['league_key']
         scope = scope.joins(:league).where(leagues: { key: params['league_key'] })
+      elsif params['north_american'] == 'true'
+        scope = scope.joins(:league).where(leagues: { key: League::MAJOR_NORTH_AMERICAN_LEAGUES })
       end
       
       # Only upcoming and live events
@@ -246,9 +287,16 @@ class CloudflareCacheSyncer
                   .where('events.commence_time > ? OR (events.commence_time <= ? AND events.completed = ?)',
                          Time.current, Time.current, false)
       
-      # Filter by league (default to major North American leagues)
-      league_key = params['league_key'].present? ? params['league_key'] : League::MAJOR_NORTH_AMERICAN_LEAGUES
-      scope = scope.joins(event: :league).where(leagues: { key: league_key })
+      # Filter by league
+      if params['league_key'].present?
+        scope = scope.joins(event: :league).where(leagues: { key: params['league_key'] })
+      elsif params['north_american'] == 'false'
+        # All leagues - no filter needed, but need join for query
+        scope = scope.joins(event: :league)
+      else
+        # Default or north_american=true
+        scope = scope.joins(event: :league).where(leagues: { key: League::MAJOR_NORTH_AMERICAN_LEAGUES })
+      end
       
       # Filter by bookmaker (default to BetStack consensus)
       bookmaker_key = params['bookmaker_key'] || 'betstack'
@@ -264,19 +312,30 @@ class CloudflareCacheSyncer
                   .where('events.commence_time > ? OR (events.commence_time <= ? AND events.completed = ?)',
                          Time.current, Time.current, false)
       
-      # Default to major North American leagues and BetStack
-      scope = scope.joins(event: :league).where(leagues: { key: League::MAJOR_NORTH_AMERICAN_LEAGUES })
+      # Filter by league
+      if params['north_american'] == 'false'
+        # All leagues - no filter needed, but need join
+        scope = scope.joins(event: :league)
+      else
+        # Default or north_american=true
+        scope = scope.joins(event: :league).where(leagues: { key: League::MAJOR_NORTH_AMERICAN_LEAGUES })
+      end
+      
       scope = scope.where(bookmakers: { key: 'betstack' })
       scope = scope.order('events.commence_time ASC')
       
       scope.map(&:api_json)
-      
+          
     when '/api/v1/results'
-      Result.includes(event: [:league, :home_team, :away_team])
-            .joins(:event)
-            .where('events.commence_time > ?', 3.days.ago)
-            .order('events.commence_time DESC')
-            .map(&:api_json)
+      scope = Result.includes(event: [:league, :home_team, :away_team])
+                    .joins(:event)
+                    .where('events.commence_time > ?', 3.days.ago)
+      
+      if params['north_american'] == 'true'
+        scope = scope.joins(event: :league).where(leagues: { key: League::MAJOR_NORTH_AMERICAN_LEAGUES })
+      end
+      
+      scope.order('events.commence_time DESC').map(&:api_json)
             
     when '/api/v1/teams'
       Team.includes(:league).order(:name).map(&:api_json)
