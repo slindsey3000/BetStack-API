@@ -2,13 +2,13 @@
 	"info": {
 		"_postman_id": "betstack-api-v1",
 		"name": "BetStack API",
-		"description": "Complete API collection for BetStack - Sports & Sports Betting Data API\n\nBase URLs:\n- Local: http://localhost:3000\n- Production: https://betstack-45ae7ff725cd.herokuapp.com\n- Edge: https://api.betstack.dev\n\nAuthentication:\n- All requests require X-API-Key header\n- API key is configured at collection level (see Variables)\n- Rate limit: 1,000 requests/day per API key\n- Rate limit headers included in responses (X-RateLimit-*)",
+		"description": "Complete API collection for BetStack - Sports & Sports Betting Data API\n\nBase URLs:\n- Local: http://localhost:3004\n- Production: https://betstack-45ae7ff725cd.herokuapp.com\n- Edge: https://api.betstack.dev\n\nAuthentication:\n- All requests require X-API-Key header\n- API key is configured at collection level (see Variables)\n- Rate limit: 1,000 requests/day per API key\n- Rate limit headers included in responses (X-RateLimit-*)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"variable": [
 		{
 			"key": "base_url",
-			"value": "http://localhost:3000",
+			"value": "http://localhost:3004",
 			"type": "string"
 		},
 		{

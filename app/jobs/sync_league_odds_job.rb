@@ -22,6 +22,9 @@ class SyncLeagueOddsJob < ApplicationJob
     ingester = OddsDataIngester.new
     result = ingester.sync_sport_odds(league_key)
 
+    # Update sync tracking timestamp
+    league.update_odds_sync_time!
+
     Rails.logger.info "✅ Odds sync complete for #{league.name}: " \
                       "#{result[:events_created]} new events, " \
                       "#{result[:events_updated]} updated events, " \

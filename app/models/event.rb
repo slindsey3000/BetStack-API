@@ -13,13 +13,38 @@ class Event < ApplicationRecord
 
   # Scopes
   scope :upcoming, -> { where("commence_time > ?", Time.current).where(completed: false) }
-  scope :live, -> { where("commence_time <= ?", Time.current).where(completed: false) }
+  scope :live, -> { 
+    where("commence_time <= ? AND commence_time > ?", Time.current, 3.hours.ago)
+      .where(completed: false) 
+  }
   scope :completed, -> { where(completed: true) }
+  scope :recently_completed, -> { 
+    where(completed: true)
+      .where("commence_time > ?", 3.hours.ago) 
+  }
   scope :for_league, ->(league_id) { where(league_id: league_id) }
   scope :recent, -> { order(commence_time: :desc) }
+  scope :starting_within, ->(duration) { 
+    where("commence_time > ? AND commence_time < ?", 
+          Time.current, Time.current + duration) 
+  }
 
   # Enums (optional - if you want to use enum for status)
   # enum status: { scheduled: "scheduled", live: "live", completed: "completed", cancelled: "cancelled", postponed: "postponed" }
+
+  # Class methods for smart scheduling
+  def self.time_until_next_game(league_key)
+    league = League.find_by(key: league_key)
+    return nil unless league
+    
+    event = where(league: league)
+            .where("commence_time > ?", Time.current)
+            .order(:commence_time)
+            .first
+    
+    return nil unless event
+    (event.commence_time - Time.current).to_i
+  end
 
   # API Serialization
   def api_json

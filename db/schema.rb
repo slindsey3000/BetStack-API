@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_02_212327) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_12_035110) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -55,7 +55,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_02_212327) do
     t.boolean "has_outrights", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "last_odds_sync_at"
+    t.datetime "last_results_sync_at"
     t.index ["key"], name: "index_leagues_on_key", unique: true
+    t.index ["last_odds_sync_at"], name: "index_leagues_on_last_odds_sync_at"
+    t.index ["last_results_sync_at"], name: "index_leagues_on_last_results_sync_at"
     t.index ["sport_id"], name: "index_leagues_on_sport_id"
   end
 

@@ -24,6 +24,29 @@ class League < ApplicationRecord
 
   scope :major_north_american, -> { where(key: MAJOR_NORTH_AMERICAN_LEAGUES) }
 
+  # Smart scheduling sync tracking
+  # Check if league needs odds sync based on frequency
+  def needs_odds_sync?(frequency_seconds)
+    last_odds_sync_at.nil? || 
+    last_odds_sync_at < frequency_seconds.seconds.ago
+  end
+
+  # Check if league needs results sync based on frequency
+  def needs_results_sync?(frequency_seconds)
+    last_results_sync_at.nil? || 
+    last_results_sync_at < frequency_seconds.seconds.ago
+  end
+
+  # Update last odds sync timestamp
+  def update_odds_sync_time!
+    update_column(:last_odds_sync_at, Time.current)
+  end
+
+  # Update last results sync timestamp
+  def update_results_sync_time!
+    update_column(:last_results_sync_at, Time.current)
+  end
+
   # API Serialization
   def api_json
     {

@@ -36,31 +36,16 @@ production:
     queue: default
     schedule: at 6am every day
   
-  # Sync odds for major North American leagues (2x daily)
-  # Morning sync
-  sync_odds_morning:
-    class: SyncAllOddsJob
+  # Smart scheduler - Intelligent odds and results syncing
+  # Runs every minute and decides what needs syncing based on:
+  # - League season status (has upcoming games)
+  # - Time until next game (frequency tiers: 30min baseline, 10min within 2hrs, 2min within 10min)
+  # - Active games (results sync every 2min during/after games)
+  # Target: ~17,000 API requests/month
+  smart_scheduler:
+    class: SmartSchedulerJob
     queue: default
-    schedule: at 12pm every day  # 7am EST
-  
-  # Evening sync
-  sync_odds_evening:
-    class: SyncAllOddsJob
-    queue: default
-    schedule: at 8pm every day   # 3pm EST
-  
-  # Sync scores/results for major leagues (2x daily)
-  # 5pm EST = 10pm UTC
-  sync_scores_evening:
-    class: SyncScoresJob
-    queue: default
-    schedule: at 10pm every day  # 5pm EST
-  
-  # 10pm EST = 3am UTC (next day)
-  sync_scores_night:
-    class: SyncScoresJob
-    queue: default
-    schedule: at 3am every day   # 10pm EST (previous day)
+    schedule: every minute
 
 development:
   # Development: No automatic syncing - run jobs manually via console or rake tasks

@@ -30,6 +30,9 @@ class SyncScoresJob < ApplicationJob
     ingester = OddsDataIngester.new
     ingester.sync_sport_scores(league_key)
 
+    # Update sync tracking timestamp
+    league.update_results_sync_time!
+
     Rails.logger.info "✅ Scores sync complete for #{league.name}"
   rescue => e
     Rails.logger.error "❌ Scores sync failed for #{league_key}: #{e.message}"

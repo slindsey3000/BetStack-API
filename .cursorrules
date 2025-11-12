@@ -3,6 +3,15 @@
 ## Project Overview
 This is a Ruby on Rails 8 API that serves as the central data hub for sports and sports betting information. The API ingests data from multiple external sports data providers (starting with The Odds API) and exposes it through well-designed RESTful endpoints to support various front-end clients including mobile apps, web applications, and third-party integrations.
 
+## Development Environment
+
+### Local Server Configuration
+- **Local Development Port:** 3004 (configured to avoid conflicts with other Rails APIs)
+- **Local Base URL:** `http://localhost:3004`
+- Rails server runs on port 3004 by default (configured in `config/puma.rb`)
+- Environment variable `PORT=3004` set in `.env` file
+- Postman collection configured to use `http://localhost:3004` as `base_url`
+
 ## Architecture Principles
 
 ### API Design
