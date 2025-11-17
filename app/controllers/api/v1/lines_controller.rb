@@ -13,10 +13,10 @@ class Api::V1::LinesController < Api::V1::BaseController
   def index
     lines = Line.includes(:bookmaker, event: [ :league, :home_team, :away_team ])
 
-    # Only lines for upcoming or live events by default
+    # Only lines for upcoming events or events from last 24 hours
+    # This prevents old incomplete events from showing up in the API
     lines = lines.joins(:event)
-                 .where("events.commence_time > ? OR (events.commence_time <= ? AND events.completed = ?)",
-                        Time.current, Time.current, false)
+                 .where("events.commence_time > ?", 1.day.ago)
 
     # Filter by event
     if params[:event_id].present?
@@ -63,10 +63,10 @@ class Api::V1::LinesController < Api::V1::BaseController
     lines = Line.includes(:bookmaker, event: [ :league, :home_team, :away_team ])
                 .incomplete
 
-    # Only lines for upcoming or live events
+    # Only lines for upcoming events or events from last 24 hours
+    # This prevents old incomplete events from showing up in the API
     lines = lines.joins(:event)
-                 .where("events.commence_time > ? OR (events.commence_time <= ? AND events.completed = ?)",
-                        Time.current, Time.current, false)
+                 .where("events.commence_time > ?", 1.day.ago)
 
     # Filter by league
     if params[:league_key].present?
