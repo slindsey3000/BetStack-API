@@ -1,7 +1,7 @@
 # SmartSchedulerJob - Intelligent odds and results sync scheduler
 #
 # Runs every minute and decides what needs syncing based on:
-# - League season status (has upcoming games within 7 days)
+# - League season status (calendar-based month check)
 # - Time until next game (different frequencies for different windows)
 # - Active games (live results syncing)
 #
@@ -33,7 +33,7 @@ class SmartSchedulerJob < ApplicationJob
     League.major_north_american.each do |league|
       stats[:leagues_checked] += 1
 
-      # Check if league is in season (has games in next 7 days)
+      # Check if league is in season (calendar-based month check)
       unless in_season?(league)
         Rails.logger.debug "  ⏸️  #{league.name}: Out of season, skipping"
         next
@@ -64,10 +64,8 @@ class SmartSchedulerJob < ApplicationJob
   private
 
   def in_season?(league)
-    # League is "in season" if it has any games scheduled within next 7 days
-    league.events.where('commence_time > ? AND commence_time < ?',
-                       Time.current,
-                       7.days.from_now).exists?
+    # Use calendar-based season detection from League model
+    league.in_season?
   end
 
   def should_sync_odds?(league)
