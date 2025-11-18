@@ -187,8 +187,7 @@ class CloudflareCacheSyncer
       
     when '/api/v1/lines'
       scope = Line.joins(:event)
-                  .where('events.commence_time > ? OR (events.commence_time <= ? AND events.completed = ?)',
-                         Time.current, Time.current, false)
+                  .where('events.commence_time > ?', 1.day.ago)
       
       if params['league_key'].present?
         league_key = params['league_key']
@@ -209,8 +208,7 @@ class CloudflareCacheSyncer
     when '/api/v1/lines/incomplete'
       scope = Line.incomplete
                   .joins(:event, :bookmaker)
-                  .where('events.commence_time > ? OR (events.commence_time <= ? AND events.completed = ?)',
-                         Time.current, Time.current, false)
+                  .where('events.commence_time > ?', 1.day.ago)
       
       if params['north_american'] == 'true'
         # Filter to North American leagues
@@ -282,8 +280,7 @@ class CloudflareCacheSyncer
     when '/api/v1/lines'
       scope = Line.includes(:bookmaker, event: [:league, :home_team, :away_team])
                   .joins(:event)
-                  .where('events.commence_time > ? OR (events.commence_time <= ? AND events.completed = ?)',
-                         Time.current, Time.current, false)
+                  .where('events.commence_time > ?', 1.day.ago)
       
       # Filter by league
       if params['league_key'].present?
@@ -307,8 +304,7 @@ class CloudflareCacheSyncer
       scope = Line.incomplete
                   .includes(:bookmaker, event: [:league, :home_team, :away_team])
                   .joins(:event, :bookmaker)
-                  .where('events.commence_time > ? OR (events.commence_time <= ? AND events.completed = ?)',
-                         Time.current, Time.current, false)
+                  .where('events.commence_time > ?', 1.day.ago)
       
       # Filter by league
       if params['north_american'] == 'true'
