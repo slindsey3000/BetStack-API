@@ -42,7 +42,11 @@ class OddsApiClient
       @connection.get("#{@base_url}/sports/#{sport_key}/odds", params)
     end
 
-    log_api_usage(response, endpoint: "GET /sports/#{sport_key}/odds")
+    log_api_usage(response, endpoint: "GET /sports/#{sport_key}/odds", league_key: sport_key)
+    
+    # Track usage in database
+    track_usage(sport_key)
+    
     JSON.parse(response.body)
   end
 
@@ -57,7 +61,11 @@ class OddsApiClient
       @connection.get("#{@base_url}/sports/#{sport_key}/scores", params)
     end
 
-    log_api_usage(response, endpoint: "GET /sports/#{sport_key}/scores")
+    log_api_usage(response, endpoint: "GET /sports/#{sport_key}/scores", league_key: sport_key)
+    
+    # Track usage in database
+    track_usage(sport_key)
+    
     JSON.parse(response.body)
   end
 
@@ -126,16 +134,24 @@ class OddsApiClient
     end
   end
 
-  def log_api_usage(response, endpoint:)
+  def log_api_usage(response, endpoint:, league_key: nil)
     used = response.headers['x-requests-used']
     remaining = response.headers['x-requests-remaining']
     last = response.headers['x-requests-last']
 
     Rails.logger.info "API Usage - #{endpoint}: Used=#{used}, Remaining=#{remaining}, Cost=#{last}"
 
-    if remaining && remaining.to_i < 50
+    if remaining && remaining.to_i < 1000
       Rails.logger.warn "⚠️  API quota running low: #{remaining} requests remaining"
     end
+  end
+
+  # Track API usage in database for monitoring
+  def track_usage(league_key)
+    ApiUsageLog.increment_for(league_key)
+  rescue => e
+    # Don't let tracking errors break API calls
+    Rails.logger.error "Failed to track API usage: #{e.message}"
   end
 end
 

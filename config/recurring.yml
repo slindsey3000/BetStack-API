@@ -46,6 +46,12 @@ production:
     class: SmartSchedulerJob
     queue: default
     schedule: every minute
+  
+  # Clean up old API usage logs (keep 90 days)
+  cleanup_old_usage_logs:
+    class: CleanupOldUsageLogsJob
+    queue: default
+    schedule: at 3am every day
 
 development:
   # Development: No automatic syncing - run jobs manually via console or rake tasks
