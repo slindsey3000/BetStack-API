@@ -1,6 +1,6 @@
 # UsageController - Public dashboard for API usage statistics
 #
-# Displays daily API request counts and league breakdowns
+# Displays daily external API request counts and league breakdowns
 # Accessible at /usage (public, no authentication required)
 
 class UsageController < ActionController::Base

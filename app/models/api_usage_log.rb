@@ -1,4 +1,4 @@
-# ApiUsageLog - Tracks daily API request counts to The Odds API
+# ApiUsageLog - Tracks daily external API request counts
 #
 # Stores aggregated counts per league per day to monitor quota usage
 # and identify which leagues consume the most API requests.
