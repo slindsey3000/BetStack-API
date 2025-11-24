@@ -50,7 +50,6 @@ class Event < ApplicationRecord
   def api_json
     {
       id: id,
-      odds_api_id: odds_api_id,
       commence_time: commence_time,
       status: status,
       completed: completed,

@@ -319,7 +319,6 @@ curl -H "X-API-Key: YOUR_KEY" \
 [
   {
     "id": 123,
-    "odds_api_id": "abc123",
     "commence_time": "2025-11-23T00:00:00.000Z",
     "status": "upcoming",
     "completed": false,
@@ -355,7 +354,6 @@ GET /api/v1/events/:id
 ```json
 {
   "id": 123,
-  "odds_api_id": "abc123",
   "commence_time": "2025-11-23T00:00:00.000Z",
   "status": "upcoming",
   "completed": false,
