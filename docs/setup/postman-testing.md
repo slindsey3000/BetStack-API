@@ -17,7 +17,7 @@ The collection includes two URL variables:
 
 ### Local Development
 ```
-base_url = http://localhost:3000
+base_url = http://localhost:3004
 ```
 
 ### Production (Heroku)
