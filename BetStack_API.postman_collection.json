@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "betstack-api-v1",
 		"name": "BetStack API",
-		"description": "Complete API collection for BetStack - Sports & Sports Betting Data API\n\nBase URLs:\n- Production: https://betstack-45ae7ff725cd.herokuapp.com (DEFAULT)\n- Local: http://localhost:3004\n- Edge: https://api.betstack.dev\n\nAll requests default to production_url. Change the variable value to switch environments.\n\nAuthentication:\n- All requests require X-API-Key header\n- API key is configured at collection level (see Variables)\n- Rate limit: 1,000 requests/day per API key\n- Rate limit headers included in responses (X-RateLimit-*)",
+		"description": "Complete API collection for BetStack - Sports & Sports Betting Data API\n\nBase URLs:\n- Edge: https://api.betstack.dev (DEFAULT - Fast global CDN)\n- Production: https://betstack-45ae7ff725cd.herokuapp.com\n- Local: http://localhost:3004\n\nAll requests default to edge_url for fastest response times (<10ms globally). Change the variable value to switch environments.\n\nAuthentication:\n- All requests require X-API-Key header\n- API key is configured at collection level (see Variables)\n- Rate limit: 100 requests/minute per API key (edge)\n- Rate limit headers included in responses (X-RateLimit-*)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"variable": [
@@ -58,8 +58,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/sports",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/sports",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "sports"]
 						},
 						"description": "Get all sports. Returns 12 sports (American Football, Baseball, Basketball, etc.)"
@@ -71,8 +71,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/sports?active=true",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/sports?active=true",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "sports"],
 							"query": [
 								{
@@ -90,8 +90,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/sports/1",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/sports/1",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "sports", "1"]
 						},
 						"description": "Get a single sport by ID with its leagues"
@@ -108,8 +108,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/leagues",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/leagues",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "leagues"]
 						},
 						"description": "Get all leagues worldwide (typically 70+ leagues). Use north_american=true to filter to North American leagues only (NBA, NFL, NHL, MLB, NCAAF, NCAAB)."
@@ -121,8 +121,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/leagues?north_american=true",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/leagues?north_american=true",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "leagues"],
 							"query": [
 								{
@@ -140,8 +140,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/leagues?active=true",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/leagues?active=true",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "leagues"],
 							"query": [
 								{
@@ -159,8 +159,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/leagues?sport_id=1",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/leagues?sport_id=1",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "leagues"],
 							"query": [
 								{
@@ -178,8 +178,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/leagues/4",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/leagues/4",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "leagues", "4"]
 						},
 						"description": "Get a single league by ID"
@@ -196,8 +196,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/events",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/events",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "events"]
 						},
 						"description": "Get all upcoming and live events from all leagues worldwide. Use north_american=true to filter to North American leagues only (NBA, NFL, NHL, MLB, NCAAF, NCAAB)."
@@ -209,8 +209,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/events?north_american=true",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/events?north_american=true",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "events"],
 							"query": [
 								{
@@ -228,8 +228,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/events?league_key=americanfootball_nfl",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/events?league_key=americanfootball_nfl",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "events"],
 							"query": [
 								{
@@ -247,8 +247,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/events?league_key=basketball_nba",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/events?league_key=basketball_nba",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "events"],
 							"query": [
 								{
@@ -266,8 +266,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/events?league_key=icehockey_nhl",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/events?league_key=icehockey_nhl",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "events"],
 							"query": [
 								{
@@ -285,8 +285,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/events?league_key=baseball_mlb",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/events?league_key=baseball_mlb",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "events"],
 							"query": [
 								{
@@ -304,8 +304,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/events?status=upcoming",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/events?status=upcoming",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "events"],
 							"query": [
 								{
@@ -323,8 +323,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/events?status=live",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/events?status=live",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "events"],
 							"query": [
 								{
@@ -342,8 +342,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/events?status=completed",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/events?status=completed",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "events"],
 							"query": [
 								{
@@ -361,8 +361,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/events?date=2025-11-02",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/events?date=2025-11-02",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "events"],
 							"query": [
 								{
@@ -380,8 +380,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/events/68",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/events/68",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "events", "68"]
 						},
 						"description": "Get a single event with BetStack consensus line and result"
@@ -398,8 +398,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/lines",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/lines",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "lines"]
 						},
 						"description": "Get BetStack consensus lines for all leagues worldwide. Returns upcoming/live events only, ordered by start time (soonest first). Use north_american=true to filter to North American leagues only (NBA, NFL, NHL, MLB, NCAAF, NCAAB)."
@@ -411,8 +411,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/lines?north_american=true",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/lines?north_american=true",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "lines"],
 							"query": [
 								{
@@ -430,8 +430,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/lines?league_key=americanfootball_nfl",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/lines?league_key=americanfootball_nfl",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "lines"],
 							"query": [
 								{
@@ -449,8 +449,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/lines?bookmaker_key=draftkings",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/lines?bookmaker_key=draftkings",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "lines"],
 							"query": [
 								{
@@ -468,8 +468,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/lines?bookmaker_key=fanduel",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/lines?bookmaker_key=fanduel",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "lines"],
 							"query": [
 								{
@@ -487,8 +487,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/lines?league_key=americanfootball_nfl&bookmaker_key=draftkings",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/lines?league_key=americanfootball_nfl&bookmaker_key=draftkings",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "lines"],
 							"query": [
 								{
@@ -510,8 +510,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/lines?event_id=68",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/lines?event_id=68",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "lines"],
 							"query": [
 								{
@@ -529,8 +529,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/lines?date=2025-11-02",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/lines?date=2025-11-02",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "lines"],
 							"query": [
 								{
@@ -548,8 +548,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/lines/incomplete",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/lines/incomplete",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "lines", "incomplete"]
 						},
 						"description": "Get lines with missing market data (missing moneyline, spread, or totals) from all leagues worldwide. Returns BetStack consensus lines. Use north_american=true to filter to North American leagues only (NBA, NFL, NHL, MLB, NCAAF, NCAAB)."
@@ -561,8 +561,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/lines/incomplete?north_american=true",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/lines/incomplete?north_american=true",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "lines", "incomplete"],
 							"query": [
 								{
@@ -580,8 +580,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/lines/incomplete?league_key=americanfootball_nfl",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/lines/incomplete?league_key=americanfootball_nfl",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "lines", "incomplete"],
 							"query": [
 								{
@@ -604,8 +604,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/results",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/results",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "results"]
 						},
 						"description": "Get all results from all leagues worldwide (last 7 days). Use north_american=true to filter to North American leagues only (NBA, NFL, NHL, MLB, NCAAF, NCAAB)."
@@ -617,8 +617,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/results?north_american=true",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/results?north_american=true",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "results"],
 							"query": [
 								{
@@ -636,8 +636,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/results?league_key=americanfootball_nfl",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/results?league_key=americanfootball_nfl",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "results"],
 							"query": [
 								{
@@ -655,8 +655,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/results?date=2025-10-28",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/results?date=2025-10-28",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "results"],
 							"query": [
 								{
@@ -674,8 +674,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/results?event_id=45",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/results?event_id=45",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "results"],
 							"query": [
 								{
@@ -693,8 +693,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/results/1",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/results/1",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "results", "1"]
 						},
 						"description": "Get a single result by ID"
@@ -711,8 +711,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/teams",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/teams",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "teams"]
 						},
 						"description": "Get all teams"
@@ -724,8 +724,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/teams?active=true",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/teams?active=true",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "teams"],
 							"query": [
 								{
@@ -743,8 +743,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/teams?league_key=americanfootball_nfl",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/teams?league_key=americanfootball_nfl",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "teams"],
 							"query": [
 								{
@@ -762,8 +762,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/teams?league_key=basketball_nba",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/teams?league_key=basketball_nba",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "teams"],
 							"query": [
 								{
@@ -781,8 +781,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/teams/120",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/teams/120",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "teams", "120"]
 						},
 						"description": "Get a single team by ID"
@@ -799,8 +799,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/bookmakers",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/bookmakers",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "bookmakers"]
 						},
 						"description": "Get all bookmakers"
@@ -812,8 +812,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/bookmakers?active=true",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/bookmakers?active=true",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "bookmakers"],
 							"query": [
 								{
@@ -831,8 +831,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/bookmakers/8",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/bookmakers/8",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "bookmakers", "8"]
 						},
 						"description": "Get a single bookmaker by ID"
@@ -849,8 +849,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/users",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/users",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "users"]
 						},
 						"description": "Get all users (API keys are not included in list view for security)"
@@ -862,8 +862,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/users/1",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/users/1",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "users", "1"]
 						},
 						"description": "Get a single user by ID (API key is not included for security)"
@@ -884,8 +884,8 @@
 							"raw": "{\n  \"email\": \"user@example.com\",\n  \"phone_number\": \"+15551234567\",\n  \"address\": \"123 Main St, City, State 12345\"\n}"
 						},
 						"url": {
-							"raw": "{{production_url}}/api/v1/users",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/users",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "users"]
 						},
 						"description": "Create a new user. API key is auto-generated and valid for 100 years. Email and phone number are required and must be unique."
@@ -906,8 +906,8 @@
 							"raw": "{\n  \"start_time\": \"2025-01-01T00:00:00Z\",\n  \"end_time\": \"2026-01-01T00:00:00Z\",\n  \"active\": false\n}"
 						},
 						"url": {
-							"raw": "{{production_url}}/api/v1/users/1",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/users/1",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "users", "1"]
 						},
 						"description": "Update a user. Can modify start_time, end_time, active status, email, phone_number, or address."
@@ -1014,8 +1014,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/lines",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/lines",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "lines"]
 						},
 						"description": "Direct request to Heroku origin (bypasses Cloudflare completely).\n\n**Expected headers:**\n- Server: Heroku\n- Via: 1.1 heroku-router\n- No X-Cache header (not through Cloudflare)\n- Response time: ~300-500ms\n\nUse this to compare performance with edge-cached requests."
@@ -1106,8 +1106,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/events",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/events",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "events"]
 						},
 						"description": "Direct request to Heroku for events (bypasses Cloudflare)."
@@ -1160,8 +1160,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{production_url}}/api/v1/lines?league_key=americanfootball_nfl",
-							"host": ["{{production_url}}"],
+							"raw": "{{edge_url}}/api/v1/lines?league_key=americanfootball_nfl",
+							"host": ["{{edge_url}}"],
 							"path": ["api", "v1", "lines"],
 							"query": [
 								{
