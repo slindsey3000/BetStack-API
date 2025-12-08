@@ -81,8 +81,7 @@ class OddsDataIngester
     scores_data = @client.fetch_scores(sport_key, days_from: days_from)
 
     scores_data.each do |score_data|
-      next unless score_data['completed']
-
+      # Include both live scores (completed: false) and final scores (completed: true)
       event = Event.find_by(odds_api_id: score_data['id'])
       next unless event
 
@@ -248,8 +247,12 @@ class OddsDataIngester
     )
     result.save!
 
-    # Mark event as completed
-    event.update!(completed: true, status: 'completed')
+    # Update event status based on whether score is final
+    if api_score_data['completed']
+      event.update!(completed: true, status: 'completed')
+    else
+      event.update!(status: 'live')
+    end
   end
 
   # Flatten markets into a single Line record
