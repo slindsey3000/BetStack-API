@@ -20,7 +20,7 @@ class Event < ApplicationRecord
   scope :completed, -> { where(completed: true) }
   scope :recently_completed, -> { 
     where(completed: true)
-      .where("commence_time > ?", 3.hours.ago) 
+      .where("commence_time > ?", 6.hours.ago) 
   }
   scope :for_league, ->(league_id) { where(league_id: league_id) }
   scope :recent, -> { order(commence_time: :desc) }
