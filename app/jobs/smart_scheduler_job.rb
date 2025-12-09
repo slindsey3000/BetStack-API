@@ -82,7 +82,15 @@ class SmartSchedulerJob < ApplicationJob
     has_active_games = league.events.live.exists? ||
                        league.events.recently_completed.exists?
 
-    return false unless has_active_games
+    # Also check for unfinal results (games that have scores but aren't marked final yet)
+    # This catches late games that may have fallen outside the time windows
+    has_unfinal_results = Result.joins(:event)
+                                .where(events: { league: league })
+                                .where(final: false)
+                                .where('events.commence_time > ?', 2.days.ago)
+                                .exists?
+
+    return false unless (has_active_games || has_unfinal_results)
 
     # Check if enough time has passed since last results sync
     league.needs_results_sync?(RESULTS_LIVE_FREQUENCY)
