@@ -1,0 +1,45 @@
+BetStack API - Your API Key
+=====================================
+
+Welcome, <%= @user.email %>!
+
+Thank you for signing up for BetStack API. Your API key has been generated and is ready to use.
+
+YOUR API KEY:
+<%= @api_key %>
+
+⚠️ KEEP THIS KEY SECURE! Treat it like a password.
+
+QUICK START
+-----------
+Here's a sample request:
+
+curl -H "X-API-Key: <%= @api_key %>" \
+  "<%= @edge_url %>/api/v1/events?league_key=basketball_nba"
+
+API ENDPOINTS
+-------------
+Edge (Fastest): <%= @edge_url %>
+Production: <%= @production_url %>
+
+Documentation: <%= @docs_url %>
+
+AVAILABLE DATA
+--------------
+- NBA: Live scores & betting odds
+- NFL: Live scores & betting odds  
+- NHL: Live scores & betting odds
+- MLB: Live scores & betting odds
+- NCAAF: Live scores & betting odds
+- NCAAB: Live scores & betting odds
+
+Updates: Live scores every 2 minutes during games
+
+Questions? Reply to this email or contact support@betstack.dev
+
+Happy building!
+The BetStack Team
+
+---
+BetStack API | Documentation: <%= @docs_url %>
+

@@ -50,12 +50,23 @@ Rails.application.configure do
   config.active_job.queue_adapter = :solid_queue
   # config.solid_queue.connects_to = { database: { writing: :queue } }  # Commented out - using single Heroku database
 
-  # Ignore bad email addresses and do not raise email delivery errors.
-  # Set this to true and configure the email server for immediate delivery to raise delivery errors.
-  # config.action_mailer.raise_delivery_errors = false
-
-  # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "example.com" }
+  # Zoho Mail SMTP configuration
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address: 'smtp.zoho.com',
+    port: 587,
+    domain: 'betstack.dev',
+    user_name: ENV['ZOHO_SMTP_USERNAME'],
+    password: ENV['ZOHO_SMTP_PASSWORD'],
+    authentication: :plain,
+    enable_starttls_auto: true
+  }
+  config.action_mailer.default_url_options = {
+    host: 'betstack-45ae7ff725cd.herokuapp.com',
+    protocol: 'https'
+  }
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.perform_deliveries = true
 
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via rails credentials:edit.
   # config.action_mailer.smtp_settings = {
