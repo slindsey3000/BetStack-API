@@ -77,14 +77,30 @@ class User < ApplicationRecord
     self.phone_number = phone_number.gsub(/\D/, '')
   end
 
-  # Normalize email (downcase, remove dots from local part)
+  # Normalize email to prevent duplicate accounts
+  # - Converts to lowercase
+  # - Removes periods from Gmail/Google Workspace addresses (shawn.lindsey@gmail.com → shawnlindsey@gmail.com)
+  # - Removes plus addressing for all providers (shawn+test@gmail.com → shawn@gmail.com)
   def normalize_email
     return unless email.present?
 
-    email_parts = email.downcase.split('@')
-    if email_parts.length == 2
-      local_part = email_parts[0].gsub('.', '')
-      self.email = "#{local_part}@#{email_parts[1]}"
+    # Downcase and strip whitespace
+    normalized = email.downcase.strip
+    
+    # Split into local and domain parts
+    local_part, domain = normalized.split('@', 2)
+    return unless domain # Invalid email format
+    
+    # Remove plus addressing (everything after +)
+    # e.g., shawn+test@gmail.com → shawn@gmail.com
+    local_part = local_part.split('+').first
+    
+    # Remove periods for Gmail and Google Workspace domains
+    # Gmail ignores periods in usernames
+    if domain =~ /^(gmail\.com|googlemail\.com)$/
+      local_part = local_part.gsub('.', '')
     end
+    
+    self.email = "#{local_part}@#{domain}"
   end
 end
