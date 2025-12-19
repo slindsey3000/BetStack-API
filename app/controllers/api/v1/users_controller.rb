@@ -34,6 +34,9 @@ class Api::V1::UsersController < Api::V1::BaseController
     user.active = true
 
     if user.save
+      # Send welcome email with API key (asynchronously)
+      UserMailer.api_key_created(user).deliver_later
+      
       render json: user.api_json_with_key, status: :created
     else
       render json: {
