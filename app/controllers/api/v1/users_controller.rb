@@ -37,7 +37,12 @@ class Api::V1::UsersController < Api::V1::BaseController
       # Send welcome email with API key (asynchronously)
       UserMailer.api_key_created(user).deliver_later
       
-      render json: user.api_json_with_key, status: :created
+      # Return success without API key - user must check email
+      render json: {
+        success: true,
+        message: "Account created! Check your email for your API key.",
+        email: user.email
+      }, status: :created
     else
       render json: {
         error: "Failed to create user",
