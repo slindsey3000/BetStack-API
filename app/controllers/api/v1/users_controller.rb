@@ -74,6 +74,6 @@ class Api::V1::UsersController < Api::V1::BaseController
   private
 
   def user_params
-    params.permit(:email, :phone_number, :address, :start_time, :end_time, :active)
+    params.permit(:email, :phone_number, :address, :api_reason, :start_time, :end_time, :active)
   end
 end
