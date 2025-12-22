@@ -24,8 +24,28 @@ class Api::V1::UsersController < Api::V1::BaseController
   # POST /api/v1/users
   # Creates a new user with auto-generated API key
   # Valid for 100 years by default
+  # If user was previously deleted, reactivate with new API key
   # Params: email, phone_number, address (optional)
   def create
+    # Check if there's a deleted user with this email that can be reactivated
+    deleted_user = User.find_deleted_by_email(params[:email])
+    
+    if deleted_user
+      # Reactivate the deleted user with a new API key
+      deleted_user.reactivate!(new_phone: params[:phone_number])
+      deleted_user.update(api_reason: params[:api_reason]) if params[:api_reason].present?
+      
+      # Send welcome email with new API key
+      UserMailer.api_key_created(deleted_user).deliver_later
+      
+      return render json: {
+        success: true,
+        message: "Welcome back! Your account has been reactivated. Check your email for your new API key.",
+        email: deleted_user.email
+      }, status: :created
+    end
+    
+    # Create new user
     user = User.new(user_params)
     
     # Set default times (now and 100 years from now)

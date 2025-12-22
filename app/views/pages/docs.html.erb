@@ -1,0 +1,684 @@
+<% content_for :title, "API Documentation - BetStack Sports Betting API" %>
+<% content_for :meta_description, "Complete documentation for the BetStack Sports Betting API. Learn how to fetch sports odds, live scores, events, and betting lines. Free RESTful API with JSON responses for NFL, NBA, MLB, NHL and more." %>
+<% content_for :meta_keywords, "sports betting API documentation, odds API docs, sports data API reference, betting API endpoints, how to get sports odds API, free betting data API tutorial" %>
+<% content_for :canonical_url, "https://api.betstack.dev/docs" %>
+
+<% content_for :page_schema do %>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "BetStack Sports Betting API Documentation",
+  "description": "Complete reference documentation for integrating with the BetStack Sports Betting API",
+  "author": {
+    "@type": "Organization",
+    "name": "BetStack"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "BetStack",
+    "url": "https://betstack.dev"
+  },
+  "mainEntityOfPage": "https://api.betstack.dev/docs",
+  "datePublished": "2025-01-01",
+  "dateModified": "<%= Date.current.iso8601 %>"
+}
+</script>
+<% end %>
+
+<% content_for :head do %>
+<style>
+  .docs-layout {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 3rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+  
+  .docs-sidebar {
+    position: sticky;
+    top: 100px;
+    height: fit-content;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+  }
+  
+  .docs-nav {
+    list-style: none;
+  }
+  
+  .docs-nav-section {
+    margin-bottom: 1.5rem;
+  }
+  
+  .docs-nav-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+  }
+  
+  .docs-nav a {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    margin-bottom: 0.25rem;
+  }
+  
+  .docs-nav a:hover,
+  .docs-nav a.active {
+    background: var(--bg-card);
+    color: var(--primary-light);
+  }
+  
+  .docs-content section {
+    margin-bottom: 4rem;
+    scroll-margin-top: 100px;
+  }
+  
+  .docs-content h2 {
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+  }
+  
+  .endpoint-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+  }
+  
+  .endpoint-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: rgba(0,0,0,0.2);
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .endpoint-method {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 0.8rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+  
+  .endpoint-path {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    color: var(--text-primary);
+  }
+  
+  .endpoint-body {
+    padding: 1.25rem;
+  }
+  
+  .endpoint-desc {
+    margin-bottom: 1rem;
+    color: var(--text-secondary);
+  }
+  
+  .param-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin: 1rem 0;
+  }
+  
+  .param-table th {
+    text-align: left;
+    padding: 0.75rem;
+    background: rgba(0,0,0,0.2);
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .param-table td {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  
+  .param-name {
+    font-family: var(--font-mono);
+    color: var(--primary-light);
+  }
+  
+  .param-type {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+  
+  .param-required {
+    color: var(--error);
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  
+  .param-optional {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+  }
+  
+  @media (max-width: 900px) {
+    .docs-layout {
+      grid-template-columns: 1fr;
+    }
+    
+    .docs-sidebar {
+      position: static;
+      display: none;
+    }
+  }
+</style>
+<% end %>
+
+<!-- Hero -->
+<section style="padding: 3rem 0 2rem; background: linear-gradient(180deg, rgba(124, 58, 237, 0.1) 0%, transparent 100%);">
+  <div class="container">
+    <h1 style="font-size: 2.5rem; margin-bottom: 0.75rem;">API <span class="text-gradient">Documentation</span></h1>
+    <p style="font-size: 1.1rem; max-width: 600px;">Complete reference for the BetStack Sports Betting API. Get started in minutes with our simple REST API.</p>
+  </div>
+</section>
+
+<div class="docs-layout">
+  <!-- Sidebar Navigation -->
+  <aside class="docs-sidebar" role="navigation" aria-label="Documentation navigation">
+    <ul class="docs-nav">
+      <li class="docs-nav-section">
+        <div class="docs-nav-title">Getting Started</div>
+        <a href="#overview">Overview</a>
+        <a href="#authentication">Authentication</a>
+        <a href="#base-url">Base URL</a>
+        <a href="#rate-limits">Rate Limits</a>
+      </li>
+      <li class="docs-nav-section">
+        <div class="docs-nav-title">Core Endpoints</div>
+        <a href="#sports">Sports</a>
+        <a href="#leagues">Leagues</a>
+        <a href="#events">Events</a>
+        <a href="#results">Results</a>
+      </li>
+      <li class="docs-nav-section">
+        <div class="docs-nav-title">Betting Data</div>
+        <a href="#lines">Lines / Odds</a>
+        <a href="#bookmakers">Bookmakers</a>
+      </li>
+      <li class="docs-nav-section">
+        <div class="docs-nav-title">Resources</div>
+        <a href="#teams">Teams</a>
+        <a href="#errors">Error Handling</a>
+        <a href="#terms">Terms of Use</a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="docs-content">
+    <!-- Overview -->
+    <section id="overview">
+      <h2>Overview</h2>
+      <p style="margin-bottom: 1rem;">The BetStack API provides programmatic access to sports betting odds, live scores, and comprehensive sports data. Our RESTful API returns JSON responses and supports all major North American and international sports leagues.</p>
+      
+      <div class="card-static" style="margin-top: 1.5rem;">
+        <h3 style="font-size: 1rem; margin-bottom: 1rem;">Quick Start</h3>
+        <ol style="list-style-position: inside; color: var(--text-secondary);">
+          <li style="margin-bottom: 0.5rem;"><a href="https://betstack.dev/#api" style="color: var(--primary-light);">Get your free API key</a> at betstack.dev</li>
+          <li style="margin-bottom: 0.5rem;">Add <code>X-API-Key: YOUR_KEY</code> header to requests</li>
+          <li style="margin-bottom: 0.5rem;">Make requests to <code>https://api.betstack.dev/api/v1/</code></li>
+          <li>Parse the JSON response in your application</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Authentication -->
+    <section id="authentication">
+      <h2>Authentication</h2>
+      <p style="margin-bottom: 1.5rem;">All API requests require authentication via the <code>X-API-Key</code> header. You'll receive your API key via email after signing up.</p>
+      
+      <pre><code><span class="code-keyword">curl</span> -X GET <span class="code-string">"https://api.betstack.dev/api/v1/sports"</span> \
+  -H <span class="code-string">"X-API-Key: your_api_key_here"</span></code></pre>
+      
+      <div class="alert alert-warning" style="margin-top: 1.5rem;">
+        <strong>Keep your API key secret!</strong> Never expose it in client-side code or public repositories.
+      </div>
+    </section>
+
+    <!-- Base URL -->
+    <section id="base-url">
+      <h2>Base URL</h2>
+      <p style="margin-bottom: 1rem;">All API requests should be made to our global edge network for the fastest response times:</p>
+      
+      <div class="card-static">
+        <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+          <span class="badge badge-get">Edge CDN</span>
+          <code style="font-size: 1rem; background: none; padding: 0;">https://api.betstack.dev/api/v1/</code>
+        </div>
+        <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-muted);">Data is cached and served from the location nearest to you for optimal performance.</p>
+      </div>
+    </section>
+
+    <!-- Rate Limits -->
+    <section id="rate-limits">
+      <h2>Rate Limits</h2>
+      <p style="margin-bottom: 1rem;">The free tier includes generous rate limits suitable for most applications:</p>
+      
+      <table class="param-table">
+        <thead>
+          <tr>
+            <th>Tier</th>
+            <th>Rate Limit</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-free">Free</span></td>
+            <td>1 request per 60 seconds</td>
+            <td style="color: var(--text-muted);">Data refreshes every 60 seconds on edge</td>
+          </tr>
+          <tr>
+            <td><span class="badge" style="background: rgba(6, 182, 212, 0.2); color: var(--secondary);">Enterprise</span></td>
+            <td>Custom</td>
+            <td style="color: var(--text-muted);"><a href="https://betstack.dev/#contact" style="color: var(--primary-light);">Contact us</a> for higher limits</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Sports -->
+    <section id="sports">
+      <h2>Sports</h2>
+      <p style="margin-bottom: 1.5rem;">Retrieve available sports categories.</p>
+      
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="endpoint-method badge-get">GET</span>
+          <span class="endpoint-path">/api/v1/sports</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Returns a list of all available sports.</p>
+          <pre><code><span class="code-comment">// Response</span>
+[
+  {
+    <span class="code-property">"id"</span>: <span class="code-number">1</span>,
+    <span class="code-property">"name"</span>: <span class="code-string">"American Football"</span>,
+    <span class="code-property">"description"</span>: <span class="code-string">"NFL, NCAA Football"</span>,
+    <span class="code-property">"active"</span>: <span class="code-keyword">true</span>
+  },
+  ...
+]</code></pre>
+        </div>
+      </div>
+      
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="endpoint-method badge-get">GET</span>
+          <span class="endpoint-path">/api/v1/sports/:id</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Returns details for a specific sport including its leagues.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Leagues -->
+    <section id="leagues">
+      <h2>Leagues</h2>
+      <p style="margin-bottom: 1.5rem;">Access league information and filter by sport.</p>
+      
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="endpoint-method badge-get">GET</span>
+          <span class="endpoint-path">/api/v1/leagues</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Returns all available leagues with their sport information.</p>
+          
+          <h4 style="font-size: 0.85rem; color: var(--text-muted); margin: 1rem 0 0.5rem; text-transform: uppercase; letter-spacing: 0.5px;">Query Parameters</h4>
+          <table class="param-table">
+            <thead>
+              <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="param-name">sport_id</span> <span class="param-optional">optional</span></td>
+                <td class="param-type">integer</td>
+                <td>Filter leagues by sport ID</td>
+              </tr>
+              <tr>
+                <td><span class="param-name">active</span> <span class="param-optional">optional</span></td>
+                <td class="param-type">boolean</td>
+                <td>Filter by active status (default: true)</td>
+              </tr>
+            </tbody>
+          </table>
+          
+          <pre style="margin-top: 1rem;"><code><span class="code-comment">// Available Leagues</span>
+<% @leagues.each do |league| %>
+<span class="code-string">"<%= league.key %>"</span> <span class="code-comment">// <%= league.name %></span>
+<% end %></code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Events -->
+    <section id="events">
+      <h2>Events</h2>
+      <p style="margin-bottom: 1.5rem;">Events represent individual games or matches. Each event includes team information, scheduled time, and can include results and betting lines.</p>
+      
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="endpoint-method badge-get">GET</span>
+          <span class="endpoint-path">/api/v1/events</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Returns events with optional filtering. Events always include their result object (scores), even if the game hasn't started.</p>
+          
+          <h4 style="font-size: 0.85rem; color: var(--text-muted); margin: 1rem 0 0.5rem; text-transform: uppercase; letter-spacing: 0.5px;">Query Parameters</h4>
+          <table class="param-table">
+            <thead>
+              <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="param-name">league</span> <span class="param-optional">optional</span></td>
+                <td class="param-type">string</td>
+                <td>Filter by league key (e.g., <code>americanfootball_nfl</code>)</td>
+              </tr>
+              <tr>
+                <td><span class="param-name">league_id</span> <span class="param-optional">optional</span></td>
+                <td class="param-type">integer</td>
+                <td>Filter by league ID</td>
+              </tr>
+              <tr>
+                <td><span class="param-name">completed</span> <span class="param-optional">optional</span></td>
+                <td class="param-type">boolean</td>
+                <td>Filter by completion status</td>
+              </tr>
+              <tr>
+                <td><span class="param-name">include_lines</span> <span class="param-optional">optional</span></td>
+                <td class="param-type">boolean</td>
+                <td>Include betting lines in response</td>
+              </tr>
+            </tbody>
+          </table>
+          
+          <pre style="margin-top: 1rem;"><code><span class="code-comment">// Response</span>
+[
+  {
+    <span class="code-property">"id"</span>: <span class="code-number">1234</span>,
+    <span class="code-property">"home_team"</span>: <span class="code-string">"Philadelphia Eagles"</span>,
+    <span class="code-property">"away_team"</span>: <span class="code-string">"Dallas Cowboys"</span>,
+    <span class="code-property">"commence_time"</span>: <span class="code-string">"2025-01-05T18:00:00Z"</span>,
+    <span class="code-property">"completed"</span>: <span class="code-keyword">false</span>,
+    <span class="code-property">"league"</span>: {
+      <span class="code-property">"key"</span>: <span class="code-string">"americanfootball_nfl"</span>,
+      <span class="code-property">"name"</span>: <span class="code-string">"NFL"</span>
+    },
+    <span class="code-property">"result"</span>: {
+      <span class="code-property">"home_score"</span>: <span class="code-number">14</span>,
+      <span class="code-property">"away_score"</span>: <span class="code-number">10</span>,
+      <span class="code-property">"total_score"</span>: <span class="code-number">24</span>,
+      <span class="code-property">"final"</span>: <span class="code-keyword">false</span>
+    }
+  }
+]</code></pre>
+        </div>
+      </div>
+      
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="endpoint-method badge-get">GET</span>
+          <span class="endpoint-path">/api/v1/events/:id</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Returns a single event with full details including result and lines.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results -->
+    <section id="results">
+      <h2>Results</h2>
+      <p style="margin-bottom: 1.5rem;">Access game scores and results. Results are included with events, but you can also query them directly.</p>
+      
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="endpoint-method badge-get">GET</span>
+          <span class="endpoint-path">/api/v1/results</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Returns results with event information. Use this to get scores for multiple games.</p>
+          
+          <h4 style="font-size: 0.85rem; color: var(--text-muted); margin: 1rem 0 0.5rem; text-transform: uppercase; letter-spacing: 0.5px;">Query Parameters</h4>
+          <table class="param-table">
+            <thead>
+              <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="param-name">event_id</span> <span class="param-optional">optional</span></td>
+                <td class="param-type">integer</td>
+                <td>Get result for specific event</td>
+              </tr>
+              <tr>
+                <td><span class="param-name">final</span> <span class="param-optional">optional</span></td>
+                <td class="param-type">boolean</td>
+                <td>Filter by final status (true = completed games)</td>
+              </tr>
+            </tbody>
+          </table>
+          
+          <pre style="margin-top: 1rem;"><code><span class="code-comment">// Response</span>
+[
+  {
+    <span class="code-property">"id"</span>: <span class="code-number">5678</span>,
+    <span class="code-property">"event_id"</span>: <span class="code-number">1234</span>,
+    <span class="code-property">"home_score"</span>: <span class="code-number">27</span>,
+    <span class="code-property">"away_score"</span>: <span class="code-number">24</span>,
+    <span class="code-property">"total_score"</span>: <span class="code-number">51</span>,
+    <span class="code-property">"final"</span>: <span class="code-keyword">true</span>,
+    <span class="code-property">"event"</span>: {
+      <span class="code-property">"id"</span>: <span class="code-number">1234</span>,
+      <span class="code-property">"commence_time"</span>: <span class="code-string">"..."</span>,
+      <span class="code-property">"home_team"</span>: <span class="code-string">"Philadelphia Eagles"</span>,
+      <span class="code-property">"away_team"</span>: <span class="code-string">"Dallas Cowboys"</span>
+    }
+  }
+]</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lines -->
+    <section id="lines">
+      <h2>Lines / Odds</h2>
+      <p style="margin-bottom: 1.5rem;">Betting lines include moneylines, point spreads, and totals from multiple sportsbooks.</p>
+      
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="endpoint-method badge-get">GET</span>
+          <span class="endpoint-path">/api/v1/lines</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Returns betting lines with bookmaker and event information.</p>
+          
+          <h4 style="font-size: 0.85rem; color: var(--text-muted); margin: 1rem 0 0.5rem; text-transform: uppercase; letter-spacing: 0.5px;">Query Parameters</h4>
+          <table class="param-table">
+            <thead>
+              <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="param-name">event_id</span> <span class="param-optional">optional</span></td>
+                <td class="param-type">integer</td>
+                <td>Filter lines by event</td>
+              </tr>
+              <tr>
+                <td><span class="param-name">bookmaker_id</span> <span class="param-optional">optional</span></td>
+                <td class="param-type">integer</td>
+                <td>Filter by specific bookmaker</td>
+              </tr>
+            </tbody>
+          </table>
+          
+          <pre style="margin-top: 1rem;"><code><span class="code-comment">// Response - Line Object</span>
+{
+  <span class="code-property">"id"</span>: <span class="code-number">9999</span>,
+  <span class="code-property">"event_id"</span>: <span class="code-number">1234</span>,
+  <span class="code-property">"bookmaker"</span>: {
+    <span class="code-property">"key"</span>: <span class="code-string">"draftkings"</span>,
+    <span class="code-property">"name"</span>: <span class="code-string">"DraftKings"</span>
+  },
+  <span class="code-property">"money_line_home"</span>: <span class="code-number">-150</span>,
+  <span class="code-property">"money_line_away"</span>: <span class="code-number">+130</span>,
+  <span class="code-property">"point_spread_home"</span>: <span class="code-number">-3.5</span>,
+  <span class="code-property">"point_spread_away"</span>: <span class="code-number">+3.5</span>,
+  <span class="code-property">"point_spread_home_line"</span>: <span class="code-number">-110</span>,
+  <span class="code-property">"point_spread_away_line"</span>: <span class="code-number">-110</span>,
+  <span class="code-property">"total_number"</span>: <span class="code-number">45.5</span>,
+  <span class="code-property">"over_line"</span>: <span class="code-number">-110</span>,
+  <span class="code-property">"under_line"</span>: <span class="code-number">-110</span>,
+  <span class="code-property">"last_updated"</span>: <span class="code-string">"2025-01-05T12:00:00Z"</span>
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bookmakers -->
+    <section id="bookmakers">
+      <h2>Bookmakers</h2>
+      <p style="margin-bottom: 1.5rem;">List of sportsbooks that provide betting lines through our API.</p>
+      
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="endpoint-method badge-get">GET</span>
+          <span class="endpoint-path">/api/v1/bookmakers</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Returns all available sportsbooks.</p>
+          
+          <pre style="margin-top: 1rem;"><code><span class="code-comment">// Available Bookmakers</span>
+<% @bookmakers.each do |book| %>
+<span class="code-string">"<%= book.key %>"</span> <span class="code-comment">// <%= book.name %></span>
+<% end %></code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Teams -->
+    <section id="teams">
+      <h2>Teams</h2>
+      <p style="margin-bottom: 1.5rem;">Access team information by league.</p>
+      
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="endpoint-method badge-get">GET</span>
+          <span class="endpoint-path">/api/v1/teams</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Returns teams with league information.</p>
+          
+          <h4 style="font-size: 0.85rem; color: var(--text-muted); margin: 1rem 0 0.5rem; text-transform: uppercase; letter-spacing: 0.5px;">Query Parameters</h4>
+          <table class="param-table">
+            <thead>
+              <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="param-name">league_id</span> <span class="param-optional">optional</span></td>
+                <td class="param-type">integer</td>
+                <td>Filter teams by league</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Errors -->
+    <section id="errors">
+      <h2>Error Handling</h2>
+      <p style="margin-bottom: 1.5rem;">The API returns standard HTTP status codes and JSON error messages.</p>
+      
+      <table class="param-table">
+        <thead>
+          <tr><th>Code</th><th>Meaning</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>200</code></td>
+            <td>Success</td>
+            <td style="color: var(--text-muted);">Request completed successfully</td>
+          </tr>
+          <tr>
+            <td><code>401</code></td>
+            <td>Unauthorized</td>
+            <td style="color: var(--text-muted);">Invalid or missing API key</td>
+          </tr>
+          <tr>
+            <td><code>404</code></td>
+            <td>Not Found</td>
+            <td style="color: var(--text-muted);">Resource doesn't exist</td>
+          </tr>
+          <tr>
+            <td><code>429</code></td>
+            <td>Rate Limited</td>
+            <td style="color: var(--text-muted);">Too many requests, please slow down</td>
+          </tr>
+          <tr>
+            <td><code>500</code></td>
+            <td>Server Error</td>
+            <td style="color: var(--text-muted);">Something went wrong on our end</td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <pre style="margin-top: 1.5rem;"><code><span class="code-comment">// Error Response Format</span>
+{
+  <span class="code-property">"error"</span>: <span class="code-string">"Unauthorized"</span>,
+  <span class="code-property">"message"</span>: <span class="code-string">"API key is required. Please provide X-API-Key header."</span>
+}</code></pre>
+    </section>
+
+    <!-- Terms -->
+    <section id="terms">
+      <h2>Terms of Use</h2>
+      <div class="card-static">
+        <ul style="list-style: disc; padding-left: 1.5rem; color: var(--text-secondary);">
+          <li style="margin-bottom: 0.5rem;">The BetStack API is free for personal and commercial use</li>
+          <li style="margin-bottom: 0.5rem;">Do not share or expose your API key publicly</li>
+          <li style="margin-bottom: 0.5rem;">Respect rate limits to ensure fair access for all users</li>
+          <li style="margin-bottom: 0.5rem;">Data is provided as-is; verify critical information with official sources</li>
+          <li style="margin-bottom: 0.5rem;">We reserve the right to revoke access for abuse or violations</li>
+          <li>For enterprise needs, <a href="https://betstack.dev/#contact" style="color: var(--primary-light);">contact us</a> for custom solutions</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Need Help -->
+    <section style="padding: 2rem; background: linear-gradient(135deg, rgba(124, 58, 237, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%); border-radius: 16px; text-align: center;">
+      <h3 style="margin-bottom: 0.75rem;">Need Help Building Your App?</h3>
+      <p style="margin-bottom: 1.5rem; max-width: 500px; margin-left: auto; margin-right: auto;">BetStack has 15 years of experience building sports betting software. From concept to App Store, we can build your app incredibly fast.</p>
+      <a href="https://betstack.dev/#contact" class="btn btn-primary">Discuss Your Project</a>
+    </section>
+  </div>
+</div>
+

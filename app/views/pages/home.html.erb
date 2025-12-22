@@ -1,0 +1,353 @@
+<% content_for :title, "Free Sports Betting API - Real-Time Odds & Scores | BetStack API" %>
+<% content_for :meta_description, "Get free access to sports betting odds, live scores, and real-time sports data API. NFL, NBA, MLB, NHL odds from top sportsbooks. Built by BetStack with 15 years of sports betting software expertise. Start building your sports app today." %>
+<% content_for :meta_keywords, "free sports betting API, sports odds API, live scores API, betting data API, NFL odds API, NBA betting API, sportsbook API, free sports data, real-time odds, betting software development" %>
+<% content_for :canonical_url, "https://api.betstack.dev/" %>
+
+<% content_for :page_schema do %>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is the BetStack Sports API really free?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! The BetStack API is free forever for most applications. We provide free access to sports betting odds, live scores, and sports data. Only enterprise applications requiring real-time, up-to-the-second data need a custom plan."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What sports does the BetStack API cover?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The BetStack API covers major sports leagues including NFL, NBA, MLB, NHL, NCAA Football, NCAA Basketball, MLS, Premier League, and more. We provide odds, scores, and event data for each supported league."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I get started with the BetStack API?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Simply sign up at betstack.dev to receive your free API key via email. Then start making requests to api.betstack.dev with your API key in the X-API-Key header. Check our documentation for endpoint details."
+      }
+    }
+  ]
+}
+</script>
+<% end %>
+
+<!-- Hero Section -->
+<section class="hero" style="padding: 6rem 0 4rem; background: linear-gradient(180deg, rgba(124, 58, 237, 0.1) 0%, transparent 100%);">
+  <div class="container text-center">
+    <div class="animate-in">
+      <span class="badge badge-free" style="margin-bottom: 1.5rem; font-size: 0.85rem; padding: 0.5rem 1rem;">Free Forever</span>
+    </div>
+    
+    <h1 class="animate-in delay-1" style="margin-bottom: 1.5rem; max-width: 900px; margin-left: auto; margin-right: auto;">
+      Free <span class="text-gradient">Sports Betting API</span> for Developers
+    </h1>
+    
+    <p class="animate-in delay-2" style="font-size: 1.25rem; max-width: 700px; margin: 0 auto 2.5rem; color: var(--text-secondary);">
+      Access real-time sports betting odds, live scores, and comprehensive sports data. 
+      NFL, NBA, MLB, NHL and more. Built by experts with 15 years of sports betting software experience.
+    </p>
+    
+    <div class="animate-in delay-3" style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+      <a href="https://betstack.dev/#api" class="btn btn-primary">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M13.8 12H3"/>
+        </svg>
+        Get Your Free API Key
+      </a>
+      <a href="/docs" class="btn btn-secondary">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+        View Documentation
+      </a>
+    </div>
+    
+    <!-- Live Stats -->
+    <div class="animate-in delay-4" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1.5rem; max-width: 700px; margin: 4rem auto 0;">
+      <div style="text-align: center;">
+        <div style="font-size: 2.5rem; font-weight: 700; color: var(--primary-light);"><%= number_with_delimiter(@events_count) %>+</div>
+        <div style="color: var(--text-muted); font-size: 0.9rem;">Events Tracked</div>
+      </div>
+      <div style="text-align: center;">
+        <div style="font-size: 2.5rem; font-weight: 700; color: var(--secondary);"><%= @leagues_count %></div>
+        <div style="color: var(--text-muted); font-size: 0.9rem;">Sports Leagues</div>
+      </div>
+      <div style="text-align: center;">
+        <div style="font-size: 2.5rem; font-weight: 700; color: var(--accent);"><%= @bookmakers_count %>+</div>
+        <div style="color: var(--text-muted); font-size: 0.9rem;">Sportsbooks</div>
+      </div>
+      <div style="text-align: center;">
+        <div style="font-size: 2.5rem; font-weight: 700; color: var(--success);">15</div>
+        <div style="color: var(--text-muted); font-size: 0.9rem;">Years Experience</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" style="padding: 4rem 0;">
+  <div class="container">
+    <div class="text-center mb-4">
+      <h2 style="margin-bottom: 1rem;">Everything You Need to Build <span class="text-gradient">Sports Apps</span></h2>
+      <p style="max-width: 600px; margin: 0 auto;">Our comprehensive API provides all the sports betting data you need to create powerful applications, from odds comparison tools to fantasy sports platforms.</p>
+    </div>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 3rem;">
+      <!-- Feature 1: Betting Odds -->
+      <article class="card">
+        <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(124, 58, 237, 0.2); display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem;">
+          <svg width="24" height="24" fill="none" stroke="var(--primary-light)" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <h3 style="margin-bottom: 0.75rem;">Sports Betting Odds</h3>
+        <p style="font-size: 0.95rem;">Real-time moneylines, point spreads, and totals from top sportsbooks including DraftKings, FanDuel, BetMGM, and more.</p>
+      </article>
+      
+      <!-- Feature 2: Live Scores -->
+      <article class="card">
+        <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(6, 182, 212, 0.2); display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem;">
+          <svg width="24" height="24" fill="none" stroke="var(--secondary)" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+        </div>
+        <h3 style="margin-bottom: 0.75rem;">Current Scores</h3>
+        <p style="font-size: 0.95rem;">Up-to-the-minute scores for games in progress. Track every touchdown, basket, goal, and run as it happens.</p>
+      </article>
+      
+      <!-- Feature 3: Event Data -->
+      <article class="card">
+        <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(245, 158, 11, 0.2); display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem;">
+          <svg width="24" height="24" fill="none" stroke="var(--accent)" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+        </div>
+        <h3 style="margin-bottom: 0.75rem;">Comprehensive Events</h3>
+        <p style="font-size: 0.95rem;">Full event schedules with team matchups, start times, and game status. Never miss a game with our complete event database.</p>
+      </article>
+      
+      <!-- Feature 4: Global Edge Network -->
+      <article class="card">
+        <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(16, 185, 129, 0.2); display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem;">
+          <svg width="24" height="24" fill="none" stroke="var(--success)" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <h3 style="margin-bottom: 0.75rem;">Global Edge Network</h3>
+        <p style="font-size: 0.95rem;">Lightning-fast responses from our global CDN. Data is served from the location nearest to you for the fastest possible response times.</p>
+      </article>
+      
+      <!-- Feature 5: Multiple Leagues -->
+      <article class="card">
+        <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(239, 68, 68, 0.2); display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem;">
+          <svg width="24" height="24" fill="none" stroke="#ef4444" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+          </svg>
+        </div>
+        <h3 style="margin-bottom: 0.75rem;">All Major Leagues</h3>
+        <p style="font-size: 0.95rem;">NFL, NBA, MLB, NHL, NCAA Football, NCAA Basketball, MLS, EPL, and more. One API for all your sports data needs.</p>
+      </article>
+      
+      <!-- Feature 6: Developer Friendly -->
+      <article class="card">
+        <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(139, 92, 246, 0.2); display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem;">
+          <svg width="24" height="24" fill="none" stroke="#8b5cf6" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+          </svg>
+        </div>
+        <h3 style="margin-bottom: 0.75rem;">Developer Friendly</h3>
+        <p style="font-size: 0.95rem;">Clean RESTful API with JSON responses. Simple authentication, comprehensive documentation, and consistent response formats.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- Code Example Section -->
+<section style="padding: 4rem 0; background: var(--bg-card);">
+  <div class="container">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem; align-items: center;">
+      <div>
+        <h2 style="margin-bottom: 1rem;">Simple Integration in <span class="text-gradient">Minutes</span></h2>
+        <p style="margin-bottom: 1.5rem;">Our RESTful API is designed for ease of use. Get sports betting data with a simple HTTP request. No complex setup, no SDK required.</p>
+        
+        <ul style="list-style: none; margin-bottom: 2rem;">
+          <li style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; color: var(--text-secondary);">
+            <svg width="20" height="20" fill="var(--success)" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg>
+            Simple API key authentication
+          </li>
+          <li style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; color: var(--text-secondary);">
+            <svg width="20" height="20" fill="var(--success)" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg>
+            Clean JSON responses
+          </li>
+          <li style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; color: var(--text-secondary);">
+            <svg width="20" height="20" fill="var(--success)" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg>
+            Works with any language or framework
+          </li>
+          <li style="display: flex; align-items: center; gap: 0.75rem; color: var(--text-secondary);">
+            <svg width="20" height="20" fill="var(--success)" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg>
+            60-second rate limit per API key
+          </li>
+        </ul>
+        
+        <a href="/docs" class="btn btn-primary">Read the Documentation</a>
+      </div>
+      
+      <div>
+        <pre><code><span class="code-comment"># Get NFL events with odds and scores</span>
+<span class="code-keyword">curl</span> -H <span class="code-string">"X-API-Key: YOUR_API_KEY"</span> \
+  <span class="code-string">"https://api.betstack.dev/api/v1/events?league=americanfootball_nfl"</span>
+
+<span class="code-comment"># Response</span>
+{
+  <span class="code-property">"id"</span>: <span class="code-number">1234</span>,
+  <span class="code-property">"home_team"</span>: <span class="code-string">"Philadelphia Eagles"</span>,
+  <span class="code-property">"away_team"</span>: <span class="code-string">"Dallas Cowboys"</span>,
+  <span class="code-property">"commence_time"</span>: <span class="code-string">"2025-01-05T18:00:00Z"</span>,
+  <span class="code-property">"result"</span>: {
+    <span class="code-property">"home_score"</span>: <span class="code-number">24</span>,
+    <span class="code-property">"away_score"</span>: <span class="code-number">17</span>,
+    <span class="code-property">"final"</span>: <span class="code-keyword">true</span>
+  },
+  <span class="code-property">"lines"</span>: [...]
+}</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing Section -->
+<section id="pricing" style="padding: 4rem 0;">
+  <div class="container text-center">
+    <h2 style="margin-bottom: 1rem;">Simple, Transparent <span class="text-gradient">Pricing</span></h2>
+    <p style="max-width: 600px; margin: 0 auto 3rem;">No hidden fees. No credit card required. Start building immediately.</p>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 800px; margin: 0 auto;">
+      <!-- Free Tier -->
+      <div class="card-static" style="border: 2px solid var(--primary); position: relative;">
+        <div style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%);">
+          <span class="badge badge-free" style="background: var(--primary); color: white;">Most Popular</span>
+        </div>
+        <h3 style="margin-bottom: 0.5rem;">Free Forever</h3>
+        <div style="font-size: 3rem; font-weight: 700; color: var(--primary-light); margin: 1rem 0;">$0</div>
+        <p style="margin-bottom: 1.5rem; color: var(--text-muted);">Perfect for hobby projects, startups, and most apps</p>
+        <ul style="list-style: none; text-align: left; margin-bottom: 2rem;">
+          <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.5rem;">
+            <svg width="16" height="16" fill="var(--success)" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+            All major sports leagues
+          </li>
+          <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.5rem;">
+            <svg width="16" height="16" fill="var(--success)" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+            Betting odds from top sportsbooks
+          </li>
+          <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.5rem;">
+            <svg width="16" height="16" fill="var(--success)" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+            Current scores and results
+          </li>
+          <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.5rem;">
+            <svg width="16" height="16" fill="var(--success)" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+            Global edge network
+          </li>
+          <li style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
+            <svg width="16" height="16" fill="var(--success)" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+            60-second refresh rate
+          </li>
+        </ul>
+        <a href="https://betstack.dev/#api" class="btn btn-primary" style="width: 100%;">Get Your Free API Key</a>
+      </div>
+      
+      <!-- Enterprise -->
+      <div class="card-static">
+        <h3 style="margin-bottom: 0.5rem;">Enterprise</h3>
+        <div style="font-size: 2rem; font-weight: 700; color: var(--text-primary); margin: 1rem 0;">Contact Us</div>
+        <p style="margin-bottom: 1.5rem; color: var(--text-muted);">For real-time data and custom solutions</p>
+        <ul style="list-style: none; text-align: left; margin-bottom: 2rem;">
+          <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.5rem;">
+            <svg width="16" height="16" fill="var(--secondary)" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+            Everything in Free
+          </li>
+          <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.5rem;">
+            <svg width="16" height="16" fill="var(--secondary)" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+            Up-to-the-second real-time data
+          </li>
+          <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.5rem;">
+            <svg width="16" height="16" fill="var(--secondary)" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+            Higher rate limits
+          </li>
+          <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.5rem;">
+            <svg width="16" height="16" fill="var(--secondary)" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+            Dedicated support
+          </li>
+          <li style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
+            <svg width="16" height="16" fill="var(--secondary)" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+            Custom integrations
+          </li>
+        </ul>
+        <a href="https://betstack.dev/#contact" class="btn btn-secondary" style="width: 100%;">Contact Sales</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ Section -->
+<section id="faq" style="padding: 4rem 0; background: var(--bg-card);">
+  <div class="container">
+    <div class="text-center mb-4">
+      <h2 style="margin-bottom: 1rem;">Frequently Asked <span class="text-gradient">Questions</span></h2>
+      <p>Everything you need to know about the BetStack Sports Betting API</p>
+    </div>
+    
+    <div style="max-width: 800px; margin: 0 auto;">
+      <article class="card-static" style="margin-bottom: 1rem;">
+        <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem;">Is the BetStack Sports API really free?</h3>
+        <p style="font-size: 0.95rem;">Yes! The BetStack API is free forever for most applications. We provide free access to sports betting odds, live scores, and sports data. Only enterprise applications requiring real-time, up-to-the-second data need a custom plan.</p>
+      </article>
+      
+      <article class="card-static" style="margin-bottom: 1rem;">
+        <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem;">What sports does the BetStack API cover?</h3>
+        <p style="font-size: 0.95rem;">We cover all major North American leagues (NFL, NBA, MLB, NHL, NCAA) plus international soccer (EPL, La Liga, Serie A), MMA, golf, tennis, and more. New leagues are added regularly.</p>
+      </article>
+      
+      <article class="card-static" style="margin-bottom: 1rem;">
+        <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem;">How do I get started with the BetStack API?</h3>
+        <p style="font-size: 0.95rem;">Simply <a href="https://betstack.dev/#api" style="color: var(--primary-light);">sign up at betstack.dev</a> to receive your free API key via email. Then start making requests to api.betstack.dev with your API key in the X-API-Key header. Check our <a href="/docs" style="color: var(--primary-light);">documentation</a> for endpoint details.</p>
+      </article>
+      
+      <article class="card-static" style="margin-bottom: 1rem;">
+        <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem;">What sportsbooks do you have odds from?</h3>
+        <p style="font-size: 0.95rem;">We aggregate odds from major US sportsbooks including DraftKings, FanDuel, BetMGM, Caesars, PointsBet, and more. Each line includes the bookmaker source so you can compare odds across sportsbooks.</p>
+      </article>
+      
+      <article class="card-static">
+        <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem;">Can you help build my sports betting app?</h3>
+        <p style="font-size: 0.95rem;">Absolutely! BetStack has 15 years of experience building sports betting software. From mobile apps to sportsbook platforms, our team can bring your vision to life incredibly fast. <a href="https://betstack.dev/#contact" style="color: var(--primary-light);">Contact us</a> to discuss your project.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section style="padding: 5rem 0; background: linear-gradient(135deg, rgba(124, 58, 237, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%);">
+  <div class="container text-center">
+    <h2 style="margin-bottom: 1rem;">Ready to Build Your <span class="text-gradient">Sports App</span>?</h2>
+    <p style="max-width: 600px; margin: 0 auto 2rem; font-size: 1.1rem;">
+      Join developers using the BetStack API to power their sports betting applications. 
+      Free API key delivered to your inbox in seconds.
+    </p>
+    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+      <a href="https://betstack.dev/#api" class="btn btn-primary">
+        Get Your Free API Key
+      </a>
+      <a href="https://betstack.dev/#contact" class="btn btn-secondary">
+        Discuss Your Project
+      </a>
+    </div>
+  </div>
+</section>
+

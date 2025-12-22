@@ -1,0 +1,154 @@
+<% content_for :title, "Account Management - BetStack API" %>
+<% content_for :meta_description, "Manage your BetStack API account. Update your profile, regenerate your API key, or delete your account." %>
+<% content_for :canonical_url, "https://api.betstack.dev/account" %>
+
+<section style="padding: 3rem 0;">
+  <div class="container-narrow">
+    <h1 style="font-size: 2rem; margin-bottom: 0.5rem; text-align: center;">Account <span class="text-gradient">Management</span></h1>
+    <p style="text-align: center; margin-bottom: 2rem;">Manage your BetStack API account and settings</p>
+    
+    <% if @message_success %>
+      <div class="alert alert-success"><%= @message_success %></div>
+    <% end %>
+    
+    <% if @message_error %>
+      <div class="alert alert-error"><%= @message_error %></div>
+    <% end %>
+    
+    <% if @message_warning %>
+      <div class="alert alert-warning"><%= @message_warning %></div>
+    <% end %>
+
+    <% unless @logged_in %>
+      <!-- Login Form -->
+      <div class="card-static" style="max-width: 500px; margin: 0 auto;">
+        <h2 style="font-size: 1.25rem; margin-bottom: 1.5rem; text-align: center;">Sign In to Your Account</h2>
+        
+        <%= form_tag(account_login_path, method: :post) do %>
+          <div class="form-group">
+            <label for="email" class="form-label">Email Address</label>
+            <input type="email" id="email" name="email" class="form-input" placeholder="you@example.com" required autofocus>
+          </div>
+          
+          <div class="form-group">
+            <label for="api_key" class="form-label">API Key</label>
+            <input type="password" id="api_key" name="api_key" class="form-input" placeholder="Your API key (from welcome email)" required>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">Your API key was sent to your email when you signed up.</p>
+          </div>
+          
+          <button type="submit" class="btn btn-primary" style="width: 100%;">
+            Sign In
+          </button>
+        <% end %>
+        
+        <div style="text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Don't have an API key?</p>
+          <a href="https://betstack.dev/#api" class="btn btn-secondary btn-sm" style="margin-top: 0.5rem;">Get Your Free API Key</a>
+        </div>
+      </div>
+    <% else %>
+      <!-- Logged In - Account Management -->
+      <div style="display: grid; gap: 2rem; max-width: 600px; margin: 0 auto;">
+        
+        <!-- Account Info -->
+        <div class="card-static">
+          <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+            <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--gradient-2); display: flex; align-items: center; justify-content: center;">
+              <svg width="24" height="24" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z"/>
+              </svg>
+            </div>
+            <div>
+              <h2 style="font-size: 1.1rem; margin: 0;">Welcome Back!</h2>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0;"><%= @user.email %></p>
+            </div>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; padding: 1rem; background: rgba(0,0,0,0.2); border-radius: 8px;">
+            <div>
+              <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Account Status</div>
+              <div style="font-weight: 600; color: var(--success);">Active</div>
+            </div>
+            <div>
+              <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Member Since</div>
+              <div style="font-weight: 500;"><%= @user.created_at.strftime('%B %Y') %></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Update Profile -->
+        <div class="card-static">
+          <h3 style="font-size: 1rem; margin-bottom: 1.25rem;">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align: middle; margin-right: 0.5rem;">
+              <path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+            </svg>
+            Update Profile
+          </h3>
+          
+          <%= form_tag(account_update_path, method: :post) do %>
+            <div class="form-group">
+              <label for="update_email" class="form-label">Email Address</label>
+              <input type="email" id="update_email" name="email" class="form-input" value="<%= @user.email %>" placeholder="you@example.com">
+            </div>
+            
+            <div class="form-group">
+              <label for="update_phone" class="form-label">Phone Number</label>
+              <input type="tel" id="update_phone" name="phone_number" class="form-input" value="<%= @user.phone_number %>" placeholder="5551234567">
+            </div>
+            
+            <button type="submit" class="btn btn-secondary" style="width: 100%;">
+              Save Changes
+            </button>
+            <p style="font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-top: 0.75rem;">You'll receive a confirmation email after updating.</p>
+          <% end %>
+        </div>
+        
+        <!-- Regenerate API Key -->
+        <div class="card-static">
+          <h3 style="font-size: 1rem; margin-bottom: 0.75rem;">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align: middle; margin-right: 0.5rem;">
+              <path d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+            </svg>
+            API Key
+          </h3>
+          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">If you believe your API key has been compromised, you can generate a new one. Your current key will be immediately invalidated.</p>
+          
+          <%= form_tag(account_regenerate_key_path, method: :post, data: { confirm: "Are you sure you want to regenerate your API key? Your current key will stop working immediately. Your new key will be emailed to you." }) do %>
+            <button type="submit" class="btn btn-secondary" style="width: 100%; border-color: var(--warning); color: var(--warning);">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+              </svg>
+              Regenerate API Key
+            </button>
+          <% end %>
+        </div>
+        
+        <!-- Delete Account -->
+        <div class="card-static" style="border-color: rgba(239, 68, 68, 0.3);">
+          <h3 style="font-size: 1rem; margin-bottom: 0.75rem; color: var(--error);">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align: middle; margin-right: 0.5rem;">
+              <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+            Danger Zone
+          </h3>
+          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Deleting your account will immediately invalidate your API key. You can sign up again later with the same email to get a new key.</p>
+          
+          <%= form_tag(account_delete_path, method: :post, data: { confirm: "Are you absolutely sure you want to delete your account? Your API key will immediately stop working. This action cannot be undone." }) do %>
+            <button type="submit" class="btn btn-danger" style="width: 100%;">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+              </svg>
+              Delete My Account
+            </button>
+          <% end %>
+        </div>
+        
+        <!-- Sign Out -->
+        <div style="text-align: center;">
+          <a href="/account" class="btn btn-secondary btn-sm">Sign Out</a>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</section>
+

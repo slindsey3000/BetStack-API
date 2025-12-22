@@ -9,13 +9,28 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
-  # Defines the root path route ("/")
-  # root "posts#index"
+  # ============================================
+  # PUBLIC WEB PAGES (SEO-optimized documentation)
+  # ============================================
+  root "pages#home"
+  
+  get "docs" => "pages#docs", as: :docs
+  get "account" => "pages#account", as: :account
+  post "account/login" => "pages#login", as: :account_login
+  post "account/update" => "pages#update_profile", as: :account_update
+  post "account/regenerate_key" => "pages#regenerate_key", as: :account_regenerate_key
+  post "account/delete" => "pages#delete_account", as: :account_delete
+  
+  # SEO files (served dynamically)
+  get "sitemap.xml" => "seo#sitemap", defaults: { format: :xml }
+  get "llms.txt" => "seo#llms", defaults: { format: :text }
 
   # Public Usage Dashboard
   get "usage" => "usage#index"
 
-  # API Routes
+  # ============================================
+  # API ROUTES
+  # ============================================
   namespace :api do
     namespace :v1 do
       resources :sports, only: [:index, :show]

@@ -13,8 +13,51 @@ class User < ApplicationRecord
   before_validation :set_default_times, on: :create
 
   # Scopes
-  scope :active, -> { where(active: true) }
-  scope :valid, -> { where(active: true).where('start_time <= ? AND end_time >= ?', Time.current, Time.current) }
+  scope :active, -> { where(active: true).where(deleted_at: nil) }
+  scope :deleted, -> { where.not(deleted_at: nil) }
+  scope :valid, -> { where(active: true).where(deleted_at: nil).where('start_time <= ? AND end_time >= ?', Time.current, Time.current) }
+  
+  # Check if a deleted user exists with this email (for reactivation)
+  def self.find_deleted_by_email(email)
+    normalized = normalize_email_static(email)
+    where.not(deleted_at: nil).find_by('LOWER(email) = ?', normalized&.downcase)
+  end
+  
+  # Normalize email for lookup (class method)
+  def self.normalize_email_static(email)
+    return nil unless email.present?
+    
+    normalized = email.downcase.strip
+    local_part, domain = normalized.split('@', 2)
+    return normalized unless domain
+    
+    # Remove plus addressing
+    local_part = local_part.split('+').first
+    
+    # Remove periods for Gmail
+    if domain =~ /^(gmail\.com|googlemail\.com)$/
+      local_part = local_part.gsub('.', '')
+    end
+    
+    "#{local_part}@#{domain}"
+  end
+  
+  # Reactivate a deleted user with a new API key
+  def reactivate!(new_phone: nil)
+    self.deleted_at = nil
+    self.active = true
+    self.phone_number = new_phone if new_phone.present?
+    self.start_time = Time.current
+    self.end_time = 100.years.from_now
+    
+    # Generate new API key
+    loop do
+      self.api_key = SecureRandom.hex(32)
+      break unless User.where.not(id: id).exists?(api_key: api_key)
+    end
+    
+    save!
+  end
 
   # Instance methods
   def valid_key?

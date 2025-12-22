@@ -1,1 +1,46 @@
-# See https://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
+# BetStack API - robots.txt
+# https://api.betstack.dev
+
+User-agent: *
+Allow: /
+Allow: /docs
+Allow: /account
+Allow: /usage
+
+# Disallow API endpoints from being crawled (they require authentication)
+Disallow: /api/
+
+# AI Crawler Support
+# For AI agents, see /llms.txt for structured information
+
+# Sitemap location
+Sitemap: https://api.betstack.dev/sitemap.xml
+
+# Crawl-delay for polite crawling
+Crawl-delay: 1
+
+# Specific bot permissions
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+# See /llms.txt for AI-friendly content
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Anthropic-AI
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
