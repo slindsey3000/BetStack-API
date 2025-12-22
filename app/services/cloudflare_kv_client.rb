@@ -105,5 +105,55 @@ class CloudflareKvClient
 
     response.success?
   end
+
+  # List keys with optional prefix filter
+  # Returns array of key names
+  # Note: KV list API returns up to 1000 keys per request
+  def list_keys(prefix: nil, limit: 1000)
+    conn = Faraday.new do |f|
+      f.adapter Faraday.default_adapter
+    end
+
+    params = { limit: limit }
+    params[:prefix] = prefix if prefix.present?
+
+    response = conn.get("#{@base_url}/keys") do |req|
+      req.headers['Authorization'] = "Bearer #{@api_token}"
+      req.params = params
+    end
+
+    if response.success?
+      result = JSON.parse(response.body)
+      # Returns array of { name: "key_name", ... } objects
+      result['result']&.map { |k| k['name'] } || []
+    else
+      Rails.logger.error "Cloudflare KV list_keys failed: #{response.status} - #{response.body}"
+      []
+    end
+  end
+
+  # Bulk delete keys
+  def bulk_delete(keys)
+    return true if keys.empty?
+    
+    conn = Faraday.new do |f|
+      f.request :json
+      f.adapter Faraday.default_adapter
+    end
+
+    response = conn.delete("#{@base_url}/bulk") do |req|
+      req.headers['Authorization'] = "Bearer #{@api_token}"
+      req.headers['Content-Type'] = 'application/json'
+      req.body = keys.to_json
+    end
+
+    if response.success?
+      Rails.logger.info "Cloudflare KV: Bulk deleted #{keys.count} keys"
+      true
+    else
+      Rails.logger.error "Cloudflare KV bulk delete failed: #{response.status} - #{response.body}"
+      false
+    end
+  end
 end
 

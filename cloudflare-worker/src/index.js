@@ -58,9 +58,9 @@ export default {
       });
     }
     
-    // Validate API key exists
-    const validKey = await env.API_KEYS.get(apiKey);
-    if (!validKey || validKey !== 'valid') {
+    // Validate API key and get associated email
+    const keyDataStr = await env.API_KEYS.get(apiKey);
+    if (!keyDataStr) {
       return new Response(JSON.stringify({ 
         error: 'Unauthorized',
         message: 'Invalid or expired API key'
@@ -70,53 +70,100 @@ export default {
       });
     }
     
-    // Rate limiting: 1,000 requests per day per API key
-    // Use daily key format: ratelimit:{apiKey}:{YYYY-MM-DD}
-    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-    const rateLimitKey = `ratelimit:${apiKey}:${today}`;
-    const RATE_LIMIT_MAX = 1000;
-    const RATE_LIMIT_TTL = 86400; // 24 hours
+    // Parse key data (supports both old 'valid' format and new JSON format)
+    let keyStatus = 'valid';
+    let userEmail = 'unknown';
     
-    // Get current count
-    const currentCountStr = await env.CACHE.get(rateLimitKey);
-    const currentCount = currentCountStr ? parseInt(currentCountStr) : 0;
+    try {
+      if (keyDataStr === 'valid') {
+        // Legacy format - still valid but no email tracking
+        keyStatus = 'valid';
+        userEmail = 'legacy';
+      } else {
+        const keyData = JSON.parse(keyDataStr);
+        keyStatus = keyData.status;
+        userEmail = keyData.email || 'unknown';
+      }
+    } catch (e) {
+      // If parsing fails, treat as legacy format
+      keyStatus = keyDataStr === 'valid' ? 'valid' : 'invalid';
+    }
     
-    // Calculate reset time (next midnight UTC)
-    const resetTime = new Date();
-    resetTime.setUTCDate(resetTime.getUTCDate() + 1);
-    resetTime.setUTCHours(0, 0, 0, 0);
-    
-    // Check if limit exceeded
-    if (currentCount >= RATE_LIMIT_MAX) {
+    if (keyStatus !== 'valid') {
       return new Response(JSON.stringify({ 
-        error: 'Rate limit exceeded',
-        message: `Maximum 1,000 requests per day. Limit resets at ${resetTime.toISOString()}`,
-        limit: RATE_LIMIT_MAX,
-        reset_at: resetTime.toISOString()
+        error: 'Unauthorized',
+        message: 'Invalid or expired API key'
       }), {
-        status: 429,
-        headers: {
-          ...corsHeaders,
-          'Content-Type': 'application/json',
-          'X-RateLimit-Limit': RATE_LIMIT_MAX.toString(),
-          'X-RateLimit-Remaining': '0',
-          'X-RateLimit-Reset': Math.floor(resetTime.getTime() / 1000).toString()
-        }
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
     
-    // Increment rate limit counter (async, won't block response)
-    const newCount = currentCount + 1;
-    const remaining = RATE_LIMIT_MAX - newCount;
+    // ==========================================
+    // RATE LIMITING: 1 request per 58 seconds
+    // ==========================================
+    const now = Date.now();
+    const lastCallKey = `lastcall:${apiKey}`;
+    const lastCallStr = await env.CACHE.get(lastCallKey);
     
+    if (lastCallStr) {
+      const lastCall = parseInt(lastCallStr);
+      const elapsed = now - lastCall;
+      const cooldownMs = 58000; // 58 seconds
+      
+      if (elapsed < cooldownMs) {
+        const waitSeconds = Math.ceil((cooldownMs - elapsed) / 1000);
+        
+        // Track abuse: increment rejected counter (async)
+        const hour = new Date().toISOString().slice(0, 13); // "2025-12-22T15"
+        const abuseKey = `abuse:${apiKey}:${hour}`;
+        ctx.waitUntil(
+          (async () => {
+            const currentAbuse = await env.CACHE.get(abuseKey);
+            const newAbuse = (parseInt(currentAbuse) || 0) + 1;
+            await env.CACHE.put(abuseKey, newAbuse.toString(), { expirationTtl: 604800 }); // 7 days
+          })()
+        );
+        
+        return new Response(JSON.stringify({ 
+          error: 'Rate limited',
+          message: `Please wait ${waitSeconds} seconds between requests. Data refreshes every 60 seconds.`,
+          retry_after: waitSeconds
+        }), {
+          status: 429,
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json',
+            'Retry-After': waitSeconds.toString()
+          }
+        });
+      }
+    }
+    
+    // Update last call timestamp (async, non-blocking)
     ctx.waitUntil(
-      env.CACHE.put(rateLimitKey, newCount.toString(), { expirationTtl: RATE_LIMIT_TTL })
+      env.CACHE.put(lastCallKey, now.toString(), { expirationTtl: 120 })
     );
     
-    // Store rate limit headers for response
-    corsHeaders['X-RateLimit-Limit'] = RATE_LIMIT_MAX.toString();
-    corsHeaders['X-RateLimit-Remaining'] = remaining.toString();
-    corsHeaders['X-RateLimit-Reset'] = Math.floor(resetTime.getTime() / 1000).toString();
+    // ==========================================
+    // USAGE TRACKING: Hourly counters per API key
+    // ==========================================
+    const hour = new Date().toISOString().slice(0, 13); // "2025-12-22T15"
+    const usageKey = `usage:${apiKey}:${hour}`;
+    
+    // Increment usage counter (async, non-blocking)
+    ctx.waitUntil(
+      (async () => {
+        const currentUsage = await env.CACHE.get(usageKey);
+        const newUsage = (parseInt(currentUsage) || 0) + 1;
+        await env.CACHE.put(usageKey, newUsage.toString(), { expirationTtl: 604800 }); // 7 days TTL
+      })()
+    );
+    
+    // Add rate limit info to headers
+    corsHeaders['X-RateLimit-Limit'] = '1';
+    corsHeaders['X-RateLimit-Window'] = '58';
+    corsHeaders['X-RateLimit-Reset'] = Math.floor((now + 58000) / 1000).toString();
     
     // User endpoints always proxy to origin (no caching for security)
     if (path.startsWith('/api/v1/users')) {
@@ -205,4 +252,3 @@ async function proxyToOrigin(request, env, corsHeaders) {
     });
   }
 }
-

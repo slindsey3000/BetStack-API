@@ -52,6 +52,13 @@ production:
     class: CleanupOldUsageLogsJob
     queue: default
     schedule: at 3am every day
+  
+  # Sync client API usage from Cloudflare KV to database (hourly)
+  # Tracks which API keys/emails are using the API and abuse attempts
+  sync_client_usage:
+    class: SyncClientUsageJob
+    queue: default
+    schedule: every hour at minute 5
 
 development:
   # Development: No automatic syncing - run jobs manually via console or rake tasks

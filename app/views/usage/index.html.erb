@@ -2,24 +2,89 @@
 
 <header>
   <div class="container">
-    <h1>📊 BetStack API Usage Dashboard</h1>
-    <p>Real-time monitoring of external API request usage</p>
+    <h1>BetStack API Usage Dashboard</h1>
+    <p>Monitoring API usage and performance</p>
   </div>
 </header>
 
 <div class="container">
-  <!-- Quick Stats -->
+  <!-- Client API Usage Section -->
+  <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; margin-bottom: 30px;">
+    <h2 style="color: white; border-bottom: 1px solid rgba(255,255,255,0.3);">Client API Usage</h2>
+    <p style="opacity: 0.9; margin-bottom: 20px;">Requests from API key holders (synced hourly from edge)</p>
+    
+    <div class="stats-grid" style="margin-top: 20px;">
+      <div class="stat-card" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2);">
+        <h3 style="color: rgba(255,255,255,0.8);">Today's Requests</h3>
+        <div class="value" style="color: white;"><%= number_with_delimiter(@client_today_requests || 0) %></div>
+        <div class="label" style="color: rgba(255,255,255,0.7);">Successful API calls</div>
+      </div>
+      
+      <div class="stat-card" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2);">
+        <h3 style="color: rgba(255,255,255,0.8);">Today's Rejected</h3>
+        <div class="value" style="color: <%= (@client_today_rejected || 0) > 0 ? '#ff6b6b' : 'white' %>;"><%= number_with_delimiter(@client_today_rejected || 0) %></div>
+        <div class="label" style="color: rgba(255,255,255,0.7);">Rate-limited requests</div>
+      </div>
+      
+      <div class="stat-card" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2);">
+        <h3 style="color: rgba(255,255,255,0.8);">This Month</h3>
+        <div class="value" style="color: white;"><%= number_with_delimiter(@client_month_requests || 0) %></div>
+        <div class="label" style="color: rgba(255,255,255,0.7);">Total in <%= Date.current.strftime('%B') %></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Client Daily Breakdown -->
+  <% if @client_daily_breakdown.present? && @client_daily_breakdown.any? %>
+  <div class="card">
+    <h2>Client Request History (Last 30 Days)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th style="text-align: right;">Requests</th>
+          <th style="text-align: right;">Rejected</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @client_daily_breakdown.first(30).each do |date, data| %>
+          <tr>
+            <td><strong><%= date.strftime('%B %d, %Y') %></strong></td>
+            <td style="text-align: right;"><%= number_with_delimiter(data[:requests] || 0) %></td>
+            <td style="text-align: right; color: <%= (data[:rejected] || 0) > 0 ? '#e74c3c' : '#27ae60' %>;"><%= number_with_delimiter(data[:rejected] || 0) %></td>
+            <td>
+              <% if (data[:rejected] || 0) > 10 %>
+                <span class="badge badge-warning">Abuse Detected</span>
+              <% elsif (data[:requests] || 0) > 100 %>
+                <span class="badge badge-info">Active</span>
+              <% else %>
+                <span class="badge badge-success">Normal</span>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <% end %>
+
+  <hr style="margin: 40px 0; border: none; border-top: 2px solid #eee;">
+  
+  <h2 style="color: #667eea; margin-bottom: 20px;">Internal API Usage (Data Provider)</h2>
+  
+  <!-- Internal API Quick Stats -->
   <div class="stats-grid">
     <div class="stat-card">
       <h3>Today's Requests</h3>
       <div class="value"><%= number_with_delimiter(@today_total) %></div>
-      <div class="label">API calls made today</div>
+      <div class="label">Calls to data provider</div>
     </div>
     
     <div class="stat-card">
       <h3>This Month</h3>
       <div class="value"><%= number_with_delimiter(@month_total) %></div>
-      <div class="label">Total requests in <%= Date.current.strftime('%B') %></div>
+      <div class="label">Total in <%= Date.current.strftime('%B') %></div>
     </div>
     
     <div class="stat-card">
@@ -111,14 +176,17 @@
   <div class="card" style="background: #f8f9fa; border-left: 4px solid #667eea;">
     <h2>About This Dashboard</h2>
     <p style="margin-bottom: 10px;">
-      This dashboard tracks all external API requests from the BetStack system.
-      Data is aggregated daily by league to monitor quota usage and optimize request patterns.
+      <strong>Client API Usage:</strong> Tracks requests from API key holders to our API.
+      Data is synced hourly from Cloudflare edge. Rejected requests indicate rate-limiting (1 request per 60 seconds).
     </p>
     <p style="margin-bottom: 10px;">
-      <strong>Current Quota:</strong> 100,000 requests per month
+      <strong>Internal API Usage:</strong> Tracks our requests to external data providers for odds and scores.
+    </p>
+    <p style="margin-bottom: 10px;">
+      <strong>Data Provider Quota:</strong> 100,000 requests per month
     </p>
     <p>
-      <strong>Data Retention:</strong> 90 days of detailed logs
+      <strong>Data Retention:</strong> 90 days
     </p>
   </div>
 </div>
@@ -128,4 +196,3 @@
     <p>BetStack API &copy; <%= Date.current.year %> | Last updated: <%= Time.current.strftime('%B %d, %Y at %I:%M %p %Z') %></p>
   </div>
 </footer>
-

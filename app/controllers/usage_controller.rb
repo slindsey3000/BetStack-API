@@ -1,24 +1,35 @@
 # UsageController - Public dashboard for API usage statistics
 #
-# Displays daily external API request counts and league breakdowns
+# Displays:
+# 1. Internal API usage (requests to external data providers like The Odds API)
+# 2. Client API usage (requests from API key holders hitting our API)
+#
 # Accessible at /usage (public, no authentication required)
 
 class UsageController < ActionController::Base
   
   def index
-    @stats = ApiUsageLog.stats_summary
-    @today_total = @stats[:today]
-    @month_total = @stats[:month]
-    @daily_breakdown = @stats[:daily]
-    @league_breakdown = @stats[:by_league_last_30_days]
+    # Internal API usage (our requests to The Odds API)
+    @internal_stats = ApiUsageLog.stats_summary
+    @today_total = @internal_stats[:today]
+    @month_total = @internal_stats[:month]
+    @daily_breakdown = @internal_stats[:daily]
+    @league_breakdown = @internal_stats[:by_league_last_30_days]
     
-    # Calculate some additional metrics
+    # Calculate some additional metrics for internal usage
     @avg_daily_last_30 = calculate_avg_daily(30)
     @projected_monthly = @avg_daily_last_30 * 30
     
+    # Client API usage (requests from API key holders)
+    @client_stats = ClientApiUsage.stats_summary
+    @client_today_requests = @client_stats[:today_requests]
+    @client_today_rejected = @client_stats[:today_rejected]
+    @client_month_requests = @client_stats[:month_requests]
+    @client_daily_breakdown = @client_stats[:daily]
+    
     respond_to do |format|
       format.html # renders app/views/usage/index.html.erb
-      format.json { render json: @stats }
+      format.json { render json: { internal: @internal_stats, client: @client_stats } }
     end
   end
   

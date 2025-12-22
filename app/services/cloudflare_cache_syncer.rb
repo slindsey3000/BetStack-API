@@ -70,18 +70,21 @@ class CloudflareCacheSyncer
   end
 
   # Sync valid API keys to Cloudflare KV for edge validation
+  # Stores JSON with email for usage tracking: {"status":"valid","email":"user@example.com"}
   def sync_api_keys
     start_time = Time.current
     bulk_data = []
 
     User.valid.find_each do |user|
-      bulk_data << [user.api_key, 'valid']
+      # Store JSON with status and email for edge usage tracking
+      key_data = { status: 'valid', email: user.email }.to_json
+      bulk_data << [user.api_key, key_data]
     end
 
     success = @api_keys_client.bulk_put(bulk_data) if bulk_data.any?
     
     duration = Time.current - start_time
-    Rails.logger.info "Synced #{bulk_data.count} API keys to Cloudflare in #{duration.round(2)}s"
+    Rails.logger.info "Synced #{bulk_data.count} API keys (with emails) to Cloudflare in #{duration.round(2)}s"
     
     success
   end

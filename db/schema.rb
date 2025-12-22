@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_22_195508) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_22_215540) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -33,6 +33,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_22_195508) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["key"], name: "index_bookmakers_on_key", unique: true
+  end
+
+  create_table "client_api_usages", force: :cascade do |t|
+    t.date "date", null: false
+    t.integer "hour", null: false
+    t.string "api_key", null: false
+    t.string "email", null: false
+    t.integer "request_count", default: 0, null: false
+    t.integer "rejected_count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["api_key"], name: "index_client_api_usages_on_api_key"
+    t.index ["date", "hour", "api_key"], name: "idx_client_usage_unique", unique: true
+    t.index ["date"], name: "index_client_api_usages_on_date"
+    t.index ["email"], name: "index_client_api_usages_on_email"
   end
 
   create_table "events", force: :cascade do |t|

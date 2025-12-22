@@ -249,7 +249,7 @@ class OddsDataIngester
 
     # Update event status based on whether score is final
     if api_score_data['completed']
-      event.update!(completed: true, status: 'completed')
+    event.update!(completed: true, status: 'completed')
     else
       event.update!(status: 'live')
     end
