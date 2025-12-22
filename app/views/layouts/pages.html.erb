@@ -190,12 +190,34 @@
         text-decoration: none;
         font-weight: 500;
         font-size: 0.95rem;
-        transition: color 0.2s;
+        transition: color 0.2s, transform 0.2s;
+        cursor: pointer;
+        padding: 0.5rem 0;
+        position: relative;
       }
       
-      .nav-links a:hover,
+      .nav-links a:hover {
+        color: var(--primary-light);
+        transform: translateY(-1px);
+      }
+      
       .nav-links a.active {
         color: var(--primary-light);
+      }
+      
+      .nav-links a::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--gradient-2);
+        transition: width 0.2s;
+      }
+      
+      .nav-links a:hover::after {
+        width: 100%;
       }
       
       .nav-cta {
@@ -475,11 +497,13 @@
         color: var(--text-secondary);
         text-decoration: none;
         font-size: 0.9rem;
-        transition: color 0.2s;
+        transition: color 0.2s, transform 0.2s;
+        cursor: pointer;
       }
       
       .footer-links a:hover {
         color: var(--primary-light);
+        transform: translateY(-1px);
       }
       
       .footer-copy {
