@@ -2,6 +2,7 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const path = url.pathname + url.search;
+    const pathname = url.pathname;
     const method = request.method;
     
     // CORS headers
@@ -16,10 +17,33 @@ export default {
       return new Response(null, { headers: corsHeaders });
     }
     
+    // PUBLIC WEB PAGES - No authentication required
+    // These are SEO-optimized documentation and account pages
+    const publicPaths = [
+      '/',              // Landing page
+      '/docs',          // API documentation
+      '/account',       // Account management
+      '/usage',         // Usage dashboard
+      '/sitemap.xml',   // SEO sitemap
+      '/llms.txt',      // AI crawler file
+      '/robots.txt',    // Search engine robots
+      '/up'             // Health check
+    ];
+    
+    // Check if this is a public web page or account action
+    const isPublicPage = publicPaths.includes(pathname) || 
+                         pathname.startsWith('/account/') ||
+                         pathname.startsWith('/assets/');
+    
+    // Public pages: proxy directly to origin without auth
+    if (isPublicPage) {
+      return proxyToOrigin(request, env, corsHeaders);
+    }
+    
     // Extract API key from header
     const apiKey = request.headers.get('X-API-Key');
     
-    // API key validation - required for all requests
+    // API key validation - required for API requests
     if (!apiKey) {
       return new Response(JSON.stringify({ 
         error: 'Unauthorized',
