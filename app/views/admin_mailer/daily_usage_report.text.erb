@@ -1,0 +1,54 @@
+BETSTACK API DAILY REPORT
+<%= @date.strftime('%A, %B %d, %Y') %>
+============================================
+
+CLIENT API USAGE
+(Requests from API key holders)
+
+Requests Yesterday: <%= number_with_delimiter(@client_today) %>
+Rejected (Rate Limited): <%= number_with_delimiter(@client_rejected) %>
+This Month: <%= number_with_delimiter(@client_month) %>
+
+<% if @client_by_email.any? %>
+Top Users Yesterday:
+<% @client_by_email.each do |user| %>
+  - <%= user[:email] %>: <%= number_with_delimiter(user[:requests]) %> requests<%= user[:rejected].to_i > 0 ? ", #{user[:rejected]} rejected" : "" %>
+<% end %>
+<% end %>
+
+<% if @top_abusers.any? %>
+⚠️ ABUSE DETECTED:
+<% @top_abusers.each do |abuser| %>
+  - <%= abuser[:email] %>: <%= number_with_delimiter(abuser[:rejected]) %> rejected requests
+<% end %>
+<% end %>
+
+--------------------------------------------
+
+INTERNAL API USAGE
+(Our requests to The Odds API)
+
+Requests Yesterday: <%= number_with_delimiter(@internal_today) %>
+This Month: <%= number_with_delimiter(@internal_month) %>
+Quota Used: <%= number_to_percentage((@internal_month.to_f / 100000 * 100), precision: 1) %>
+
+<% if @internal_by_league.any? %>
+By League Yesterday:
+<% @internal_by_league.each do |league, count| %>
+  - <%= league %>: <%= number_with_delimiter(count) %>
+<% end %>
+<% end %>
+
+--------------------------------------------
+
+USER STATS
+
+Total Users: <%= @total_users %>
+Active Users: <%= @active_users %>
+New Yesterday: <%= @new_users_today %>
+
+--------------------------------------------
+
+Generated at <%= @generated_at.strftime('%B %d, %Y at %I:%M %p %Z') %>
+View Dashboard: https://api.betstack.dev/usage
+

@@ -59,6 +59,13 @@ production:
     class: SyncClientUsageJob
     queue: default
     schedule: every hour at minute 5
+  
+  # Daily usage report email (6am EST = 11am UTC)
+  # Sends summary of yesterday's usage to admin
+  send_daily_usage_report:
+    class: SendDailyUsageReportJob
+    queue: default
+    schedule: at 11am every day
 
 development:
   # Development: No automatic syncing - run jobs manually via console or rake tasks
