@@ -9,6 +9,8 @@
     .header h1 { margin: 0; font-size: 28px; }
     .content { padding: 40px 30px; color: #333; }
     .api-key-box { background-color: #f8f9fa; border: 2px solid #27ae60; border-radius: 8px; padding: 20px; margin: 20px 0; font-family: 'Courier New', monospace; font-size: 16px; word-break: break-all; text-align: center; }
+    .highlight-box { background-color: #e8f5e9; border-left: 4px solid #27ae60; padding: 15px; margin: 20px 0; }
+    .dev-services { background-color: #f0f8ff; border: 2px solid #2196F3; border-radius: 8px; padding: 20px; margin: 25px 0; }
     .button { display: inline-block; background-color: #27ae60; color: #ffffff; padding: 15px 30px; text-decoration: none; border-radius: 5px; margin: 20px 0; font-weight: bold; }
     .footer { background-color: #f8f9fa; padding: 20px; text-align: center; font-size: 14px; color: #666; }
     .code-example { background-color: #2c3e50; color: #fff; padding: 15px; border-radius: 5px; margin: 15px 0; font-family: 'Courier New', monospace; font-size: 13px; overflow-x: auto; }
@@ -32,6 +34,11 @@
       
       <p><strong>⚠️ Keep this key secure!</strong> Treat it like a password. Anyone with this key can access the API under your account.</p>
       
+      <div class="highlight-box">
+        <strong>⚡ Lightning Fast Global Access</strong><br>
+        Your API key gives you access to our blazing-fast global CDN edge network. Data is served from the location nearest to you for the fastest possible response times.
+      </div>
+      
       <h3>Quick Start</h3>
       
       <p>Here's a sample request to get you started:</p>
@@ -39,15 +46,14 @@
       <div class="code-example">curl -H "X-API-Key: <%= @api_key %>" \<br>
   "<%= @edge_url %>/api/v1/events?league_key=basketball_nba"</div>
       
-      <h3>API Endpoints</h3>
+      <h3>API Endpoint</h3>
       
-      <p><strong>Edge (Fastest - Global CDN):</strong><br>
+      <p><strong>Global Edge Network:</strong><br>
       <%= @edge_url %></p>
       
-      <p><strong>Production:</strong><br>
-      <%= @production_url %></p>
+      <h3>Rate Limits</h3>
       
-      <a href="<%= @docs_url %>" class="button">View Documentation</a>
+      <p>Your API key allows requests every <strong>60 seconds</strong>. Perfect for real-time sports data without overwhelming your systems.</p>
       
       <h3>Available Data</h3>
       
@@ -60,16 +66,36 @@
         <li>🏀 NCAAB - Live scores & betting odds</li>
       </ul>
       
-      <p><strong>Updates:</strong> Live scores every 2 minutes during games, Odds updated dynamically.</p>
+      <p><strong>Updates:</strong> Live scores every 2 minutes during games, odds updated dynamically.</p>
       
-      <p>If you have any questions, reply to this email or visit our support page.</p>
+      <div class="dev-services">
+        <h3 style="margin-top: 0; color: #2196F3;">🚀 Need Help Building Your App?</h3>
+        
+        <p><strong>BetStack specializes in sports and sports betting apps.</strong></p>
+        
+        <p>Our tech lead is also a developer with <strong>15 years of experience</strong> in this space. We can help you go from idea to live app in the App Store <strong>faster than anyone</strong> in the app development industry.</p>
+        
+        <p><strong>What makes us different:</strong></p>
+        <ul>
+          <li>We exclusively build sports and sports betting apps</li>
+          <li>Our costs are a <strong>fraction of traditional agencies</strong></li>
+          <li>Hands-on technical leadership from day one</li>
+          <li>Speed to market is our specialty</li>
+        </ul>
+        
+        <p>Whether you're just starting or need help scaling, we've got you covered.</p>
+        
+        <p><strong>Interested?</strong> Just reply to this email and let's talk about your project.</p>
+      </div>
+      
+      <p>If you have any questions about the API, reply to this email.</p>
       
       <p>Happy building!<br>
       The BetStack Team</p>
     </div>
     
     <div class="footer">
-      <p>BetStack API | <a href="<%= @docs_url %>">Documentation</a> | support@betstack.dev</p>
+      <p>BetStack API | support@betstack.dev</p>
       <p style="font-size: 12px; color: #999;">You received this email because you created an account on BetStack API.</p>
     </div>
   </div>
