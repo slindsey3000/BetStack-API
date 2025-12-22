@@ -57,7 +57,7 @@ class SeoController < ActionController::Base
       ## Rate Limits
       
       Free tier: 1 request per 60 seconds - perfect for most apps and projects.
-      Data is cached on a global edge network for fast response times.
+      Data is served from a global edge network for fast response times.
       
       ## Pricing
       
