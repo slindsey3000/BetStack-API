@@ -2,11 +2,13 @@ class UserMailer < ApplicationMailer
   default from: 'BetStack Support <support@betstack.dev>'
   
   # API Key confirmation email
-  def api_key_created(user)
+  def api_key_created(user, plain_password = nil)
     @user = user
     @api_key = user.api_key
+    @password = plain_password || user.plain_password
     @edge_url = 'https://api.betstack.dev'
     @docs_url = 'https://api.betstack.dev/docs'
+    @account_url = 'https://api.betstack.dev/account'
     
     mail(
       to: @user.email,
@@ -45,6 +47,28 @@ class UserMailer < ApplicationMailer
     mail(
       to: @user.email,
       subject: 'Your BetStack Account Has Been Deleted'
+    )
+  end
+  
+  # Password reset email
+  def password_reset(user)
+    @user = user
+    @reset_url = "https://api.betstack.dev/reset-password?token=#{user.password_reset_token}"
+    
+    mail(
+      to: @user.email,
+      subject: 'Reset Your BetStack Password'
+    )
+  end
+  
+  # Password changed confirmation
+  def password_changed(user)
+    @user = user
+    @account_url = 'https://api.betstack.dev/account'
+    
+    mail(
+      to: @user.email,
+      subject: 'Your BetStack Password Has Been Changed'
     )
   end
   

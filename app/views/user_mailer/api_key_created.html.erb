@@ -32,7 +32,12 @@
         <%= @api_key %>
       </div>
       
-      <p><strong>⚠️ Keep this key secure!</strong> Treat it like a password. Anyone with this key can access the API under your account.</p>
+      <div class="api-key-box" style="border-color: #2196F3;">
+        <strong>Your Account Password:</strong><br>
+        <%= @password %>
+      </div>
+      
+      <p><strong>⚠️ Keep these secure!</strong> You'll need your password to access your account at <a href="<%= @account_url %>"><%= @account_url %></a>. You can change your password anytime from your account page.</p>
       
       <div class="highlight-box">
         <strong>⚡ BetStack Odds, Scores & Sports Data</strong><br>

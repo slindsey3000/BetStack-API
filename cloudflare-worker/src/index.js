@@ -24,6 +24,8 @@ export default {
       '/docs',          // API documentation
       '/account',       // Account management
       '/usage',         // Usage dashboard
+      '/forgot-password', // Password reset request
+      '/reset-password',  // Password reset form
       '/sitemap.xml',   // SEO sitemap
       '/llms.txt',      // AI crawler file
       '/robots.txt',    // Search engine robots
@@ -33,7 +35,9 @@ export default {
     // Check if this is a public web page or account action
     const isPublicPage = publicPaths.includes(pathname) || 
                          pathname.startsWith('/account/') ||
-                         pathname.startsWith('/assets/');
+                         pathname.startsWith('/assets/') ||
+                         pathname.startsWith('/forgot-password') ||
+                         pathname.startsWith('/reset-password');
     
     // Public pages: proxy directly to origin without auth
     if (isPublicPage) {

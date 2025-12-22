@@ -17,9 +17,17 @@ Rails.application.routes.draw do
   get "docs" => "pages#docs", as: :docs
   get "account" => "pages#account", as: :account
   post "account/login" => "pages#login", as: :account_login
+  post "account/logout" => "pages#logout", as: :account_logout
   post "account/update" => "pages#update_profile", as: :account_update
+  post "account/change-password" => "pages#change_password", as: :account_change_password
   post "account/regenerate_key" => "pages#regenerate_key", as: :account_regenerate_key
   post "account/delete" => "pages#delete_account", as: :account_delete
+  
+  # Password reset
+  get "forgot-password" => "pages#forgot_password", as: :forgot_password
+  post "forgot-password" => "pages#send_password_reset", as: :send_password_reset
+  get "reset-password" => "pages#reset_password", as: :reset_password
+  post "reset-password" => "pages#process_password_reset", as: :process_password_reset
   
   # SEO files (served dynamically)
   get "sitemap.xml" => "seo#sitemap", defaults: { format: :xml }

@@ -1,15 +1,23 @@
 class User < ApplicationRecord
+  # Password handling with bcrypt
+  has_secure_password
+  
+  # Store the plain password temporarily for emails (not persisted)
+  attr_accessor :plain_password
+  
   # Validations
   validates :api_key, presence: true, uniqueness: true
   validates :email, presence: true, uniqueness: true
   validates :phone_number, presence: true, uniqueness: true
   validates :start_time, :end_time, presence: true
   validates :end_time, comparison: { greater_than: :start_time }, if: -> { start_time.present? && end_time.present? }
+  validates :password, length: { minimum: 6 }, allow_nil: true
 
   # Callbacks
   before_validation :normalize_phone_number, on: :create
   before_validation :normalize_email, on: :create
   before_validation :generate_api_key, on: :create
+  before_validation :generate_password, on: :create
   before_validation :set_default_times, on: :create
 
   # Scopes
@@ -42,7 +50,7 @@ class User < ApplicationRecord
     "#{local_part}@#{domain}"
   end
   
-  # Reactivate a deleted user with a new API key
+  # Reactivate a deleted user with a new API key and password
   def reactivate!(new_phone: nil)
     self.deleted_at = nil
     self.active = true
@@ -56,6 +64,29 @@ class User < ApplicationRecord
       break unless User.where.not(id: id).exists?(api_key: api_key)
     end
     
+    # Generate new password
+    self.plain_password = generate_random_password
+    self.password = plain_password
+    
+    save!
+  end
+  
+  # Generate password reset token
+  def generate_password_reset_token!
+    self.password_reset_token = SecureRandom.urlsafe_base64(32)
+    self.password_reset_sent_at = Time.current
+    save!
+  end
+  
+  # Check if password reset token is valid (expires after 2 hours)
+  def password_reset_valid?
+    password_reset_sent_at.present? && password_reset_sent_at > 2.hours.ago
+  end
+  
+  # Clear password reset token
+  def clear_password_reset!
+    self.password_reset_token = nil
+    self.password_reset_sent_at = nil
     save!
   end
 
@@ -102,6 +133,20 @@ class User < ApplicationRecord
       self.api_key = SecureRandom.hex(32)
       break unless User.exists?(api_key: api_key)
     end
+  end
+  
+  # Generate random 8-character alphanumeric password
+  def generate_password
+    return if password_digest.present?
+    
+    self.plain_password = generate_random_password
+    self.password = plain_password
+  end
+  
+  # Generate a random 8-character alphanumeric password
+  def generate_random_password
+    chars = ('A'..'Z').to_a + ('a'..'z').to_a + ('0'..'9').to_a
+    8.times.map { chars.sample }.join
   end
 
   # Set default times (now and 100 years from now)

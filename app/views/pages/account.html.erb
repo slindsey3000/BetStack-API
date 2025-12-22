@@ -1,5 +1,5 @@
 <% content_for :title, "Account Management - BetStack API" %>
-<% content_for :meta_description, "Manage your BetStack API account. Update your profile, regenerate your API key, or delete your account." %>
+<% content_for :meta_description, "Manage your BetStack API account. Update your profile, change your password, regenerate your API key, or delete your account." %>
 <% content_for :canonical_url, "https://api.betstack.dev/account" %>
 
 <section style="padding: 3rem 0;">
@@ -31,15 +31,19 @@
           </div>
           
           <div class="form-group">
-            <label for="api_key" class="form-label">API Key</label>
-            <input type="password" id="api_key" name="api_key" class="form-input" placeholder="Your API key (from welcome email)" required>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">Your API key was sent to your email when you signed up.</p>
+            <label for="password" class="form-label">Password</label>
+            <input type="password" id="password" name="password" class="form-input" placeholder="Your password (from welcome email)" required>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">Your password was sent to your email when you signed up.</p>
           </div>
           
           <button type="submit" class="btn btn-primary" style="width: 100%;">
             Sign In
           </button>
         <% end %>
+        
+        <div style="text-align: center; margin-top: 1rem;">
+          <a href="<%= forgot_password_path %>" style="color: var(--primary-light); font-size: 0.9rem;">Forgot your password?</a>
+        </div>
         
         <div style="text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
           <p style="color: var(--text-muted); font-size: 0.9rem;">Don't have an API key?</p>
@@ -103,6 +107,37 @@
           <% end %>
         </div>
         
+        <!-- Change Password -->
+        <div class="card-static">
+          <h3 style="font-size: 1rem; margin-bottom: 1.25rem;">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align: middle; margin-right: 0.5rem;">
+              <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+            </svg>
+            Change Password
+          </h3>
+          
+          <%= form_tag(account_change_password_path, method: :post) do %>
+            <div class="form-group">
+              <label for="current_password" class="form-label">Current Password</label>
+              <input type="password" id="current_password" name="current_password" class="form-input" placeholder="Enter current password" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="new_password" class="form-label">New Password</label>
+              <input type="password" id="new_password" name="new_password" class="form-input" placeholder="At least 6 characters" required minlength="6">
+            </div>
+            
+            <div class="form-group">
+              <label for="confirm_password" class="form-label">Confirm New Password</label>
+              <input type="password" id="confirm_password" name="confirm_password" class="form-input" placeholder="Re-enter new password" required>
+            </div>
+            
+            <button type="submit" class="btn btn-secondary" style="width: 100%;">
+              Change Password
+            </button>
+          <% end %>
+        </div>
+        
         <!-- Regenerate API Key -->
         <div class="card-static">
           <h3 style="font-size: 1rem; margin-bottom: 0.75rem;">
@@ -145,10 +180,11 @@
         
         <!-- Sign Out -->
         <div style="text-align: center;">
-          <a href="/account" class="btn btn-secondary btn-sm">Sign Out</a>
+          <%= form_tag(account_logout_path, method: :post, style: "display: inline;") do %>
+            <button type="submit" class="btn btn-secondary btn-sm">Sign Out</button>
+          <% end %>
         </div>
       </div>
     <% end %>
   </div>
 </section>
-

@@ -31,12 +31,13 @@ class Api::V1::UsersController < Api::V1::BaseController
     deleted_user = User.find_deleted_by_email(params[:email])
     
     if deleted_user
-      # Reactivate the deleted user with a new API key
+      # Reactivate the deleted user with a new API key and password
       deleted_user.reactivate!(new_phone: params[:phone_number])
+      plain_password = deleted_user.plain_password # Capture before it's cleared
       deleted_user.update(api_reason: params[:api_reason]) if params[:api_reason].present?
       
-      # Send welcome email with new API key
-      UserMailer.api_key_created(deleted_user).deliver_later
+      # Send welcome email with new API key and password
+      UserMailer.api_key_created(deleted_user, plain_password).deliver_later
       
       return render json: {
         success: true,
@@ -54,8 +55,11 @@ class Api::V1::UsersController < Api::V1::BaseController
     user.active = true
 
     if user.save
-      # Send welcome email with API key (asynchronously)
-      UserMailer.api_key_created(user).deliver_later
+      # Capture plain password before it's cleared from memory
+      plain_password = user.plain_password
+      
+      # Send welcome email with API key and password (asynchronously)
+      UserMailer.api_key_created(user, plain_password).deliver_later
       
       # Return success without API key - user must check email
       render json: {
