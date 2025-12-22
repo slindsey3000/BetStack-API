@@ -1,5 +1,5 @@
 <% content_for :title, "API Documentation - BetStack Sports Betting API" %>
-<% content_for :meta_description, "Complete documentation for the BetStack Sports Betting API. Learn how to fetch sports odds, live scores, events, and betting lines. Free RESTful API with JSON responses for NFL, NBA, MLB, NHL and more." %>
+<% content_for :meta_description, "Complete documentation for the BetStack Sports Betting API. Learn how to fetch consensus sports odds, up-to-the-minute scores, events, and betting lines. Free RESTful API with JSON responses for NFL, NBA, MLB, NHL and more." %>
 <% content_for :meta_keywords, "sports betting API documentation, odds API docs, sports data API reference, betting API endpoints, how to get sports odds API, free betting data API tutorial" %>
 <% content_for :canonical_url, "https://api.betstack.dev/docs" %>
 
@@ -218,7 +218,6 @@
       <li class="docs-nav-section">
         <div class="docs-nav-title">Betting Data</div>
         <a href="#lines">Lines / Odds</a>
-        <a href="#bookmakers">Bookmakers</a>
       </li>
       <li class="docs-nav-section">
         <div class="docs-nav-title">Resources</div>
@@ -234,7 +233,7 @@
     <!-- Overview -->
     <section id="overview">
       <h2>Overview</h2>
-      <p style="margin-bottom: 1rem;">The BetStack API provides programmatic access to sports betting odds, live scores, and comprehensive sports data. Our RESTful API returns JSON responses and supports all major North American and international sports leagues.</p>
+      <p style="margin-bottom: 1rem;">The BetStack API provides programmatic access to consensus sports betting odds, up-to-the-minute scores, and comprehensive sports data. Our RESTful API returns JSON responses and supports all major North American and international sports leagues.</p>
       
       <div class="card-static" style="margin-top: 1.5rem;">
         <h3 style="font-size: 1rem; margin-bottom: 1rem;">Quick Start</h3>
@@ -277,7 +276,7 @@
     <!-- Rate Limits -->
     <section id="rate-limits">
       <h2>Rate Limits</h2>
-      <p style="margin-bottom: 1rem;">The free tier includes generous rate limits suitable for most applications:</p>
+      <p style="margin-bottom: 1rem;">The free tier includes generous rate limits that are <strong>perfect for most apps and projects</strong>:</p>
       
       <table class="param-table">
         <thead>
@@ -291,7 +290,7 @@
           <tr>
             <td><span class="badge badge-free">Free</span></td>
             <td>1 request per 60 seconds</td>
-            <td style="color: var(--text-muted);">Data refreshes every 60 seconds on edge</td>
+            <td style="color: var(--text-muted);">Data refreshes every 60 seconds on edge — perfect for most apps</td>
           </tr>
           <tr>
             <td><span class="badge" style="background: rgba(6, 182, 212, 0.2); color: var(--secondary);">Enterprise</span></td>
@@ -370,10 +369,14 @@
             </tbody>
           </table>
           
-          <pre style="margin-top: 1rem;"><code><span class="code-comment">// Available Leagues</span>
-<% @leagues.each do |league| %>
-<span class="code-string">"<%= league.key %>"</span> <span class="code-comment">// <%= league.name %></span>
-<% end %></code></pre>
+          <pre style="margin-top: 1rem;"><code><span class="code-comment">// Example Leagues (6 major American sports)</span>
+<span class="code-string">"americanfootball_nfl"</span> <span class="code-comment">// NFL</span>
+<span class="code-string">"basketball_nba"</span> <span class="code-comment">// NBA</span>
+<span class="code-string">"baseball_mlb"</span> <span class="code-comment">// MLB</span>
+<span class="code-string">"icehockey_nhl"</span> <span class="code-comment">// NHL</span>
+<span class="code-string">"americanfootball_ncaaf"</span> <span class="code-comment">// NCAA Football</span>
+<span class="code-string">"basketball_ncaab"</span> <span class="code-comment">// NCAA Basketball</span>
+<span class="code-comment">// ... and 100+ more leagues worldwide</span></code></pre>
         </div>
       </div>
     </section>
@@ -510,7 +513,7 @@
     <!-- Lines -->
     <section id="lines">
       <h2>Lines / Odds</h2>
-      <p style="margin-bottom: 1.5rem;">Betting lines include moneylines, point spreads, and totals from multiple sportsbooks.</p>
+      <p style="margin-bottom: 1.5rem;">Betting lines include moneylines, point spreads, and totals aggregated from all the top sportsbooks. Our consensus odds are highly accurate and reliable.</p>
       
       <div class="endpoint-card">
         <div class="endpoint-header">
@@ -558,27 +561,6 @@
   <span class="code-property">"under_line"</span>: <span class="code-number">-110</span>,
   <span class="code-property">"last_updated"</span>: <span class="code-string">"2025-01-05T12:00:00Z"</span>
 }</code></pre>
-        </div>
-      </div>
-    </section>
-
-    <!-- Bookmakers -->
-    <section id="bookmakers">
-      <h2>Bookmakers</h2>
-      <p style="margin-bottom: 1.5rem;">List of sportsbooks that provide betting lines through our API.</p>
-      
-      <div class="endpoint-card">
-        <div class="endpoint-header">
-          <span class="endpoint-method badge-get">GET</span>
-          <span class="endpoint-path">/api/v1/bookmakers</span>
-        </div>
-        <div class="endpoint-body">
-          <p class="endpoint-desc">Returns all available sportsbooks.</p>
-          
-          <pre style="margin-top: 1rem;"><code><span class="code-comment">// Available Bookmakers</span>
-<% @bookmakers.each do |book| %>
-<span class="code-string">"<%= book.key %>"</span> <span class="code-comment">// <%= book.name %></span>
-<% end %></code></pre>
         </div>
       </div>
     </section>

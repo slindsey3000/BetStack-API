@@ -21,17 +21,17 @@ class SeoController < ActionController::Base
     <<~LLMS
       # BetStack Sports Betting API
       
-      > Free API for sports betting odds, live scores, and real-time sports data
+      > Free API for consensus sports betting odds and up-to-the-minute scores
       
       ## About BetStack
       
       BetStack provides a free REST API for accessing sports betting data including:
-      - Betting odds from major sportsbooks (DraftKings, FanDuel, BetMGM, etc.)
-      - Live and final scores for games
+      - Consensus betting odds aggregated from all the top sportsbooks
+      - Up-to-the-minute scores for games in progress and final scores
       - Event schedules and team information
       - Coverage for NFL, NBA, MLB, NHL, NCAA, and more
       
-      The API is built by BetStack (https://betstack.dev), a sports betting software development company with 15 years of industry expertise based in Philadelphia.
+      The API is built by BetStack (https://betstack.dev), a sports and recreation software development company with 15 years of industry expertise based in Philadelphia. We can build ANY app in the sports, betting, or recreation activity space incredibly fast.
       
       ## API Access
       
@@ -43,12 +43,11 @@ class SeoController < ActionController::Base
       ## Key Endpoints
       
       - GET /api/v1/sports - List all sports
-      - GET /api/v1/leagues - List all leagues
+      - GET /api/v1/leagues - List all leagues (NFL, NBA, MLB, NHL, NCAA, and 100+ more)
       - GET /api/v1/events - Get events with scores and optional betting lines
       - GET /api/v1/events?league=americanfootball_nfl - Filter by league
       - GET /api/v1/results - Get game scores and results
-      - GET /api/v1/lines - Get betting odds from sportsbooks
-      - GET /api/v1/bookmakers - List available sportsbooks
+      - GET /api/v1/lines - Get consensus betting odds
       - GET /api/v1/teams - List teams by league
       
       ## Response Format
@@ -57,12 +56,12 @@ class SeoController < ActionController::Base
       
       ## Rate Limits
       
-      Free tier: 1 request per 60 seconds
+      Free tier: 1 request per 60 seconds - perfect for most apps and projects.
       Data is cached on a global edge network for fast response times.
       
       ## Pricing
       
-      Free forever for most applications. Contact us for enterprise real-time data needs.
+      Free forever for most applications. Contact us for enterprise up-to-the-second data needs.
       
       ## Documentation
       
@@ -70,7 +69,7 @@ class SeoController < ActionController::Base
       
       ## Development Services
       
-      BetStack also offers custom sports betting app development. Visit https://betstack.dev for more information.
+      BetStack builds custom sports and recreation apps incredibly fast. 15 years of experience. Visit https://betstack.dev for more information.
       
       ## Contact
       
