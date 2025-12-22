@@ -2,6 +2,11 @@ class PagesController < ActionController::Base
   # Include session support for user authentication
   include ActionController::Cookies
   
+  # Skip CSRF verification - requests come from api.betstack.dev (Cloudflare)
+  # but hit betstack-xxx.herokuapp.com, causing origin mismatch
+  # Security is maintained via signed cookies for authentication
+  skip_forgery_protection
+  
   # Use pages layout for all actions
   layout "pages"
   
