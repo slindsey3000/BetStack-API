@@ -384,7 +384,11 @@
     <!-- Events -->
     <section id="events">
       <h2>Events</h2>
-      <p style="margin-bottom: 1.5rem;">Events represent individual games or matches. Each event includes team information, scheduled time, and can include results and betting lines.</p>
+      <p style="margin-bottom: 1rem;">Events represent individual games or matches. Each event includes team information, scheduled time, results, and betting lines.</p>
+      
+      <div style="background: linear-gradient(135deg, rgba(39, 174, 96, 0.1), rgba(52, 152, 219, 0.1)); border-left: 4px solid var(--primary); padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; margin-bottom: 1.5rem;">
+        <p style="margin: 0; font-size: 0.95rem;"><strong>💡 Pro tip:</strong> If you're persisting data to your own database, this endpoint may be the only one you need. It provides the complete picture of each event — from when odds are first released, through score updates every minute during the game, to the final score when the game ends. One call gives you everything. BetStack enables fast, efficient app building.</p>
+      </div>
       
       <div class="endpoint-card">
         <div class="endpoint-header">
