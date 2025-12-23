@@ -44,17 +44,16 @@ class PagesController < ActionController::Base
     
     if @user && @user.authenticate(password)
       @logged_in = true
-      # Set cookie - works for both api.betstack.dev and direct Heroku access
-      cookie_domain = Rails.env.production? ? "api.betstack.dev" : nil
+      # Set cookie without explicit domain - browser will use current domain (api.betstack.dev via Cloudflare)
       cookies.signed[:user_id] = { 
         value: @user.id, 
         expires: 1.hour.from_now,
         httponly: true,
-        same_site: :lax,
-        path: "/",
-        domain: cookie_domain
+        same_site: :none,
+        secure: true,
+        path: "/"
       }
-      Rails.logger.info "🔐 LOGIN: Set cookie for user #{@user.id} domain=#{cookie_domain}"
+      Rails.logger.info "🔐 LOGIN: Set cookie for user #{@user.id}"
       @message_success = "Welcome back!"
       render :account
     else
@@ -68,21 +67,19 @@ class PagesController < ActionController::Base
   def logout
     Rails.logger.info "🔐 LOGOUT: Starting logout for user_id cookie: #{cookies.signed[:user_id]}"
     
-    cookie_domain = Rails.env.production? ? "api.betstack.dev" : nil
-    
-    # Clear the cookie by setting empty value with past expiration
+    # Clear the cookie - no explicit domain, browser uses current domain
     cookies.signed[:user_id] = { 
       value: "", 
       expires: 1.year.ago,
       httponly: true,
-      same_site: :lax,
-      path: "/",
-      domain: cookie_domain
+      same_site: :none,
+      secure: true,
+      path: "/"
     }
-    # Also explicitly delete with domain
-    cookies.delete(:user_id, path: "/", domain: cookie_domain)
+    # Also explicitly delete
+    cookies.delete(:user_id, path: "/")
     
-    Rails.logger.info "🔐 LOGOUT: Cookie cleared for domain=#{cookie_domain}, redirecting"
+    Rails.logger.info "🔐 LOGOUT: Cookie cleared, redirecting"
     
     # Use relative redirect - browser will stay on api.betstack.dev
     redirect_to "/?success=You+have+been+logged+out."
