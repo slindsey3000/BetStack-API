@@ -227,6 +227,7 @@ export default {
 };
 
 async function proxyToOrigin(request, env, corsHeaders) {
+  const originalUrl = new URL(request.url);
   const originUrl = new URL(request.url);
   originUrl.hostname = 'betstack-45ae7ff725cd.herokuapp.com';
   originUrl.protocol = 'https:';
@@ -238,21 +239,71 @@ async function proxyToOrigin(request, env, corsHeaders) {
     body = await request.arrayBuffer();
   }
   
+  // Copy headers but preserve original host for cookie handling
+  const headers = new Headers(request.headers);
+  // Tell Rails about the original host for proper URL generation
+  headers.set('X-Forwarded-Host', originalUrl.hostname);
+  headers.set('X-Forwarded-Proto', 'https');
+  
   const originRequest = new Request(originUrl, {
     method: request.method,
-    headers: request.headers,
+    headers: headers,
     body: body,
-    redirect: 'follow'  // Follow redirects automatically
+    redirect: 'manual'  // Handle redirects manually so we can rewrite them
   });
   
   try {
     const response = await fetch(originRequest);
     
-    // Clone response and add CORS headers
+    // Handle redirects - rewrite Location header to use original domain
+    if (response.status >= 300 && response.status < 400) {
+      const location = response.headers.get('Location');
+      if (location) {
+        const locationUrl = new URL(location, originUrl);
+        // Rewrite Heroku domain back to original domain
+        if (locationUrl.hostname === 'betstack-45ae7ff725cd.herokuapp.com') {
+          locationUrl.hostname = originalUrl.hostname;
+        }
+        
+        const redirectHeaders = new Headers(response.headers);
+        redirectHeaders.set('Location', locationUrl.toString());
+        
+        // Rewrite Set-Cookie domain if present
+        const cookies = response.headers.getAll ? response.headers.getAll('Set-Cookie') : [];
+        if (response.headers.get('Set-Cookie')) {
+          const cookie = response.headers.get('Set-Cookie');
+          // Remove any domain setting - let browser use request domain
+          const fixedCookie = cookie.replace(/;\s*domain=[^;]*/gi, '');
+          redirectHeaders.set('Set-Cookie', fixedCookie);
+        }
+        
+        Object.entries(corsHeaders).forEach(([key, value]) => {
+          redirectHeaders.set(key, value);
+        });
+        
+        return new Response(null, {
+          status: response.status,
+          statusText: response.statusText,
+          headers: redirectHeaders
+        });
+      }
+    }
+    
+    // Clone response and modify headers
+    const responseHeaders = new Headers(response.headers);
+    
+    // Rewrite Set-Cookie to remove Heroku domain
+    const setCookie = response.headers.get('Set-Cookie');
+    if (setCookie) {
+      // Remove domain= from cookies so browser uses request domain (api.betstack.dev)
+      const fixedCookie = setCookie.replace(/;\s*domain=[^;]*/gi, '');
+      responseHeaders.set('Set-Cookie', fixedCookie);
+    }
+    
     const modifiedResponse = new Response(response.body, {
       status: response.status,
       statusText: response.statusText,
-      headers: new Headers(response.headers)
+      headers: responseHeaders
     });
     
     // Add CORS headers
