@@ -84,12 +84,8 @@ class PagesController < ActionController::Base
     
     Rails.logger.info "🔐 LOGOUT: Cookie cleared for domain=#{cookie_domain}, redirecting"
     
-    # Redirect to the public domain, not Heroku
-    if Rails.env.production?
-      redirect_to "https://api.betstack.dev/?success=You+have+been+logged+out.", allow_other_host: true
-    else
-      redirect_to root_path(success: "You have been logged out.")
-    end
+    # Use relative redirect - browser will stay on api.betstack.dev
+    redirect_to "/?success=You+have+been+logged+out."
   end
   
   # GET /forgot-password - Forgot password form
