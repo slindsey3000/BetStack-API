@@ -44,14 +44,17 @@ class PagesController < ActionController::Base
     
     if @user && @user.authenticate(password)
       @logged_in = true
+      # Set cookie - works for both api.betstack.dev and direct Heroku access
+      cookie_domain = Rails.env.production? ? "api.betstack.dev" : nil
       cookies.signed[:user_id] = { 
         value: @user.id, 
         expires: 1.hour.from_now,
         httponly: true,
         same_site: :lax,
-        path: "/"
+        path: "/",
+        domain: cookie_domain
       }
-      Rails.logger.info "🔐 LOGIN: Set cookie for user #{@user.id}"
+      Rails.logger.info "🔐 LOGIN: Set cookie for user #{@user.id} domain=#{cookie_domain}"
       @message_success = "Welcome back!"
       render :account
     else
@@ -65,19 +68,28 @@ class PagesController < ActionController::Base
   def logout
     Rails.logger.info "🔐 LOGOUT: Starting logout for user_id cookie: #{cookies.signed[:user_id]}"
     
+    cookie_domain = Rails.env.production? ? "api.betstack.dev" : nil
+    
     # Clear the cookie by setting empty value with past expiration
     cookies.signed[:user_id] = { 
       value: "", 
       expires: 1.year.ago,
       httponly: true,
       same_site: :lax,
-      path: "/"
+      path: "/",
+      domain: cookie_domain
     }
-    # Also explicitly delete
-    cookies.delete(:user_id, path: "/")
+    # Also explicitly delete with domain
+    cookies.delete(:user_id, path: "/", domain: cookie_domain)
     
-    Rails.logger.info "🔐 LOGOUT: Cookie cleared, redirecting to root"
-    redirect_to root_path(success: "You have been logged out."), allow_other_host: true
+    Rails.logger.info "🔐 LOGOUT: Cookie cleared for domain=#{cookie_domain}, redirecting"
+    
+    # Redirect to the public domain, not Heroku
+    if Rails.env.production?
+      redirect_to "https://api.betstack.dev/?success=You+have+been+logged+out.", allow_other_host: true
+    else
+      redirect_to root_path(success: "You have been logged out.")
+    end
   end
   
   # GET /forgot-password - Forgot password form
