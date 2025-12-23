@@ -82,11 +82,18 @@ class PagesController < ActionController::Base
   # GET /reset-password - Reset password form (with token)
   def reset_password
     @token = params[:token]
+    
+    # If no token provided, redirect to forgot password
+    if @token.blank?
+      redirect_to forgot_password_path(error: "No reset token provided. Please request a password reset.") and return
+    end
+    
     @user = User.find_by(password_reset_token: @token)
     
     if @user.nil? || !@user.password_reset_valid?
-      redirect_to forgot_password_path(error: "This password reset link is invalid or has expired. Please request a new one.")
+      redirect_to forgot_password_path(error: "This password reset link is invalid or has expired. Please request a new one.") and return
     end
+    # If we get here, render the reset_password form
   end
   
   # POST /reset-password - Process password reset
