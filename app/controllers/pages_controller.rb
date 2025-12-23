@@ -71,7 +71,7 @@ class PagesController < ActionController::Base
     @user = User.active.find_by(email: email)
     
     if @user
-      @user.generate_password_reset_token!
+      @user.generate_reset_token!
       UserMailer.password_reset(@user).deliver_later
     end
     
@@ -88,9 +88,9 @@ class PagesController < ActionController::Base
       redirect_to forgot_password_path(error: "No reset token provided. Please request a password reset.") and return
     end
     
-    @user = User.find_by(password_reset_token: @token)
+    @user = User.find_by(reset_token: @token)
     
-    if @user.nil? || !@user.password_reset_valid?
+    if @user.nil? || !@user.reset_token_valid?
       redirect_to forgot_password_path(error: "This password reset link is invalid or has expired. Please request a new one.") and return
     end
     # If we get here, render the reset_password form
@@ -99,9 +99,9 @@ class PagesController < ActionController::Base
   # POST /reset-password - Process password reset
   def process_password_reset
     @token = params[:token]
-    @user = User.find_by(password_reset_token: @token)
+    @user = User.find_by(reset_token: @token)
     
-    if @user.nil? || !@user.password_reset_valid?
+    if @user.nil? || !@user.reset_token_valid?
       redirect_to forgot_password_path(error: "This password reset link is invalid or has expired. Please request a new one.")
       return
     end
@@ -119,7 +119,7 @@ class PagesController < ActionController::Base
     end
     
     @user.password = params[:password]
-    @user.clear_password_reset!
+    @user.clear_reset_token!
     
     UserMailer.password_changed(@user).deliver_later
     

@@ -53,7 +53,7 @@ class UserMailer < ApplicationMailer
   # Password reset email
   def password_reset(user)
     @user = user
-    @reset_url = "https://api.betstack.dev/reset-password?token=#{user.password_reset_token}"
+    @reset_url = "https://api.betstack.dev/reset-password?token=#{user.reset_token}"
     
     mail(
       to: @user.email,

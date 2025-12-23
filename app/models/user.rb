@@ -72,21 +72,23 @@ class User < ApplicationRecord
   end
   
   # Generate password reset token
-  def generate_password_reset_token!
-    self.password_reset_token = SecureRandom.urlsafe_base64(32)
-    self.password_reset_sent_at = Time.current
+  # Note: Column is named reset_token to avoid conflict with Rails 7.1+ has_secure_password
+  # which automatically adds a password_reset_token method
+  def generate_reset_token!
+    self.reset_token = SecureRandom.urlsafe_base64(32)
+    self.reset_token_sent_at = Time.current
     save!
   end
   
   # Check if password reset token is valid (expires after 2 hours)
-  def password_reset_valid?
-    password_reset_sent_at.present? && password_reset_sent_at > 2.hours.ago
+  def reset_token_valid?
+    reset_token_sent_at.present? && reset_token_sent_at > 2.hours.ago
   end
   
   # Clear password reset token
-  def clear_password_reset!
-    self.password_reset_token = nil
-    self.password_reset_sent_at = nil
+  def clear_reset_token!
+    self.reset_token = nil
+    self.reset_token_sent_at = nil
     save!
   end
 
