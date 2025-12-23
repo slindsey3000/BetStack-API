@@ -56,6 +56,8 @@ class PagesController < ActionController::Base
   
   # POST /account/logout - Log out
   def logout
+    # Expire the cookie immediately by setting it to nil with past expiration
+    cookies.signed[:user_id] = { value: nil, expires: 1.day.ago }
     cookies.delete(:user_id)
     redirect_to root_path(success: "You have been logged out.")
   end
