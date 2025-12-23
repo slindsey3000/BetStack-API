@@ -231,10 +231,18 @@ async function proxyToOrigin(request, env, corsHeaders) {
   originUrl.hostname = 'betstack-45ae7ff725cd.herokuapp.com';
   originUrl.protocol = 'https:';
   
+  // Buffer the request body to handle redirects properly
+  // Streaming bodies can't be retransmitted on redirects
+  let body = null;
+  if (request.method !== 'GET' && request.method !== 'HEAD') {
+    body = await request.arrayBuffer();
+  }
+  
   const originRequest = new Request(originUrl, {
     method: request.method,
     headers: request.headers,
-    body: request.body,
+    body: body,
+    redirect: 'follow'  // Follow redirects automatically
   });
   
   try {
