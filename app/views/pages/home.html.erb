@@ -228,16 +228,16 @@
     <h2 style="margin-bottom: 1rem;">Simple, Transparent <span class="text-gradient">Pricing</span></h2>
     <p style="max-width: 600px; margin: 0 auto 3rem;">No hidden fees. No credit card required. Start building immediately.</p>
     
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 800px; margin: 0 auto;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 800px; margin: 0 auto; align-items: stretch;">
       <!-- Free Tier -->
-      <div class="card-static" style="border: 2px solid var(--primary); position: relative;">
+      <div class="card-static" style="border: 2px solid var(--primary); position: relative; display: flex; flex-direction: column;">
         <div style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%);">
           <span class="badge badge-free" style="background: var(--primary); color: white;">Most Popular</span>
         </div>
         <h3 style="margin-bottom: 0.5rem;">Free Forever</h3>
-        <div style="font-size: 3rem; font-weight: 700; color: var(--primary-light); margin: 1rem 0;">$0</div>
-        <p style="margin-bottom: 1.5rem; color: var(--text-muted);">Perfect for most projects and production apps in the Apple App Store and Google Play Store</p>
-        <ul style="list-style: none; text-align: left; margin-bottom: 2rem;">
+        <div style="font-size: 2.5rem; font-weight: 700; color: var(--primary-light); margin: 1rem 0; min-height: 60px; display: flex; align-items: center; justify-content: center;">$0</div>
+        <p style="margin-bottom: 1.5rem; color: var(--text-muted); min-height: 48px;">Perfect for most projects and production apps in the Apple App Store and Google Play Store</p>
+        <ul style="list-style: none; text-align: left; flex: 1;">
           <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.5rem;">
             <svg width="16" height="16" fill="var(--success)" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
             All major sports leagues
@@ -259,15 +259,15 @@
             60-second refresh rate
           </li>
         </ul>
-        <a href="https://betstack.dev/#api" class="btn btn-primary" style="width: 100%;">Get Your Free API Key</a>
+        <a href="https://betstack.dev/#api" class="btn btn-primary" style="width: 100%; margin-top: 2rem;">Get Your Free API Key</a>
       </div>
       
       <!-- Enterprise -->
-      <div class="card-static">
+      <div class="card-static" style="display: flex; flex-direction: column;">
         <h3 style="margin-bottom: 0.5rem;">Enterprise</h3>
-        <div style="font-size: 2rem; font-weight: 700; color: var(--text-primary); margin: 1rem 0;">Contact Us</div>
-        <p style="margin-bottom: 1.5rem; color: var(--text-muted);">For real-time data and custom solutions</p>
-        <ul style="list-style: none; text-align: left; margin-bottom: 2rem;">
+        <div style="font-size: 2.5rem; font-weight: 700; color: var(--text-primary); margin: 1rem 0; min-height: 60px; display: flex; align-items: center; justify-content: center;">Contact Us</div>
+        <p style="margin-bottom: 1.5rem; color: var(--text-muted); min-height: 48px;">For real-time data and custom solutions</p>
+        <ul style="list-style: none; text-align: left; flex: 1;">
           <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.5rem;">
             <svg width="16" height="16" fill="var(--secondary)" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
             Everything in Free
@@ -289,7 +289,7 @@
             Custom integrations
           </li>
         </ul>
-        <a href="https://betstack.dev/#contact" class="btn btn-secondary" style="width: 100%;">Contact Sales</a>
+        <a href="https://betstack.dev/#contact" class="btn btn-secondary" style="width: 100%; margin-top: 2rem;">Contact Sales</a>
       </div>
     </div>
   </div>
