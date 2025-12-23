@@ -38,6 +38,12 @@
 </script>
 <% end %>
 
+<% if @message_success %>
+  <div class="container" style="padding-top: 1rem;">
+    <div class="alert alert-success"><%= @message_success %></div>
+  </div>
+<% end %>
+
 <!-- Hero Section -->
 <section class="hero" style="padding: 6rem 0 4rem; background: linear-gradient(180deg, rgba(124, 58, 237, 0.1) 0%, transparent 100%);">
   <div class="container text-center">

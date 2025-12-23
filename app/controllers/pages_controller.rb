@@ -16,6 +16,7 @@ class PagesController < ActionController::Base
     @leagues_count = League.count
     @events_count = Event.count
     @bookmakers_count = Bookmaker.count
+    @message_success = params[:success]
   end
   
   # GET /docs - API Documentation
@@ -56,7 +57,7 @@ class PagesController < ActionController::Base
   # POST /account/logout - Log out
   def logout
     cookies.delete(:user_id)
-    redirect_to account_path(success: "You have been logged out.")
+    redirect_to root_path(success: "You have been logged out.")
   end
   
   # GET /forgot-password - Forgot password form
