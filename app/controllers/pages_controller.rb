@@ -44,7 +44,12 @@ class PagesController < ActionController::Base
     
     if @user && @user.authenticate(password)
       @logged_in = true
-      cookies.signed[:user_id] = { value: @user.id, expires: 1.hour.from_now }
+      cookies.signed[:user_id] = { 
+        value: @user.id, 
+        expires: 1.hour.from_now,
+        httponly: true,
+        same_site: :lax
+      }
       @message_success = "Welcome back!"
       render :account
     else
@@ -56,8 +61,15 @@ class PagesController < ActionController::Base
   
   # POST /account/logout - Log out
   def logout
-    # Expire the cookie immediately by setting it to nil with past expiration
-    cookies.signed[:user_id] = { value: nil, expires: 1.day.ago }
+    # Clear the cookie by setting empty value with past expiration
+    cookies.signed[:user_id] = { 
+      value: "", 
+      expires: 1.year.ago,
+      httponly: true,
+      same_site: :lax
+    }
+    # Also explicitly delete with all possible paths
+    cookies.delete(:user_id, path: "/")
     cookies.delete(:user_id)
     redirect_to root_path(success: "You have been logged out.")
   end
@@ -228,6 +240,8 @@ class PagesController < ActionController::Base
     end
     
     if @user.save
+      # Immediately sync new API key to Cloudflare KV
+      SyncSingleApiKeyJob.perform_later(@user.api_key, @user.email)
       # Send email with new key
       UserMailer.api_key_regenerated(@user).deliver_later
       @message_success = "New API key generated! Check your email for the new key."
