@@ -42,6 +42,9 @@ class Api::V1::UsersController < Api::V1::BaseController
       # Notify admin of new signup
       UserMailer.new_signup_notification(deleted_user).deliver_later
       
+      # Immediately sync API key to Cloudflare for instant access
+      SyncSingleApiKeyJob.perform_later(deleted_user.id)
+      
       return render json: {
         success: true,
         message: "Welcome back! Your account has been reactivated. Check your email for your new API key.",
@@ -66,6 +69,9 @@ class Api::V1::UsersController < Api::V1::BaseController
       
       # Notify admin of new signup
       UserMailer.new_signup_notification(user).deliver_later
+      
+      # Immediately sync API key to Cloudflare for instant access
+      SyncSingleApiKeyJob.perform_later(user.id)
       
       # Return success without API key - user must check email
       render json: {
