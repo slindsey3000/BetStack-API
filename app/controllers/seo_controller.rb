@@ -26,7 +26,7 @@ class SeoController < ActionController::Base
       ## About BetStack
       
       BetStack provides a free REST API for accessing sports betting data including:
-      - Consensus betting odds aggregated from all the top sportsbooks
+      - Accurate consensus betting odds
       - Up-to-the-minute scores for games in progress and final scores
       - Event schedules and team information
       - Coverage for NFL, NBA, MLB, NHL, NCAA, and more

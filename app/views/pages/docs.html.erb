@@ -513,7 +513,7 @@
     <!-- Lines -->
     <section id="lines">
       <h2>Lines / Odds</h2>
-      <p style="margin-bottom: 1.5rem;">Betting lines include moneylines, point spreads, and totals aggregated from all the top sportsbooks. Our consensus odds are highly accurate and reliable.</p>
+      <p style="margin-bottom: 1.5rem;">Betting lines include moneylines, point spreads, and totals. Our consensus odds are highly accurate and reliable.</p>
       
       <div class="endpoint-card">
         <div class="endpoint-header">
@@ -521,7 +521,7 @@
           <span class="endpoint-path">/api/v1/lines</span>
         </div>
         <div class="endpoint-body">
-          <p class="endpoint-desc">Returns betting lines with bookmaker and event information.</p>
+          <p class="endpoint-desc">Returns consensus betting lines with event information.</p>
           
           <h4 style="font-size: 0.85rem; color: var(--text-muted); margin: 1rem 0 0.5rem; text-transform: uppercase; letter-spacing: 0.5px;">Query Parameters</h4>
           <table class="param-table">
@@ -534,22 +534,13 @@
                 <td class="param-type">integer</td>
                 <td>Filter lines by event</td>
               </tr>
-              <tr>
-                <td><span class="param-name">bookmaker_id</span> <span class="param-optional">optional</span></td>
-                <td class="param-type">integer</td>
-                <td>Filter by specific bookmaker</td>
-              </tr>
             </tbody>
           </table>
           
-          <pre style="margin-top: 1rem;"><code><span class="code-comment">// Response - Line Object</span>
+          <pre style="margin-top: 1rem;"><code><span class="code-comment">// Response - Line Object (Consensus Odds)</span>
 {
   <span class="code-property">"id"</span>: <span class="code-number">9999</span>,
   <span class="code-property">"event_id"</span>: <span class="code-number">1234</span>,
-  <span class="code-property">"bookmaker"</span>: {
-    <span class="code-property">"key"</span>: <span class="code-string">"draftkings"</span>,
-    <span class="code-property">"name"</span>: <span class="code-string">"DraftKings"</span>
-  },
   <span class="code-property">"money_line_home"</span>: <span class="code-number">-150</span>,
   <span class="code-property">"money_line_away"</span>: <span class="code-number">+130</span>,
   <span class="code-property">"point_spread_home"</span>: <span class="code-number">-3.5</span>,
