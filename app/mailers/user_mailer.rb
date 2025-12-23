@@ -92,5 +92,16 @@ class UserMailer < ApplicationMailer
       subject: 'BetStack API - Test Email'
     )
   end
+  
+  # Admin notification for new signup
+  def new_signup_notification(user)
+    @user = user
+    @signup_time = Time.current.strftime('%B %d, %Y at %I:%M %p %Z')
+    
+    mail(
+      to: 'support@betstack.dev',
+      subject: "New API Signup: #{user.email}"
+    )
+  end
 end
 

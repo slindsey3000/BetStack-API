@@ -1,0 +1,18 @@
+NEW API SIGNUP
+==============
+
+A new user has signed up for the BetStack API.
+
+Email: <%= @user.email %>
+Phone: <%= @user.phone_number || 'Not provided' %>
+Signup Time: <%= @signup_time %>
+<% if @user.api_reason.present? %>
+API Reason: <%= @user.api_reason %>
+<% end %>
+
+---
+
+This is an automated notification. The user has already received their welcome email with API key and password.
+
+BetStack API Admin Notification
+

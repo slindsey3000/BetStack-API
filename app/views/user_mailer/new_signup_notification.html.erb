@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f7f6; }
+    .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; }
+    .header { background-color: #10b981; color: #ffffff; padding: 20px; text-align: center; }
+    .header h1 { margin: 0; font-size: 24px; }
+    .content { padding: 30px; }
+    .info-box { background-color: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 20px; margin: 20px 0; }
+    .info-row { padding: 8px 0; border-bottom: 1px solid #e5e7eb; }
+    .info-row:last-child { border-bottom: none; }
+    .label { font-weight: bold; color: #374151; }
+    .value { color: #6b7280; }
+    .footer { background-color: #f3f4f6; padding: 20px; text-align: center; font-size: 12px; color: #6b7280; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🎉 New API Signup!</h1>
+    </div>
+    
+    <div class="content">
+      <p>A new user has signed up for the BetStack API.</p>
+      
+      <div class="info-box">
+        <div class="info-row">
+          <span class="label">Email:</span>
+          <span class="value"><%= @user.email %></span>
+        </div>
+        <div class="info-row">
+          <span class="label">Phone:</span>
+          <span class="value"><%= @user.phone_number || 'Not provided' %></span>
+        </div>
+        <div class="info-row">
+          <span class="label">Signup Time:</span>
+          <span class="value"><%= @signup_time %></span>
+        </div>
+        <% if @user.api_reason.present? %>
+        <div class="info-row">
+          <span class="label">API Reason:</span>
+          <span class="value"><%= @user.api_reason %></span>
+        </div>
+        <% end %>
+      </div>
+      
+      <p style="color: #6b7280; font-size: 14px;">
+        This is an automated notification. The user has already received their welcome email with API key and password.
+      </p>
+    </div>
+    
+    <div class="footer">
+      BetStack API Admin Notification
+    </div>
+  </div>
+</body>
+</html>
+

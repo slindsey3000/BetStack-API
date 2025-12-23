@@ -39,6 +39,9 @@ class Api::V1::UsersController < Api::V1::BaseController
       # Send welcome email with new API key and password
       UserMailer.api_key_created(deleted_user, plain_password).deliver_later
       
+      # Notify admin of new signup
+      UserMailer.new_signup_notification(deleted_user).deliver_later
+      
       return render json: {
         success: true,
         message: "Welcome back! Your account has been reactivated. Check your email for your new API key.",
@@ -60,6 +63,9 @@ class Api::V1::UsersController < Api::V1::BaseController
       
       # Send welcome email with API key and password (asynchronously)
       UserMailer.api_key_created(user, plain_password).deliver_later
+      
+      # Notify admin of new signup
+      UserMailer.new_signup_notification(user).deliver_later
       
       # Return success without API key - user must check email
       render json: {
