@@ -1,65 +1,222 @@
-<% content_for :title, "API Usage Dashboard" %>
+<% content_for :title, "API Usage Dashboard - BetStack" %>
 
-<header>
+<style>
+  .usage-header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: white;
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+  }
+  .usage-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .usage-header p {
+    opacity: 0.8;
+    font-size: 1.1rem;
+  }
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #667eea;
+  }
+  .section-title h2 {
+    margin: 0;
+    color: #1a1a2e;
+  }
+  .section-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+  }
+  .client-icon { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+  .internal-icon { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+  .usage-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    border: 1px solid #e5e7eb;
+  }
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .stat-box {
+    background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+    border-radius: 12px;
+    padding: 1.25rem;
+    text-align: center;
+    border: 1px solid #e0e5f0;
+  }
+  .stat-box.highlight {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+  }
+  .stat-box.danger {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+    color: white;
+    border: none;
+  }
+  .stat-box .number {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .stat-box .label {
+    font-size: 0.85rem;
+    opacity: 0.8;
+    margin-top: 0.25rem;
+  }
+  .stat-box.highlight .label,
+  .stat-box.danger .label {
+    opacity: 0.9;
+  }
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .data-table th {
+    background: #f8f9fa;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: #374151;
+    border-bottom: 2px solid #e5e7eb;
+  }
+  .data-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .data-table tr:hover {
+    background: #f8f9ff;
+  }
+  .data-table .numeric {
+    text-align: right;
+    font-family: 'SF Mono', 'Monaco', monospace;
+  }
+  .email-cell {
+    font-family: 'SF Mono', 'Monaco', monospace;
+    font-size: 0.9rem;
+    color: #667eea;
+  }
+  .status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .badge-success { background: #d1fae5; color: #065f46; }
+  .badge-warning { background: #fef3c7; color: #92400e; }
+  .badge-danger { background: #fee2e2; color: #991b1b; }
+  .badge-info { background: #dbeafe; color: #1e40af; }
+  .info-banner {
+    background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 100%);
+    border-left: 4px solid #667eea;
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin-top: 2rem;
+  }
+  .info-banner h3 {
+    margin: 0 0 0.75rem;
+    color: #1a1a2e;
+  }
+  .info-banner p {
+    margin: 0.5rem 0;
+    color: #4b5563;
+    font-size: 0.95rem;
+  }
+  .section-divider {
+    margin: 3rem 0;
+    border: none;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #e5e7eb, transparent);
+  }
+  .empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: #9ca3af;
+  }
+  .empty-state svg {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+  }
+</style>
+
+<div class="usage-header">
   <div class="container">
-    <h1>BetStack API Usage Dashboard</h1>
-    <p>Monitoring API usage and performance</p>
+    <h1>📊 API Usage Dashboard</h1>
+    <p>Real-time monitoring of BetStack API usage and performance</p>
   </div>
-</header>
+</div>
 
 <div class="container">
-  <!-- Client API Usage Section -->
-  <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; margin-bottom: 30px;">
-    <h2 style="color: white; border-bottom: 1px solid rgba(255,255,255,0.3);">Client API Usage</h2>
-    <p style="opacity: 0.9; margin-bottom: 20px;">Requests from API key holders (synced hourly from edge)</p>
-    
-    <div class="stats-grid" style="margin-top: 20px;">
-      <div class="stat-card" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2);">
-        <h3 style="color: rgba(255,255,255,0.8);">Today's Requests</h3>
-        <div class="value" style="color: white;"><%= number_with_delimiter(@client_today_requests || 0) %></div>
-        <div class="label" style="color: rgba(255,255,255,0.7);">Successful API calls</div>
+  <!-- ==================== CLIENT API USAGE ==================== -->
+  <div class="section-title">
+    <div class="section-icon client-icon">👥</div>
+    <h2>Client API Usage</h2>
+  </div>
+  
+  <div class="usage-card">
+    <div class="stats-row">
+      <div class="stat-box highlight">
+        <div class="number"><%= number_with_delimiter(@client_today_requests || 0) %></div>
+        <div class="label">Today's Requests</div>
       </div>
-      
-      <div class="stat-card" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2);">
-        <h3 style="color: rgba(255,255,255,0.8);">Today's Rejected</h3>
-        <div class="value" style="color: <%= (@client_today_rejected || 0) > 0 ? '#ff6b6b' : 'white' %>;"><%= number_with_delimiter(@client_today_rejected || 0) %></div>
-        <div class="label" style="color: rgba(255,255,255,0.7);">Rate-limited requests</div>
+      <div class="stat-box <%= (@client_today_rejected || 0) > 0 ? 'danger' : '' %>">
+        <div class="number"><%= number_with_delimiter(@client_today_rejected || 0) %></div>
+        <div class="label">Today's Rejected</div>
       </div>
-      
-      <div class="stat-card" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2);">
-        <h3 style="color: rgba(255,255,255,0.8);">This Month</h3>
-        <div class="value" style="color: white;"><%= number_with_delimiter(@client_month_requests || 0) %></div>
-        <div class="label" style="color: rgba(255,255,255,0.7);">Total in <%= Date.current.strftime('%B') %></div>
+      <div class="stat-box">
+        <div class="number"><%= number_with_delimiter(@client_month_requests || 0) %></div>
+        <div class="label"><%= Date.current.strftime('%B') %> Total</div>
       </div>
     </div>
   </div>
 
-  <!-- Client Daily Breakdown -->
-  <% if @client_daily_breakdown.present? && @client_daily_breakdown.any? %>
-  <div class="card">
-    <h2>Client Request History (Last 30 Days)</h2>
-    <table>
+  <!-- Usage by Email/User -->
+  <% if @client_usage_by_email.present? && @client_usage_by_email.any? %>
+  <div class="usage-card">
+    <h3 style="margin-top: 0; margin-bottom: 1rem; color: #374151;">📧 Usage by Account (Last 30 Days)</h3>
+    <table class="data-table">
       <thead>
         <tr>
-          <th>Date</th>
-          <th style="text-align: right;">Requests</th>
-          <th style="text-align: right;">Rejected</th>
+          <th>Account</th>
+          <th class="numeric">Requests</th>
+          <th class="numeric">Rejected</th>
           <th>Status</th>
         </tr>
       </thead>
       <tbody>
-        <% @client_daily_breakdown.first(30).each do |date, data| %>
+        <% @client_usage_by_email.each do |usage| %>
           <tr>
-            <td><strong><%= date.strftime('%B %d, %Y') %></strong></td>
-            <td style="text-align: right;"><%= number_with_delimiter(data[:requests] || 0) %></td>
-            <td style="text-align: right; color: <%= (data[:rejected] || 0) > 0 ? '#e74c3c' : '#27ae60' %>;"><%= number_with_delimiter(data[:rejected] || 0) %></td>
+            <td class="email-cell"><%= obfuscate_email(usage[:email]) %></td>
+            <td class="numeric"><%= number_with_delimiter(usage[:requests]) %></td>
+            <td class="numeric" style="color: <%= usage[:rejected] > 0 ? '#dc2626' : '#16a34a' %>;"><%= number_with_delimiter(usage[:rejected]) %></td>
             <td>
-              <% if (data[:rejected] || 0) > 10 %>
-                <span class="badge badge-warning">Abuse Detected</span>
-              <% elsif (data[:requests] || 0) > 100 %>
-                <span class="badge badge-info">Active</span>
+              <% if usage[:rejected] > 50 %>
+                <span class="status-badge badge-danger">Abuse</span>
+              <% elsif usage[:rejected] > 10 %>
+                <span class="status-badge badge-warning">Warning</span>
+              <% elsif usage[:requests] > 100 %>
+                <span class="status-badge badge-info">Active</span>
               <% else %>
-                <span class="badge badge-success">Normal</span>
+                <span class="status-badge badge-success">Normal</span>
               <% end %>
             </td>
           </tr>
@@ -69,130 +226,114 @@
   </div>
   <% end %>
 
-  <hr style="margin: 40px 0; border: none; border-top: 2px solid #eee;">
+  <!-- Client Daily Breakdown -->
+  <% if @client_daily_breakdown.present? && @client_daily_breakdown.any? %>
+  <div class="usage-card">
+    <h3 style="margin-top: 0; margin-bottom: 1rem; color: #374151;">📅 Daily Request History</h3>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th class="numeric">Requests</th>
+          <th class="numeric">Rejected</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @client_daily_breakdown.first(14).each do |date, data| %>
+          <tr>
+            <td><strong><%= date.strftime('%b %d, %Y') %></strong></td>
+            <td class="numeric"><%= number_with_delimiter(data[:requests] || 0) %></td>
+            <td class="numeric" style="color: <%= (data[:rejected] || 0) > 0 ? '#dc2626' : '#16a34a' %>;"><%= number_with_delimiter(data[:rejected] || 0) %></td>
+            <td>
+              <% if (data[:rejected] || 0) > 10 %>
+                <span class="status-badge badge-warning">Abuse Detected</span>
+              <% elsif (data[:requests] || 0) > 100 %>
+                <span class="status-badge badge-info">Active</span>
+              <% else %>
+                <span class="status-badge badge-success">Normal</span>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <% end %>
+
+  <hr class="section-divider">
+
+  <!-- ==================== INTERNAL API USAGE ==================== -->
+  <div class="section-title">
+    <div class="section-icon internal-icon">🔌</div>
+    <h2>Internal API Usage (Data Provider)</h2>
+  </div>
   
-  <h2 style="color: #667eea; margin-bottom: 20px;">Internal API Usage (Data Provider)</h2>
-  
-  <!-- Internal API Quick Stats -->
-  <div class="stats-grid">
-    <div class="stat-card">
-      <h3>Today's Requests</h3>
-      <div class="value"><%= number_with_delimiter(@today_total) %></div>
-      <div class="label">Calls to data provider</div>
-    </div>
-    
-    <div class="stat-card">
-      <h3>This Month</h3>
-      <div class="value"><%= number_with_delimiter(@month_total) %></div>
-      <div class="label">Total in <%= Date.current.strftime('%B') %></div>
-    </div>
-    
-    <div class="stat-card">
-      <h3>Daily Average (30d)</h3>
-      <div class="value"><%= number_with_delimiter(@avg_daily_last_30) %></div>
-      <div class="label">Average per day</div>
-    </div>
-    
-    <div class="stat-card">
-      <h3>Projected Monthly</h3>
-      <div class="value"><%= number_with_delimiter(@projected_monthly) %></div>
-      <div class="label">Based on 30-day avg</div>
+  <div class="usage-card">
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="number"><%= number_with_delimiter(@today_total) %></div>
+        <div class="label">Today's Requests</div>
+      </div>
+      <div class="stat-box">
+        <div class="number"><%= number_with_delimiter(@month_total) %></div>
+        <div class="label"><%= Date.current.strftime('%B') %> Total</div>
+      </div>
+      <div class="stat-box">
+        <div class="number"><%= number_with_delimiter(@avg_daily_last_30) %></div>
+        <div class="label">Daily Average (30d)</div>
+      </div>
+      <div class="stat-box">
+        <div class="number"><%= number_with_delimiter(@projected_monthly) %></div>
+        <div class="label">Projected Monthly</div>
+      </div>
     </div>
   </div>
 
   <!-- League Breakdown -->
-  <div class="card">
-    <h2>Usage by League (Last 30 Days)</h2>
-    <% if @league_breakdown.any? %>
-      <table>
-        <thead>
+  <% if @league_breakdown.any? %>
+  <div class="usage-card">
+    <h3 style="margin-top: 0; margin-bottom: 1rem; color: #374151;">🏈 Usage by League (Last 30 Days)</h3>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>League</th>
+          <th class="numeric">Requests</th>
+          <th class="numeric">% of Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% total_requests = @league_breakdown.values.sum %>
+        <% @league_breakdown.each do |league_key, count| %>
           <tr>
-            <th>League</th>
-            <th style="text-align: right;">Requests</th>
-            <th style="text-align: right;">% of Total</th>
+            <td><strong><%= league_key %></strong></td>
+            <td class="numeric"><%= number_with_delimiter(count) %></td>
+            <td class="numeric"><%= number_to_percentage((count.to_f / total_requests * 100), precision: 1) %></td>
           </tr>
-        </thead>
-        <tbody>
-          <% total_requests = @league_breakdown.values.sum %>
-          <% @league_breakdown.each do |league_key, count| %>
-            <tr>
-              <td><strong><%= league_key %></strong></td>
-              <td style="text-align: right;"><%= number_with_delimiter(count) %></td>
-              <td style="text-align: right;">
-                <%= number_to_percentage((count.to_f / total_requests * 100), precision: 1) %>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-        <tfoot>
-          <tr style="font-weight: bold; background: #f8f9fa;">
-            <td>Total</td>
-            <td style="text-align: right;"><%= number_with_delimiter(total_requests) %></td>
-            <td style="text-align: right;">100%</td>
-          </tr>
-        </tfoot>
-      </table>
-    <% else %>
-      <p style="color: #888; padding: 20px; text-align: center;">No usage data available for the last 30 days</p>
-    <% end %>
+        <% end %>
+      </tbody>
+      <tfoot>
+        <tr style="font-weight: bold; background: #f8f9fa;">
+          <td>Total</td>
+          <td class="numeric"><%= number_with_delimiter(total_requests) %></td>
+          <td class="numeric">100%</td>
+        </tr>
+      </tfoot>
+    </table>
   </div>
+  <% end %>
 
-  <!-- Daily Breakdown -->
-  <div class="card">
-    <h2>Daily Request History (Last 90 Days)</h2>
-    <% if @daily_breakdown.any? %>
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th style="text-align: right;">Requests</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @daily_breakdown.first(90).each do |date, count| %>
-            <tr>
-              <td><strong><%= date.strftime('%B %d, %Y') %></strong></td>
-              <td style="text-align: right;"><%= number_with_delimiter(count) %></td>
-              <td>
-                <% if count > 1000 %>
-                  <span class="badge badge-warning">High Usage</span>
-                <% elsif count > 100 %>
-                  <span class="badge badge-info">Normal</span>
-                <% else %>
-                  <span class="badge badge-success">Low</span>
-                <% end %>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-    <% else %>
-      <p style="color: #888; padding: 20px; text-align: center;">No usage data available yet</p>
-    <% end %>
-  </div>
-
-  <!-- Info Box -->
-  <div class="card" style="background: #f8f9fa; border-left: 4px solid #667eea;">
-    <h2>About This Dashboard</h2>
-    <p style="margin-bottom: 10px;">
-      <strong>Client API Usage:</strong> Tracks requests from API key holders to our API.
-      Data is synced hourly from Cloudflare edge. Rejected requests indicate rate-limiting (1 request per 60 seconds).
-    </p>
-    <p style="margin-bottom: 10px;">
-      <strong>Internal API Usage:</strong> Tracks our requests to external data providers for odds and scores.
-    </p>
-    <p style="margin-bottom: 10px;">
-      <strong>Data Provider Quota:</strong> 100,000 requests per month
-    </p>
-    <p>
-      <strong>Data Retention:</strong> 90 days
-    </p>
+  <!-- Info Banner -->
+  <div class="info-banner">
+    <h3>ℹ️ About This Dashboard</h3>
+    <p><strong>Client API Usage:</strong> Tracks requests from API key holders. Data synced hourly from edge. Rejected = rate-limited (1 req/60s).</p>
+    <p><strong>Internal API Usage:</strong> Our requests to external data providers for odds and scores.</p>
+    <p><strong>Quota:</strong> 100,000 requests/month from data provider • <strong>Retention:</strong> 90 days</p>
   </div>
 </div>
 
-<footer>
-  <div class="container">
-    <p>BetStack API &copy; <%= Date.current.year %> | Last updated: <%= Time.current.strftime('%B %d, %Y at %I:%M %p %Z') %></p>
+<footer style="background: #1a1a2e; color: white; padding: 1.5rem 0; margin-top: 3rem;">
+  <div class="container" style="text-align: center;">
+    <p style="margin: 0; opacity: 0.8;">BetStack API &copy; <%= Date.current.year %> | Last updated: <%= Time.current.strftime('%b %d, %Y at %I:%M %p %Z') %></p>
   </div>
 </footer>

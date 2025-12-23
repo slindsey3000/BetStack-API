@@ -100,50 +100,65 @@ export default {
     }
     
     // ==========================================
+    // RATE LIMIT WHITELIST: Skip rate limiting for certain accounts
+    // ==========================================
+    const rateLimitWhitelist = [
+      'gmoneyapp@betstack.dev',
+      'support@betstack.dev'
+    ];
+    const skipRateLimit = rateLimitWhitelist.includes(userEmail.toLowerCase());
+    
+    // ==========================================
     // RATE LIMITING: 1 request per 58 seconds
     // ==========================================
     const now = Date.now();
-    const lastCallKey = `lastcall:${apiKey}`;
-    const lastCallStr = await env.CACHE.get(lastCallKey);
     
-    if (lastCallStr) {
-      const lastCall = parseInt(lastCallStr);
-      const elapsed = now - lastCall;
-      const cooldownMs = 58000; // 58 seconds
+    if (!skipRateLimit) {
+      const lastCallKey = `lastcall:${apiKey}`;
+      const lastCallStr = await env.CACHE.get(lastCallKey);
       
-      if (elapsed < cooldownMs) {
-        const waitSeconds = Math.ceil((cooldownMs - elapsed) / 1000);
+      if (lastCallStr) {
+        const lastCall = parseInt(lastCallStr);
+        const elapsed = now - lastCall;
+        const cooldownMs = 58000; // 58 seconds
         
-        // Track abuse: increment rejected counter (async)
-        const hour = new Date().toISOString().slice(0, 13); // "2025-12-22T15"
-        const abuseKey = `abuse:${apiKey}:${hour}`;
-        ctx.waitUntil(
-          (async () => {
-            const currentAbuse = await env.CACHE.get(abuseKey);
-            const newAbuse = (parseInt(currentAbuse) || 0) + 1;
-            await env.CACHE.put(abuseKey, newAbuse.toString(), { expirationTtl: 604800 }); // 7 days
-          })()
-        );
-        
-        return new Response(JSON.stringify({ 
-          error: 'Rate limited',
-          message: `Please wait ${waitSeconds} seconds between requests. Data refreshes every 60 seconds.`,
-          retry_after: waitSeconds
-        }), {
-          status: 429,
-          headers: {
-            ...corsHeaders,
-            'Content-Type': 'application/json',
-            'Retry-After': waitSeconds.toString()
-          }
-        });
+        if (elapsed < cooldownMs) {
+          const waitSeconds = Math.ceil((cooldownMs - elapsed) / 1000);
+          
+          // Track abuse: increment rejected counter (async)
+          const hour = new Date().toISOString().slice(0, 13); // "2025-12-22T15"
+          const abuseKey = `abuse:${apiKey}:${hour}`;
+          ctx.waitUntil(
+            (async () => {
+              const currentAbuse = await env.CACHE.get(abuseKey);
+              const newAbuse = (parseInt(currentAbuse) || 0) + 1;
+              await env.CACHE.put(abuseKey, newAbuse.toString(), { expirationTtl: 604800 }); // 7 days
+            })()
+          );
+          
+          return new Response(JSON.stringify({ 
+            error: 'Rate limited',
+            message: `Please wait ${waitSeconds} seconds between requests. Data refreshes every 60 seconds.`,
+            retry_after: waitSeconds
+          }), {
+            status: 429,
+            headers: {
+              ...corsHeaders,
+              'Content-Type': 'application/json',
+              'Retry-After': waitSeconds.toString()
+            }
+          });
+        }
       }
     }
     
-    // Update last call timestamp (async, non-blocking)
-    ctx.waitUntil(
-      env.CACHE.put(lastCallKey, now.toString(), { expirationTtl: 120 })
-    );
+    // Update last call timestamp (async, non-blocking) - skip for whitelisted users
+    if (!skipRateLimit) {
+      const lastCallKey = `lastcall:${apiKey}`;
+      ctx.waitUntil(
+        env.CACHE.put(lastCallKey, now.toString(), { expirationTtl: 120 })
+      );
+    }
     
     // ==========================================
     // USAGE TRACKING: Hourly counters per API key
