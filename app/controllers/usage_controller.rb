@@ -49,36 +49,23 @@ class UsageController < ActionController::Base
     days_with_data > 0 ? (total.to_f / days_with_data).round : 0
   end
   
-  # Obfuscate email for display: "john.doe@example.com" -> "j***e@e***.com"
+  # Obfuscate email for display: "john.doe@example.com" -> "john***@example.com"
+  # Shows first 4 chars of local part and full domain
   def obfuscate_email(email)
     return 'unknown' if email.blank? || email == 'unknown'
     
     local, domain = email.split('@')
     return email if local.nil? || domain.nil?
     
-    # Obfuscate local part: keep first and last char
-    if local.length <= 2
-      obfuscated_local = local[0] + '*'
+    # Obfuscate local part: show first 4 chars, then ***
+    if local.length <= 4
+      obfuscated_local = local
     else
-      obfuscated_local = local[0] + ('*' * [local.length - 2, 3].min) + local[-1]
+      obfuscated_local = local[0, 4] + '***'
     end
     
-    # Obfuscate domain: keep first char and TLD
-    domain_parts = domain.split('.')
-    if domain_parts.length >= 2
-      tld = domain_parts.last
-      domain_name = domain_parts[0..-2].join('.')
-      if domain_name.length <= 2
-        obfuscated_domain = domain_name[0] + '*'
-      else
-        obfuscated_domain = domain_name[0] + ('*' * [domain_name.length - 1, 3].min)
-      end
-      obfuscated_domain += '.' + tld
-    else
-      obfuscated_domain = domain[0] + '***'
-    end
-    
-    "#{obfuscated_local}@#{obfuscated_domain}"
+    # Keep full domain visible
+    "#{obfuscated_local}@#{domain}"
   end
 end
 
