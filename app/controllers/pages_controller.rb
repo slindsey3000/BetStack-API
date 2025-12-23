@@ -48,8 +48,10 @@ class PagesController < ActionController::Base
         value: @user.id, 
         expires: 1.hour.from_now,
         httponly: true,
-        same_site: :lax
+        same_site: :lax,
+        path: "/"
       }
+      Rails.logger.info "🔐 LOGIN: Set cookie for user #{@user.id}"
       @message_success = "Welcome back!"
       render :account
     else
@@ -59,19 +61,23 @@ class PagesController < ActionController::Base
     end
   end
   
-  # POST /account/logout - Log out
+  # POST or GET /account/logout - Log out
   def logout
+    Rails.logger.info "🔐 LOGOUT: Starting logout for user_id cookie: #{cookies.signed[:user_id]}"
+    
     # Clear the cookie by setting empty value with past expiration
     cookies.signed[:user_id] = { 
       value: "", 
       expires: 1.year.ago,
       httponly: true,
-      same_site: :lax
+      same_site: :lax,
+      path: "/"
     }
-    # Also explicitly delete with all possible paths
+    # Also explicitly delete
     cookies.delete(:user_id, path: "/")
-    cookies.delete(:user_id)
-    redirect_to root_path(success: "You have been logged out.")
+    
+    Rails.logger.info "🔐 LOGOUT: Cookie cleared, redirecting to root"
+    redirect_to root_path(success: "You have been logged out."), allow_other_host: true
   end
   
   # GET /forgot-password - Forgot password form

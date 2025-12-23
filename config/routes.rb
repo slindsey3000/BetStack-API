@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   get "account" => "pages#account", as: :account
   post "account/login" => "pages#login", as: :account_login
   post "account/logout" => "pages#logout", as: :account_logout
+  get "account/logout" => "pages#logout"  # Allow GET for easier testing
   post "account/update" => "pages#update_profile", as: :account_update
   post "account/change-password" => "pages#change_password", as: :account_change_password
   post "account/regenerate_key" => "pages#regenerate_key", as: :account_regenerate_key
