@@ -176,73 +176,6 @@
     font-size: 0.75rem;
   }
   
-  /* Mobile hamburger menu */
-  .mobile-nav-toggle {
-    display: none;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
-    color: var(--text-primary);
-    font-size: 0.95rem;
-    font-weight: 500;
-    cursor: pointer;
-    width: 100%;
-    text-align: left;
-    margin-bottom: 1rem;
-  }
-  
-  .mobile-nav-toggle:hover {
-    background: var(--bg-card-hover);
-  }
-  
-  .mobile-nav-toggle svg {
-    margin-right: 0.5rem;
-    vertical-align: middle;
-  }
-  
-  .mobile-nav {
-    display: none;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 1rem;
-    margin-bottom: 1.5rem;
-  }
-  
-  .mobile-nav.open {
-    display: block;
-  }
-  
-  .mobile-nav a {
-    display: block;
-    padding: 0.5rem 0.75rem;
-    color: var(--text-secondary);
-    text-decoration: none;
-    font-size: 0.9rem;
-    border-radius: 6px;
-    transition: all 0.2s;
-  }
-  
-  .mobile-nav a:hover {
-    background: var(--bg-card-hover);
-    color: var(--primary-light);
-  }
-  
-  .mobile-nav-section {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding: 0.75rem 0.75rem 0.25rem;
-    margin-top: 0.5rem;
-  }
-  
-  .mobile-nav-section:first-child {
-    margin-top: 0;
-  }
-
   @media (max-width: 900px) {
     .docs-layout {
       grid-template-columns: 1fr;
@@ -253,11 +186,6 @@
     .docs-sidebar {
       position: static;
       display: none;
-    }
-    
-    .mobile-nav-toggle {
-      display: flex;
-      align-items: center;
     }
     
     .docs-content {
@@ -299,48 +227,6 @@
   <div class="container">
     <h1 style="font-size: 2.5rem; margin-bottom: 0.75rem;">API <span class="text-gradient">Documentation</span></h1>
     <p style="font-size: 1.1rem; max-width: 600px;">Complete reference for the BetStack Sports Betting API. Get started in minutes with our simple REST API.</p>
-    
-    <!-- Mobile Navigation Toggle -->
-    <button class="mobile-nav-toggle" onclick="toggleMobileNav()" id="mobileNavToggle">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="3" y1="6" x2="21" y2="6"></line>
-        <line x1="3" y1="12" x2="21" y2="12"></line>
-        <line x1="3" y1="18" x2="21" y2="18"></line>
-      </svg>
-      Jump to Section
-    </button>
-    
-    <!-- Mobile Navigation Menu -->
-    <nav class="mobile-nav" id="mobileNav">
-      <div class="mobile-nav-section">Getting Started</div>
-      <a href="#overview" onclick="closeMobileNav()">Overview</a>
-      <a href="#authentication" onclick="closeMobileNav()">Authentication</a>
-      <a href="#base-url" onclick="closeMobileNav()">Base URL</a>
-      <a href="#rate-limits" onclick="closeMobileNav()">Rate Limits</a>
-      
-      <div class="mobile-nav-section">Core Endpoints</div>
-      <a href="#sports" onclick="closeMobileNav()">Sports</a>
-      <a href="#leagues" onclick="closeMobileNav()">Leagues</a>
-      <a href="#events" onclick="closeMobileNav()">Events</a>
-      <a href="#results" onclick="closeMobileNav()">Results</a>
-      <a href="#lines" onclick="closeMobileNav()">Lines</a>
-      
-      <div class="mobile-nav-section">Resources</div>
-      <a href="#teams" onclick="closeMobileNav()">Teams</a>
-      <a href="#errors" onclick="closeMobileNav()">Error Handling</a>
-      <a href="#terms" onclick="closeMobileNav()">Terms of Use</a>
-    </nav>
-    
-    <script>
-      function toggleMobileNav() {
-        const nav = document.getElementById('mobileNav');
-        nav.classList.toggle('open');
-      }
-      function closeMobileNav() {
-        const nav = document.getElementById('mobileNav');
-        nav.classList.remove('open');
-      }
-    </script>
   </div>
 </section>
 

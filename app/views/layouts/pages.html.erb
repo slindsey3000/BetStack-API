@@ -527,10 +527,81 @@
       .py-4 { padding-top: 2rem; padding-bottom: 2rem; }
       .py-6 { padding-top: 4rem; padding-bottom: 4rem; }
       
+      /* Mobile hamburger menu */
+      .mobile-menu-toggle {
+        display: none;
+        background: transparent;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 0.5rem;
+        cursor: pointer;
+        color: var(--text-primary);
+      }
+      
+      .mobile-menu-toggle:hover {
+        background: var(--bg-card);
+      }
+      
+      .mobile-menu {
+        display: none;
+        position: fixed;
+        top: 60px;
+        left: 0;
+        right: 0;
+        background: var(--bg-dark);
+        border-bottom: 1px solid var(--border);
+        padding: 1rem;
+        z-index: 999;
+        max-height: calc(100vh - 60px);
+        overflow-y: auto;
+      }
+      
+      .mobile-menu.open {
+        display: block;
+      }
+      
+      .mobile-menu a {
+        display: block;
+        padding: 0.75rem 1rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        border-radius: 6px;
+        transition: all 0.2s;
+      }
+      
+      .mobile-menu a:hover {
+        background: var(--bg-card);
+        color: var(--primary-light);
+      }
+      
+      .mobile-menu-section {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 1rem 1rem 0.25rem;
+        margin-top: 0.5rem;
+      }
+      
+      .mobile-menu-section:first-child {
+        margin-top: 0;
+        padding-top: 0;
+      }
+      
+      .mobile-menu-divider {
+        border-top: 1px solid var(--border);
+        margin: 0.75rem 0;
+      }
+
       /* Responsive */
       @media (max-width: 768px) {
         .nav-links {
           display: none;
+        }
+        
+        .mobile-menu-toggle {
+          display: block;
         }
         
         .container, .container-narrow {
@@ -637,8 +708,49 @@
           <li><a href="/account" class="<%= 'active' if controller_name == 'pages' && action_name == 'account' %>">Account</a></li>
           <li><a href="https://betstack.dev/#api" class="nav-cta">Get Free API Key</a></li>
         </ul>
+        
+        <!-- Mobile hamburger -->
+        <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
       </div>
     </nav>
+    
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="/" onclick="closeMobileMenu()">Home</a>
+      <a href="/docs" onclick="closeMobileMenu()">Documentation</a>
+      <a href="/account" onclick="closeMobileMenu()">Account</a>
+      <a href="https://betstack.dev/#api" onclick="closeMobileMenu()">Get Free API Key</a>
+      
+      <% if controller_name == 'pages' && action_name == 'docs' %>
+        <div class="mobile-menu-divider"></div>
+        <div class="mobile-menu-section">Documentation</div>
+        <a href="#overview" onclick="closeMobileMenu()">Overview</a>
+        <a href="#authentication" onclick="closeMobileMenu()">Authentication</a>
+        <a href="#rate-limits" onclick="closeMobileMenu()">Rate Limits</a>
+        <a href="#events" onclick="closeMobileMenu()">Events</a>
+        <a href="#results" onclick="closeMobileMenu()">Results</a>
+        <a href="#lines" onclick="closeMobileMenu()">Lines</a>
+        <a href="#terms" onclick="closeMobileMenu()">Terms of Use</a>
+      <% end %>
+      
+      <div class="mobile-menu-divider"></div>
+      <a href="https://betstack.dev" onclick="closeMobileMenu()">betstack.dev</a>
+    </div>
+    
+    <script>
+      function toggleMobileMenu() {
+        document.getElementById('mobileMenu').classList.toggle('open');
+      }
+      function closeMobileMenu() {
+        document.getElementById('mobileMenu').classList.remove('open');
+      }
+    </script>
 
     <main role="main">
       <%= yield %>
